@@ -1,0 +1,24 @@
+# Maven / Java Build Outputs
+backend/target/
+*.class
+*.jar
+*.war
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# File uploads (ignore temporary uploaded files, keep folder)
+uploads/*
+!uploads/.gitkeep
