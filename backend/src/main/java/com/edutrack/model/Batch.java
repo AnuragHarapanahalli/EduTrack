@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "batches")
-public class Batch {
+public class
+
+Batch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

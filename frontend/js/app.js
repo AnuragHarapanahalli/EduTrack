@@ -24,9 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // View Navigation
 function showView(viewId) {
-    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+    document.querySelectorAll('.view-section').forEach(sec => {
+        sec.classList.remove('active');
+        sec.classList.add('hidden');
+    });
     const target = document.getElementById(viewId);
-    if (target) target.classList.add('active');
+    if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('active');
+    }
 }
 
 // Render Navigation User Header
