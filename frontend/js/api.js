@@ -1,9 +1,7 @@
 /**
  * EduTrack REST API Client
- * Pure API Interface to Spring Boot Backend
+ * Uses centralized ApiEndpoints registry from endpoints.js
  */
-const API_BASE_URL = 'http://localhost:8080/api';
-
 class ApiClient {
     static getAuthToken() {
         return localStorage.getItem('edutrack_jwt');
@@ -44,7 +42,8 @@ class ApiClient {
             headers
         };
 
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
+        const response = await fetch(url, config);
         
         if (!response.ok) {
             let errorMsg = `Server error (${response.status})`;
@@ -60,16 +59,16 @@ class ApiClient {
         return text ? JSON.parse(text) : null;
     }
 
-    // Auth API
+    // Auth APIs
     static async login(email, password) {
-        return this.request('/auth/login', {
+        return this.request(ApiEndpoints.AUTH.LOGIN, {
             method: 'POST',
             body: JSON.stringify({ email, password })
         });
     }
 
     static async register(fullName, email, password, role, batchId) {
-        return this.request('/auth/register', {
+        return this.request(ApiEndpoints.AUTH.REGISTER, {
             method: 'POST',
             body: JSON.stringify({ fullName, email, password, role, batchId })
         });
@@ -77,19 +76,19 @@ class ApiClient {
 
     // Subject & Milestone APIs
     static async getSubjectsForStudent(studentId) {
-        return this.request(`/subjects/student/${studentId}`);
+        return this.request(ApiEndpoints.SUBJECTS.GET_BY_STUDENT(studentId));
     }
 
     static async getSubjectsForInstructor(instructorId) {
-        return this.request(`/subjects/instructor/${instructorId}`);
+        return this.request(ApiEndpoints.SUBJECTS.GET_BY_INSTRUCTOR(instructorId));
     }
 
     static async getMilestonesBySubject(subjectId) {
-        return this.request(`/milestones/subject/${subjectId}`);
+        return this.request(ApiEndpoints.MILESTONES.GET_BY_SUBJECT(subjectId));
     }
 
     static async createMilestone(data) {
-        return this.request('/milestones', {
+        return this.request(ApiEndpoints.MILESTONES.CREATE, {
             method: 'POST',
             body: JSON.stringify(data)
         });
@@ -97,22 +96,22 @@ class ApiClient {
 
     // Submission APIs
     static async uploadSubmission(formData) {
-        return this.request('/submissions/upload', {
+        return this.request(ApiEndpoints.SUBMISSIONS.UPLOAD, {
             method: 'POST',
             body: formData
         });
     }
 
     static async getSubmissionsByStudent(studentId) {
-        return this.request(`/submissions/student/${studentId}`);
+        return this.request(ApiEndpoints.SUBMISSIONS.GET_BY_STUDENT(studentId));
     }
 
     static async getSubmissionsByMilestone(milestoneId) {
-        return this.request(`/submissions/milestone/${milestoneId}`);
+        return this.request(ApiEndpoints.SUBMISSIONS.GET_BY_MILESTONE(milestoneId));
     }
 
     static async reviewSubmission(submissionId, reviewData) {
-        return this.request(`/submissions/${submissionId}/review`, {
+        return this.request(ApiEndpoints.SUBMISSIONS.REVIEW(submissionId), {
             method: 'PUT',
             body: JSON.stringify(reviewData)
         });
@@ -120,6 +119,6 @@ class ApiClient {
 
     // Leaderboard API
     static async getLeaderboard(subjectId) {
-        return this.request(`/leaderboard/subject/${subjectId}`);
+        return this.request(ApiEndpoints.LEADERBOARD.GET_BY_SUBJECT(subjectId));
     }
 }
