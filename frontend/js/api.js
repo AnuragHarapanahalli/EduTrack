@@ -1,5 +1,6 @@
 /**
  * EduTrack REST API Client
+ * Pure API Interface to Spring Boot Backend
  */
 const API_BASE_URL = 'http://localhost:8080/api';
 
@@ -43,24 +44,23 @@ class ApiClient {
             headers
         };
 
-        try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-            
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: 'API request failed' }));
-                throw new Error(errorData.message || `HTTP error ${response.status}`);
-            }
-
-            if (response.status === 24) return null;
-            const text = await response.text();
-            return text ? JSON.parse(text) : null;
-        } catch (error) {
-            console.warn(`API call failed to ${endpoint}:`, error.message);
-            throw error;
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        
+        if (!response.ok) {
+            let errorMsg = `Server error (${response.status})`;
+            try {
+                const errorData = await response.json();
+                if (errorData.message) errorMsg = errorData.message;
+            } catch (e) {}
+            throw new Error(errorMsg);
         }
+
+        if (response.status === 204) return null;
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
     }
 
-    // Auth endpoints
+    // Auth API
     static async login(email, password) {
         return this.request('/auth/login', {
             method: 'POST',
@@ -75,7 +75,7 @@ class ApiClient {
         });
     }
 
-    // Subject & Milestone Endpoints
+    // Subject & Milestone APIs
     static async getSubjectsForStudent(studentId) {
         return this.request(`/subjects/student/${studentId}`);
     }
@@ -95,7 +95,7 @@ class ApiClient {
         });
     }
 
-    // Submissions
+    // Submission APIs
     static async uploadSubmission(formData) {
         return this.request('/submissions/upload', {
             method: 'POST',
@@ -118,7 +118,7 @@ class ApiClient {
         });
     }
 
-    // Leaderboard
+    // Leaderboard API
     static async getLeaderboard(subjectId) {
         return this.request(`/leaderboard/subject/${subjectId}`);
     }

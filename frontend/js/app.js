@@ -1,33 +1,13 @@
 /**
- * EduTrack Application Logic & View Router
+ * EduTrack Pure View Controller
+ * Receives view model data directly from Spring Boot REST APIs with ZERO client-side business logic.
  */
 
-// Application State
+// UI View State
 let currentUser = null;
 let currentSubject = null;
 let currentMilestones = [];
-let currentSubmissionsMap = {}; // milestoneId -> submission object
-let currentSubmissionsList = [];
-let currentLeaderboard = [];
-
-// Fallback Mock Data for instant browser testing if backend server is starting up
-const MOCK_DATA = {
-    userStudent: { id: 4, fullName: 'Anurag Harapanahalli', email: 'anurag@edutrack.edu', role: 'STUDENT', batchId: 1, batchName: 'B.Tech CSE 2026 - Batch A' },
-    userInstructor: { id: 2, fullName: 'Prof. Rajesh Sharma', email: 'sharma@edutrack.edu', role: 'INSTRUCTOR', batchId: null, batchName: null },
-    subject: { id: 1, name: 'CSE20140 - Project Based Learning III', code: 'CSE20140-PBL3', instructorName: 'Prof. Rajesh Sharma' },
-    milestones: [
-        { id: 1, title: 'Milestone 1: Project Topic Selection & Problem Statement', description: 'Submit project proposal including domain, problem statement, team roles, and initial feature list.', deadline: '2026-07-25T23:59:00', basePoints: 100, requiredDeliverables: 'Proposal PDF, Problem Statement Doc', isOverdue: false },
-        { id: 2, title: 'Milestone 2: Software Requirements Specification (SRS)', description: 'Complete IEEE 830 formatted SRS document detailing functional and non-functional requirements.', deadline: '2026-08-01T23:59:00', basePoints: 150, requiredDeliverables: 'SRS Document (.docx or .pdf)', isOverdue: false },
-        { id: 3, title: 'Milestone 3: Database Schema & REST API Architecture', description: 'Provide ER diagram, relational schema, and Swagger/REST endpoint specifications.', deadline: '2026-08-10T23:59:00', basePoints: 200, requiredDeliverables: 'ER Diagram PNG, OpenAPI Spec YAML', isOverdue: false },
-        { id: 4, title: 'Milestone 4: Final Working Prototype & PBL Lab Viva', description: 'Demonstrate complete working web application with frontend, backend, database integration, and test suite.', deadline: '2026-08-20T23:59:00', basePoints: 300, requiredDeliverables: 'GitHub Repository URL, Live Demo Video, Project Report', isOverdue: false }
-    ],
-    leaderboard: [
-        { rank: 1, studentId: 4, studentName: 'Anurag Harapanahalli', studentEmail: 'anurag@edutrack.edu', totalPoints: 120.0, approvedMilestonesCount: 1, totalSubjectMilestonesCount: 4, completionPercentage: 25.0 },
-        { rank: 2, studentId: 5, studentName: 'Priya Patel', studentEmail: 'priya@edutrack.edu', totalPoints: 100.0, approvedMilestonesCount: 1, totalSubjectMilestonesCount: 4, completionPercentage: 25.0 },
-        { rank: 3, studentId: 6, studentName: 'Rohit Verma', studentEmail: 'rohit@edutrack.edu', totalPoints: 85.0, approvedMilestonesCount: 1, totalSubjectMilestonesCount: 4, completionPercentage: 25.0 },
-        { rank: 4, studentId: 7, studentName: 'Sneha Kulkarni', studentEmail: 'sneha@edutrack.edu', totalPoints: 0.0, approvedMilestonesCount: 0, totalSubjectMilestonesCount: 4, completionPercentage: 0.0 }
-    ]
-};
+let currentSubmissionsMap = {};
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
@@ -42,14 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// View Router
+// View Navigation
 function showView(viewId) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     const target = document.getElementById(viewId);
     if (target) target.classList.add('active');
 }
 
-// Navigation User Info Render
+// Render Navigation User Header
 function renderNavUser() {
     const userArea = document.getElementById('navUserArea');
     if (!currentUser) {
@@ -103,23 +83,12 @@ async function handleLogin(e) {
         ApiClient.setAuthToken(response.token);
         ApiClient.setCurrentUser(response.user);
         currentUser = response.user;
-        showToast(`Welcome back, ${currentUser.fullName}!`, 'success');
+        showToast(`Welcome, ${currentUser.fullName}!`, 'success');
         renderNavUser();
         showView('dashboardView');
         loadDashboardData();
     } catch (err) {
-        console.warn('Backend login failed, using local mock auth:', err.message);
-        // Fallback for seamless offline preview
-        if (email.includes('sharma') || email.includes('prof')) {
-            currentUser = MOCK_DATA.userInstructor;
-        } else {
-            currentUser = MOCK_DATA.userStudent;
-        }
-        ApiClient.setCurrentUser(currentUser);
-        showToast(`Signed in as ${currentUser.fullName} (Demo Mode)`, 'info');
-        renderNavUser();
-        showView('dashboardView');
-        loadDashboardData();
+        showToast(err.message || 'Login failed. Ensure backend server is running.', 'danger');
     }
 }
 
@@ -149,10 +118,10 @@ function handleLogout() {
     currentUser = null;
     renderNavUser();
     showView('authView');
-    showToast('Logged out successfully', 'info');
+    showToast('Logged out', 'info');
 }
 
-// Dashboard Tab Router
+// Dashboard Tabs Switcher
 function switchDashTab(tabId) {
     document.querySelectorAll('.dash-tab').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
@@ -170,9 +139,8 @@ function switchDashTab(tabId) {
     }
 }
 
-// Load Dashboard Data
+// Fetch & Display Dashboard Data from Backend API
 async function loadDashboardData() {
-    // 1. Set role-based UI options
     const instructorTabBtn = document.getElementById('instructorTabBtn');
     const dashActions = document.getElementById('dashActions');
 
@@ -188,7 +156,6 @@ async function loadDashboardData() {
         dashActions.innerHTML = '';
     }
 
-    // 2. Fetch Subjects & Milestones
     try {
         let subjects = [];
         if (currentUser.role === 'INSTRUCTOR') {
@@ -199,115 +166,114 @@ async function loadDashboardData() {
 
         if (subjects && subjects.length > 0) {
             currentSubject = subjects[0];
-        } else {
-            currentSubject = MOCK_DATA.subject;
-        }
+            currentMilestones = await ApiClient.getMilestonesBySubject(currentSubject.id);
 
-        // Fetch Milestones
-        const milestones = await ApiClient.getMilestonesBySubject(currentSubject.id);
-        currentMilestones = (milestones && milestones.length > 0) ? milestones : MOCK_DATA.milestones;
-
-        // Fetch Student's existing submissions if Student
-        if (currentUser.role === 'STUDENT') {
-            const studentSubmissions = await ApiClient.getSubmissionsByStudent(currentUser.id);
-            currentSubmissionsMap = {};
-            if (studentSubmissions) {
-                studentSubmissions.forEach(sub => {
-                    currentSubmissionsMap[sub.milestoneId] = sub;
-                });
+            if (currentUser.role === 'STUDENT') {
+                const studentSubmissions = await ApiClient.getSubmissionsByStudent(currentUser.id);
+                currentSubmissionsMap = {};
+                if (studentSubmissions) {
+                    studentSubmissions.forEach(sub => {
+                        currentSubmissionsMap[sub.milestoneId] = sub;
+                    });
+                }
             }
         }
     } catch (err) {
-        console.warn('API error, using demo milestone data:', err);
-        currentSubject = MOCK_DATA.subject;
-        currentMilestones = MOCK_DATA.milestones;
+        showToast(`Failed to load data: ${err.message}`, 'danger');
     }
 
     renderHeroStats();
     renderMilestones();
 }
 
-// Render Hero Stats
-function renderHeroStats() {
+// Render Hero Stats Bar using Backend Leaderboard Summary Data
+async function renderHeroStats() {
     const container = document.getElementById('heroStatsGrid');
 
-    if (currentUser.role === 'STUDENT') {
-        const total = currentMilestones.length;
-        const approvedCount = Object.values(currentSubmissionsMap).filter(s => s.status === 'APPROVED').length;
-        const totalPoints = Object.values(currentSubmissionsMap)
-            .filter(s => s.status === 'APPROVED')
-            .reduce((acc, s) => acc + (s.finalPoints || 0), 0);
-        const progressPct = total > 0 ? Math.round((approvedCount / total) * 100) : 0;
+    if (currentUser.role === 'STUDENT' && currentSubject) {
+        try {
+            // Fetch backend leaderboard endpoint to get student's calculated progress & points
+            const leaderboard = await ApiClient.getLeaderboard(currentSubject.id);
+            const myEntry = leaderboard ? leaderboard.find(e => e.studentId === currentUser.id) : null;
 
-        container.innerHTML = `
-            <div class="stat-card glass-panel">
-                <div class="stat-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--primary);">
-                    <i class="fa-solid fa-list-check"></i>
+            const approvedCount = myEntry ? myEntry.approvedMilestonesCount : 0;
+            const total = myEntry ? myEntry.totalSubjectMilestonesCount : currentMilestones.length;
+            const completionPct = myEntry ? myEntry.completionPercentage : 0;
+            const totalPoints = myEntry ? myEntry.totalPoints : 0.0;
+
+            container.innerHTML = `
+                <div class="stat-card glass-panel">
+                    <div class="stat-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--primary);">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Milestones Approved</h4>
+                        <div class="stat-value">${approvedCount} / ${total}</div>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h4>Milestone Progress</h4>
-                    <div class="stat-value">${approvedCount} / ${total}</div>
+                <div class="stat-card glass-panel">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success);">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Completion Rate</h4>
+                        <div class="stat-value">${completionPct}%</div>
+                    </div>
                 </div>
-            </div>
-            <div class="stat-card glass-panel">
-                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success);">
-                    <i class="fa-solid fa-chart-line"></i>
+                <div class="stat-card glass-panel">
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--warning);">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Points</h4>
+                        <div class="stat-value">${totalPoints.toFixed(1)} pts</div>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h4>Completion Rate</h4>
-                    <div class="stat-value">${progressPct}%</div>
-                </div>
-            </div>
-            <div class="stat-card glass-panel">
-                <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--warning);">
-                    <i class="fa-solid fa-award"></i>
-                </div>
-                <div class="stat-info">
-                    <h4>Accumulated Points</h4>
-                    <div class="stat-value">${totalPoints.toFixed(1)} pts</div>
-                </div>
-            </div>
-        `;
-    } else {
-        container.innerHTML = `
-            <div class="stat-card glass-panel">
-                <div class="stat-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--primary);">
-                    <i class="fa-solid fa-book-open"></i>
-                </div>
-                <div class="stat-info">
-                    <h4>Active Subject</h4>
-                    <div class="stat-value" style="font-size: 1.2rem;">${currentSubject ? currentSubject.code : 'PBL3'}</div>
-                </div>
-            </div>
-            <div class="stat-card glass-panel">
-                <div class="stat-icon" style="background: rgba(56, 189, 248, 0.15); color: var(--accent);">
-                    <i class="fa-solid fa-flag"></i>
-                </div>
-                <div class="stat-info">
-                    <h4>Total Milestones</h4>
-                    <div class="stat-value">${currentMilestones.length}</div>
-                </div>
-            </div>
-            <div class="stat-card glass-panel">
-                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success);">
-                    <i class="fa-solid fa-users"></i>
-                </div>
-                <div class="stat-info">
-                    <h4>Enrolled Batch</h4>
-                    <div class="stat-value" style="font-size: 1.1rem;">B.Tech CSE 2026</div>
-                </div>
-            </div>
-        `;
+            `;
+            return;
+        } catch (e) {
+            console.warn("Could not fetch student stats:", e);
+        }
     }
+
+    container.innerHTML = `
+        <div class="stat-card glass-panel">
+            <div class="stat-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--primary);">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div class="stat-info">
+                <h4>Active Subject</h4>
+                <div class="stat-value" style="font-size: 1.2rem;">${currentSubject ? currentSubject.code : 'PBL3'}</div>
+            </div>
+        </div>
+        <div class="stat-card glass-panel">
+            <div class="stat-icon" style="background: rgba(56, 189, 248, 0.15); color: var(--accent);">
+                <i class="fa-solid fa-flag"></i>
+            </div>
+            <div class="stat-info">
+                <h4>Total Milestones</h4>
+                <div class="stat-value">${currentMilestones.length}</div>
+            </div>
+        </div>
+        <div class="stat-card glass-panel">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success);">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h4>Enrolled Batch</h4>
+                <div class="stat-value" style="font-size: 1.1rem;">${currentSubject ? currentSubject.batchName : 'Batch'}</div>
+            </div>
+        </div>
+    `;
 }
 
-// Render Milestones
+// Render Milestones View
 function renderMilestones() {
     const grid = document.getElementById('milestonesGrid');
     document.getElementById('milestonesCountBadge').innerText = `${currentMilestones.length} Milestones`;
 
-    if (currentMilestones.length === 0) {
-        grid.innerHTML = `<div class="glass-panel" style="padding: 2rem; grid-column: 1/-1; text-align: center; color: var(--text-muted);">No milestones defined yet.</div>`;
+    if (!currentMilestones || currentMilestones.length === 0) {
+        grid.innerHTML = `<div class="glass-panel" style="padding: 2rem; grid-column: 1/-1; text-align: center; color: var(--text-muted);">No milestones found.</div>`;
         return;
     }
 
@@ -334,13 +300,13 @@ function renderMilestones() {
         let actionBtn = '';
         if (currentUser.role === 'STUDENT') {
             if (sub && sub.status === 'APPROVED') {
-                actionBtn = `<button class="btn btn-secondary btn-block" disabled><i class="fa-solid fa-lock"></i> Submitted & Approved</button>`;
+                actionBtn = `<button class="btn btn-secondary btn-block" disabled><i class="fa-solid fa-lock"></i> Approved</button>`;
             } else {
                 const btnText = (sub && sub.status === 'NEEDS_REVISION') ? 'Resubmit Deliverable' : 'Upload Submission';
                 actionBtn = `<button class="btn btn-primary btn-block" onclick="openUploadModal(${m.id})"><i class="fa-solid fa-upload"></i> ${btnText}</button>`;
             }
         } else {
-            actionBtn = `<button class="btn btn-secondary btn-block" onclick="switchDashTab('instructorSubmissionsTab')"><i class="fa-solid fa-eye"></i> View Student Submissions</button>`;
+            actionBtn = `<button class="btn btn-secondary btn-block" onclick="switchDashTab('instructorSubmissionsTab')"><i class="fa-solid fa-eye"></i> View Submissions</button>`;
         }
 
         return `
@@ -368,104 +334,95 @@ function renderMilestones() {
     }).join('');
 }
 
-// Load Leaderboard
+// Load & Render Backend-Calculated Leaderboard Table
 async function loadLeaderboard() {
     const tbody = document.getElementById('leaderboardTableBody');
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading live leaderboard...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading leaderboard from server...</td></tr>`;
 
     try {
-        const data = await ApiClient.getLeaderboard(currentSubject ? currentSubject.id : 1);
-        currentLeaderboard = (data && data.length > 0) ? data : MOCK_DATA.leaderboard;
+        const leaderboard = await ApiClient.getLeaderboard(currentSubject ? currentSubject.id : 1);
+        
+        if (!leaderboard || leaderboard.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">No student rankings available yet.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = leaderboard.map(entry => {
+            let rankBadgeClass = 'rank-other';
+            let medal = `#${entry.rank}`;
+            if (entry.rank === 1) { rankBadgeClass = 'rank-1'; medal = '🥇 1'; }
+            else if (entry.rank === 2) { rankBadgeClass = 'rank-2'; medal = '🥈 2'; }
+            else if (entry.rank === 3) { rankBadgeClass = 'rank-3'; medal = '🥉 3'; }
+
+            return `
+                <tr>
+                    <td><span class="rank-badge ${rankBadgeClass}">${medal}</span></td>
+                    <td>
+                        <strong style="color: var(--text-main);">${entry.studentName}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">${entry.studentEmail}</div>
+                    </td>
+                    <td>${entry.approvedMilestonesCount} / ${entry.totalSubjectMilestonesCount}</td>
+                    <td>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill" style="width: ${entry.completionPercentage}%;"></div>
+                        </div>
+                        <span style="font-size: 0.85rem; font-weight: 600;">${entry.completionPercentage}%</span>
+                    </td>
+                    <td><strong style="color: var(--warning); font-size: 1.1rem;">${entry.totalPoints.toFixed(1)} pts</strong></td>
+                </tr>
+            `;
+        }).join('');
     } catch (err) {
-        currentLeaderboard = MOCK_DATA.leaderboard;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--danger);">Error loading leaderboard: ${err.message}</td></tr>`;
     }
-
-    tbody.innerHTML = currentLeaderboard.map(entry => {
-        let rankBadgeClass = 'rank-other';
-        let medal = `#${entry.rank}`;
-        if (entry.rank === 1) { rankBadgeClass = 'rank-1'; medal = '🥇 1'; }
-        else if (entry.rank === 2) { rankBadgeClass = 'rank-2'; medal = '🥈 2'; }
-        else if (entry.rank === 3) { rankBadgeClass = 'rank-3'; medal = '🥉 3'; }
-
-        return `
-            <tr>
-                <td><span class="rank-badge ${rankBadgeClass}">${medal}</span></td>
-                <td>
-                    <strong style="color: var(--text-main);">${entry.studentName}</strong>
-                    <div style="font-size: 0.75rem; color: var(--text-dim);">${entry.studentEmail}</div>
-                </td>
-                <td>${entry.approvedMilestonesCount} / ${entry.totalSubjectMilestonesCount}</td>
-                <td>
-                    <div class="progress-bar-wrap">
-                        <div class="progress-bar-fill" style="width: ${entry.completionPercentage}%;"></div>
-                    </div>
-                    <span style="font-size: 0.85rem; font-weight: 600;">${entry.completionPercentage}%</span>
-                </td>
-                <td><strong style="color: var(--warning); font-size: 1.1rem;">${entry.totalPoints.toFixed(1)} pts</strong></td>
-            </tr>
-        `;
-    }).join('');
 }
 
-// Load Instructor Submissions Review
+// Load Submissions for Instructor Evaluation
 async function loadInstructorSubmissions() {
     const list = document.getElementById('submissionsList');
-    list.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading student submissions...</div>`;
+    list.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Fetching student submissions...</div>`;
 
-    let submissions = [];
+    if (!currentMilestones || currentMilestones.length === 0) {
+        list.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No milestones available.</div>`;
+        return;
+    }
+
     try {
-        if (currentMilestones.length > 0) {
-            submissions = await ApiClient.getSubmissionsByMilestone(currentMilestones[0].id);
+        const submissions = await ApiClient.getSubmissionsByMilestone(currentMilestones[0].id);
+
+        if (!submissions || submissions.length === 0) {
+            list.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No student submissions for this milestone yet.</div>`;
+            return;
         }
+
+        list.innerHTML = submissions.map(sub => `
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="badge badge-info">${sub.studentName}</span>
+                        <span class="badge badge-warning">${sub.status}</span>
+                        <span class="badge badge-success">Timeliness Multiplier: ${sub.timelinessMultiplier || 1.0}x</span>
+                    </div>
+                    <h4 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 0.35rem;">${sub.milestoneTitle}</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">${sub.comments || 'No comments provided'}</p>
+                    <div style="font-size: 0.8rem; color: var(--accent);">
+                        ${sub.submissionLink ? `<a href="${sub.submissionLink}" target="_blank" style="color: var(--accent); margin-right: 1rem;"><i class="fa-solid fa-link"></i> ${sub.submissionLink}</a>` : ''}
+                        ${sub.fileUrl ? `<a href="http://localhost:8080${sub.fileUrl}" target="_blank" style="color: var(--success);"><i class="fa-solid fa-file"></i> Download Deliverable File</a>` : ''}
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="openReviewModal(${sub.id}, '${sub.studentName}')">
+                        <i class="fa-solid fa-star"></i> Evaluate Work
+                    </button>
+                </div>
+            </div>
+        `).join('');
     } catch (err) {
-        console.warn('Backend submissions fetch failed, using demo submissions:', err);
+        list.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--danger);">Error loading submissions: ${err.message}</div>`;
     }
-
-    if (!submissions || submissions.length === 0) {
-        // Create mock submissions for demo review
-        submissions = [
-            {
-                id: 101,
-                milestoneId: 1,
-                milestoneTitle: 'Milestone 1: Project Topic Selection & Problem Statement',
-                studentId: 4,
-                studentName: 'Anurag Harapanahalli',
-                studentEmail: 'anurag@edutrack.edu',
-                fileUrl: '/uploads/demo_srs.pdf',
-                submissionLink: 'https://github.com/AnuragHarapanahalli/sem-project',
-                comments: 'Submitted initial PBL problem statement doc and repository setup.',
-                submittedAt: new Date().toISOString(),
-                status: 'SUBMITTED',
-                timelinessMultiplier: 1.2
-            }
-        ];
-    }
-
-    list.innerHTML = submissions.map(sub => `
-        <div class="glass-panel" style="padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                    <span class="badge badge-info">${sub.studentName}</span>
-                    <span class="badge badge-warning">${sub.status}</span>
-                    <span class="badge badge-success">Timeliness: ${sub.timelinessMultiplier || 1.0}x</span>
-                </div>
-                <h4 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 0.35rem;">${sub.milestoneTitle}</h4>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">${sub.comments || 'No comments provided'}</p>
-                <div style="font-size: 0.8rem; color: var(--accent);">
-                    ${sub.submissionLink ? `<a href="${sub.submissionLink}" target="_blank" style="color: var(--accent); margin-right: 1rem;"><i class="fa-solid fa-link"></i> ${sub.submissionLink}</a>` : ''}
-                    ${sub.fileUrl ? `<a href="http://localhost:8080${sub.fileUrl}" target="_blank" style="color: var(--success);"><i class="fa-solid fa-file"></i> View Uploaded File</a>` : ''}
-                </div>
-            </div>
-            <div>
-                <button class="btn btn-primary" onclick="openReviewModal(${sub.id}, '${sub.studentName}')">
-                    <i class="fa-solid fa-star"></i> Evaluate Work
-                </button>
-            </div>
-        </div>
-    `).join('');
 }
 
-// Modal Controllers
+// Modal Trigger Controls
 function openModal(id) {
     const el = document.getElementById(id);
     if (el) el.classList.remove('hidden');
@@ -487,7 +444,7 @@ function openReviewModal(submissionId, studentName) {
     openModal('reviewModal');
 }
 
-// Form Handlers
+// Forms Submission Handlers (Delegating 100% processing & logic to REST API)
 async function handleUploadSubmit(e) {
     e.preventDefault();
     const milestoneId = document.getElementById('uploadMilestoneId').value;
@@ -504,27 +461,12 @@ async function handleUploadSubmit(e) {
 
     try {
         await ApiClient.uploadSubmission(formData);
-        showToast('Deliverable submitted successfully!', 'success');
+        showToast('Deliverable uploaded to backend successfully!', 'success');
+        closeModal('uploadModal');
+        loadDashboardData();
     } catch (err) {
-        console.warn('API upload fallback simulation:', err);
-        // Instant local feedback
-        currentSubmissionsMap[milestoneId] = {
-            id: Date.now(),
-            milestoneId: parseInt(milestoneId),
-            studentId: currentUser.id,
-            status: 'SUBMITTED',
-            submissionLink: link,
-            comments: comments,
-            submittedAt: new Date().toISOString(),
-            timelinessMultiplier: 1.0,
-            finalPoints: 0
-        };
-        showToast('Deliverable submitted successfully (Local Demo Mode)!', 'success');
+        showToast(`Upload failed: ${err.message}`, 'danger');
     }
-
-    closeModal('uploadModal');
-    renderHeroStats();
-    renderMilestones();
 }
 
 async function handleReviewSubmit(e) {
@@ -536,13 +478,12 @@ async function handleReviewSubmit(e) {
 
     try {
         await ApiClient.reviewSubmission(submissionId, { status, qualityRating: quality, feedback });
-        showToast('Submission evaluated successfully!', 'success');
+        showToast('Evaluation submitted to backend successfully!', 'success');
+        closeModal('reviewModal');
+        loadInstructorSubmissions();
     } catch (err) {
-        showToast('Evaluation recorded (Local Demo Mode)!', 'success');
+        showToast(`Evaluation failed: ${err.message}`, 'danger');
     }
-
-    closeModal('reviewModal');
-    loadInstructorSubmissions();
 }
 
 async function handleCreateMilestone(e) {
@@ -563,23 +504,16 @@ async function handleCreateMilestone(e) {
     };
 
     try {
-        const newMs = await ApiClient.createMilestone(payload);
-        currentMilestones.push(newMs);
-        showToast('New milestone created!', 'success');
+        await ApiClient.createMilestone(payload);
+        showToast('New milestone created on backend!', 'success');
+        closeModal('createMilestoneModal');
+        loadDashboardData();
     } catch (err) {
-        currentMilestones.push({
-            id: Date.now(),
-            ...payload,
-            isOverdue: false
-        });
-        showToast('Milestone created (Local Demo Mode)!', 'success');
+        showToast(`Milestone creation failed: ${err.message}`, 'danger');
     }
-
-    closeModal('createMilestoneModal');
-    renderMilestones();
 }
 
-// Toast Notifications
+// Toast System
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
