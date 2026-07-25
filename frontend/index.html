@@ -3,21 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduTrack - Milestone & Progress Monitoring System</title>
+    <title>EduTrack - PBL Milestone & Progress Monitoring Platform</title>
     <meta name="description" content="A Web-Based Milestone and Progress Monitoring System for Project-Based Learning Labs">
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Plus Jakarta Sans, Outfit, Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Custom CSS -->
+    <!-- Custom CSS Design System -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="dark-theme">
-    <!-- Background Decorators -->
+    <!-- Dynamic Ambient Background Glowing Orbs -->
     <div class="bg-glow bg-glow-1"></div>
     <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- Top Announcement Banner -->
+    <div class="top-banner">
+        <div class="top-banner-content">
+            <span class="pulse-dot"></span>
+            <span class="banner-text"><strong>EduTrack v1.0 Live</strong> &mdash; Project-Based Learning Lab Portal (CSE20140)</span>
+        </div>
+    </div>
 
     <!-- Navigation Bar -->
     <header class="navbar">
@@ -27,8 +36,8 @@
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <div class="brand-text">
-                    <span class="brand-title">EduTrack</span>
-                    <span class="brand-subtitle">PBL Progress System</span>
+                    <span class="brand-title">EduTrack<span class="brand-dot">.</span></span>
+                    <span class="brand-subtitle">PBL Progress Engine</span>
                 </div>
             </div>
 
@@ -43,79 +52,119 @@
     <main class="main-content">
         <!-- Auth View (Login / Register) -->
         <section id="authView" class="view-section active">
-            <div class="auth-card glass-panel">
-                <div class="auth-header">
-                    <div class="auth-icon-wrap">
-                        <i class="fa-solid fa-shield-halved"></i>
+            <div class="auth-wrapper">
+                <div class="auth-hero-side">
+                    <div class="hero-badge">
+                        <i class="fa-solid fa-sparkles"></i> Academic Excellence Platform
                     </div>
-                    <h2>Welcome to EduTrack</h2>
-                    <p>Sign in to access your PBL subjects, milestones & leaderboard</p>
-                </div>
-
-                <div class="auth-tabs">
-                    <button class="auth-tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
-                    <button class="auth-tab-btn" onclick="switchAuthTab('register')">Register Account</button>
-                </div>
-
-                <!-- Login Form -->
-                <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="loginEmail"><i class="fa-solid fa-envelope"></i> Email Address</label>
-                        <input type="email" id="loginEmail" placeholder="e.g. student@edutrack.edu" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword"><i class="fa-solid fa-lock"></i> Password</label>
-                        <input type="password" id="loginPassword" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <span>Sign In</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-
-                    <!-- Quick Demo Accounts -->
-                    <div class="demo-accounts">
-                        <p class="demo-title">⚡ Quick Demo Credentials:</p>
-                        <div class="demo-chips">
-                            <button type="button" class="chip" onclick="fillDemo('anurag@edutrack.edu', 'student123')">
-                                <i class="fa-solid fa-user-graduate"></i> Student (Anurag)
-                            </button>
-                            <button type="button" class="chip" onclick="fillDemo('sharma@edutrack.edu', 'prof123')">
-                                <i class="fa-solid fa-chalkboard-user"></i> Faculty (Prof. Sharma)
-                            </button>
-                            <button type="button" class="chip" onclick="fillDemo('admin@edutrack.edu', 'admin123')">
-                                <i class="fa-solid fa-user-gear"></i> Admin
-                            </button>
+                    <h1 class="hero-title">Track, Submit & Excel in <span class="gradient-text">PBL Milestones</span></h1>
+                    <p class="hero-desc">Digitizing lab milestones, gamified rankings, and real-time faculty feedback in one integrated portal.</p>
+                    
+                    <div class="hero-features">
+                        <div class="hero-feature-item">
+                            <div class="feature-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                            <div>
+                                <strong>Timeliness Multipliers</strong>
+                                <p>Earn up to 1.2x bonus points for submitting 24h early.</p>
+                            </div>
+                        </div>
+                        <div class="hero-feature-item">
+                            <div class="feature-icon"><i class="fa-solid fa-trophy"></i></div>
+                            <div>
+                                <strong>Live Class Leaderboard</strong>
+                                <p>Compete transparently based on approved quality & timeliness.</p>
+                            </div>
+                        </div>
+                        <div class="hero-feature-item">
+                            <div class="feature-icon"><i class="fa-solid fa-file-shield"></i></div>
+                            <div>
+                                <strong>Secure Deliverable Storage</strong>
+                                <p>Local storage audit trail for code repos & documents.</p>
+                            </div>
                         </div>
                     </div>
-                </form>
+                </div>
 
-                <!-- Register Form -->
-                <form id="registerForm" class="auth-form hidden" onsubmit="handleRegister(event)">
-                    <div class="form-group">
-                        <label for="regFullName"><i class="fa-solid fa-user"></i> Full Name</label>
-                        <input type="text" id="regFullName" placeholder="John Doe" required>
+                <div class="auth-card glass-panel">
+                    <div class="auth-header">
+                        <div class="auth-icon-wrap">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h2>Portal Login</h2>
+                        <p>Sign in to access your PBL subjects, milestones & leaderboard</p>
                     </div>
-                    <div class="form-group">
-                        <label for="regEmail"><i class="fa-solid fa-envelope"></i> Email Address</label>
-                        <input type="email" id="regEmail" placeholder="student@edutrack.edu" required>
+
+                    <div class="auth-tabs">
+                        <button class="auth-tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
+                        <button class="auth-tab-btn" onclick="switchAuthTab('register')">Register Account</button>
                     </div>
-                    <div class="form-group">
-                        <label for="regPassword"><i class="fa-solid fa-lock"></i> Password</label>
-                        <input type="password" id="regPassword" placeholder="••••••••" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="regRole"><i class="fa-solid fa-user-tag"></i> Account Role</label>
-                        <select id="regRole" required>
-                            <option value="STUDENT">Student</option>
-                            <option value="INSTRUCTOR">Instructor / Faculty</option>
-                            <option value="ADMIN">Administrator</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <span>Create Account</span>
-                        <i class="fa-solid fa-user-plus"></i>
-                    </button>
-                </form>
+
+                    <!-- Login Form -->
+                    <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label for="loginEmail"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-at input-icon"></i>
+                                <input type="email" id="loginEmail" placeholder="e.g. student@edutrack.edu" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword"><i class="fa-solid fa-lock"></i> Password</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-key input-icon"></i>
+                                <input type="password" id="loginPassword" placeholder="••••••••" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span>Sign In to Dashboard</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+
+                        <!-- Quick Demo Accounts -->
+                        <div class="demo-accounts">
+                            <p class="demo-title">⚡ Instant Demo Accounts:</p>
+                            <div class="demo-chips">
+                                <button type="button" class="chip chip-student" onclick="fillDemo('anurag@edutrack.edu', 'student123')">
+                                    <i class="fa-solid fa-user-graduate"></i> Student (Anurag)
+                                </button>
+                                <button type="button" class="chip chip-instructor" onclick="fillDemo('sharma@edutrack.edu', 'prof123')">
+                                    <i class="fa-solid fa-chalkboard-user"></i> Faculty (Prof. Sharma)
+                                </button>
+                                <button type="button" class="chip chip-admin" onclick="fillDemo('admin@edutrack.edu', 'admin123')">
+                                    <i class="fa-solid fa-user-gear"></i> Admin
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="registerForm" class="auth-form hidden" onsubmit="handleRegister(event)">
+                        <div class="form-group">
+                            <label for="regFullName"><i class="fa-solid fa-user"></i> Full Name</label>
+                            <input type="text" id="regFullName" placeholder="e.g. Anurag Harapanahalli" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regEmail"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                            <input type="email" id="regEmail" placeholder="student@edutrack.edu" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regPassword"><i class="fa-solid fa-lock"></i> Password</label>
+                            <input type="password" id="regPassword" placeholder="••••••••" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regRole"><i class="fa-solid fa-user-tag"></i> Account Role</label>
+                            <select id="regRole" required>
+                                <option value="STUDENT">Student</option>
+                                <option value="INSTRUCTOR">Instructor / Faculty</option>
+                                <option value="ADMIN">Administrator</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span>Create Account</span>
+                            <i class="fa-solid fa-user-plus"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </section>
 
@@ -148,7 +197,10 @@
             <!-- Tab 1: Milestones View -->
             <div id="milestonesTab" class="tab-content active">
                 <div class="section-header">
-                    <h3><i class="fa-solid fa-flag"></i> Active Course Milestones</h3>
+                    <div>
+                        <h3 class="section-title"><i class="fa-solid fa-flag"></i> Active Course Milestones</h3>
+                        <p class="section-subtitle">Track project checkpoints, deadlines, and submission requirements.</p>
+                    </div>
                     <span class="badge badge-info" id="milestonesCountBadge">0 Milestones</span>
                 </div>
                 <div class="milestones-grid" id="milestonesGrid">
@@ -159,8 +211,10 @@
             <!-- Tab 2: Leaderboard View -->
             <div id="leaderboardTab" class="tab-content hidden">
                 <div class="section-header">
-                    <h3><i class="fa-solid fa-crown"></i> Subject Gamified Leaderboard</h3>
-                    <p>Calculated live using: Base Points × Timeliness Multiplier × (Quality Rating / 5)</p>
+                    <div>
+                        <h3 class="section-title"><i class="fa-solid fa-crown"></i> Subject Gamified Leaderboard</h3>
+                        <p class="section-subtitle">Formula: Base Points &times; Timeliness Multiplier &times; (Quality Rating / 5)</p>
+                    </div>
                 </div>
                 <div class="leaderboard-card glass-panel">
                     <div class="table-responsive">
@@ -185,8 +239,10 @@
             <!-- Tab 3: Instructor Review Submissions -->
             <div id="instructorSubmissionsTab" class="tab-content hidden">
                 <div class="section-header">
-                    <h3><i class="fa-solid fa-clipboard-check"></i> Submissions Review & Grading</h3>
-                    <p>Review uploaded student deliverables, assign quality scores (1-5), and provide feedback.</p>
+                    <div>
+                        <h3 class="section-title"><i class="fa-solid fa-clipboard-check"></i> Submissions Review & Grading</h3>
+                        <p class="section-subtitle">Review uploaded student deliverables, assign quality scores (1-5), and provide feedback.</p>
+                    </div>
                 </div>
                 <div class="submissions-list" id="submissionsList">
                     <!-- Submissions Cards Injected Here -->
@@ -199,16 +255,22 @@
     <div class="modal-backdrop hidden" id="uploadModal">
         <div class="modal-card glass-panel">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-upload"></i> Upload Deliverable</h3>
+                <h3><i class="fa-solid fa-cloud-arrow-up"></i> Upload Deliverable</h3>
                 <button class="modal-close" onclick="closeModal('uploadModal')">&times;</button>
             </div>
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
                 <input type="hidden" id="uploadMilestoneId">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="uploadFile"><i class="fa-solid fa-file-arrow-up"></i> Choose File (Stored locally in /uploads)</label>
-                        <input type="file" id="uploadFile">
-                        <small class="help-text">Accepted formats: ZIP, PDF, DOCX, Code files (max 25MB)</small>
+                        <label for="uploadFile"><i class="fa-solid fa-file-arrow-up"></i> Choose File (Saved locally in /uploads)</label>
+                        <div class="file-drop-zone">
+                            <input type="file" id="uploadFile" class="file-drop-input">
+                            <div class="file-drop-text">
+                                <i class="fa-solid fa-folder-open drop-icon"></i>
+                                <span>Click to select or drag & drop file</span>
+                                <small class="help-text">ZIP, PDF, DOCX, Code files (max 25MB)</small>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="uploadLink"><i class="fa-solid fa-link"></i> External Repository / Demo Link (Optional)</label>
