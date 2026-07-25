@@ -11,6 +11,7 @@ public class MilestoneDto {
         private String deadline; // ISO format "2026-08-15T23:59:00"
         private Double basePoints;
         private String requiredDeliverables;
+        private Boolean isMandatory;
 
         public CreateMilestoneRequest() {}
 
@@ -31,6 +32,9 @@ public class MilestoneDto {
 
         public String getRequiredDeliverables() { return requiredDeliverables; }
         public void setRequiredDeliverables(String requiredDeliverables) { this.requiredDeliverables = requiredDeliverables; }
+
+        public Boolean getIsMandatory() { return isMandatory; }
+        public void setIsMandatory(Boolean isMandatory) { this.isMandatory = isMandatory; }
     }
 
     public static class MilestoneResponse {
@@ -42,6 +46,7 @@ public class MilestoneDto {
         private LocalDateTime deadline;
         private Double basePoints;
         private String requiredDeliverables;
+        private Boolean isMandatory;
         private Boolean isOverdue;
 
         public MilestoneResponse() {}
@@ -69,6 +74,9 @@ public class MilestoneDto {
 
         public String getRequiredDeliverables() { return requiredDeliverables; }
         public void setRequiredDeliverables(String requiredDeliverables) { this.requiredDeliverables = requiredDeliverables; }
+
+        public Boolean getIsMandatory() { return isMandatory; }
+        public void setIsMandatory(Boolean isMandatory) { this.isMandatory = isMandatory; }
 
         public Boolean getIsOverdue() { return isOverdue; }
         public void setIsOverdue(Boolean isOverdue) { this.isOverdue = isOverdue; }

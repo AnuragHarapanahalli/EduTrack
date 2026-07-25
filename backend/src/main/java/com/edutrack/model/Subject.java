@@ -1,6 +1,8 @@
 package com.edutrack.model;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "subjects")
@@ -25,6 +27,14 @@ public class Subject {
     private Batch batch;
 
     private String description;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "subject_enrolled_students",
+        joinColumns = @JoinColumn(name = "subject_id"),
+        inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private Set<User> enrolledStudents = new HashSet<>();
 
     public Subject() {}
 
@@ -53,4 +63,7 @@ public class Subject {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public Set<User> getEnrolledStudents() { return enrolledStudents; }
+    public void setEnrolledStudents(Set<User> enrolledStudents) { this.enrolledStudents = enrolledStudents; }
 }

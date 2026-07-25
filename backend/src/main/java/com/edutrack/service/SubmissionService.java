@@ -143,6 +143,54 @@ public class SubmissionService {
         }
     }
 
+    public List<SubmissionDto.MilestoneRosterResponse> getMilestoneRoster(Long milestoneId) {
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new RuntimeException("Milestone not found"));
+
+        Subject subject = milestone.getSubject();
+        if (subject.getBatch() == null) return List.of();
+
+        List<User> students = userRepository.findByBatchIdAndRole(subject.getBatch().getId(), Role.STUDENT);
+        List<Submission> submissions = submissionRepository.findByMilestone(milestone);
+
+        return students.stream().map(student -> {
+            SubmissionDto.MilestoneRosterResponse r = new SubmissionDto.MilestoneRosterResponse();
+            r.setStudentId(student.getId());
+            r.setStudentName(student.getFullName());
+            r.setStudentEmail(student.getEmail());
+
+            Optional<Submission> subOpt = submissions.stream()
+                    .filter(s -> s.getStudent().getId().equals(student.getId()))
+                    .findFirst();
+
+            if (subOpt.isPresent()) {
+                Submission sub = subOpt.get();
+                r.setSubmissionId(sub.getId());
+                r.setStatus(sub.getStatus());
+                r.setSubmittedAt(sub.getSubmittedAt());
+                r.setTimelinessMultiplier(sub.getTimelinessMultiplier());
+                r.setFileUrl(sub.getFileUrl());
+                r.setSubmissionLink(sub.getSubmissionLink());
+                r.setComments(sub.getComments());
+                r.setQualityRating(sub.getQualityRating());
+                r.setFinalPoints(sub.getFinalPoints());
+                r.setInstructorFeedback(sub.getInstructorFeedback());
+
+                if (sub.getTimelinessMultiplier() != null) {
+                    if (sub.getTimelinessMultiplier() >= 1.2) r.setTimelinessLabel("Early (+1.2x)");
+                    else if (sub.getTimelinessMultiplier() >= 1.0) r.setTimelinessLabel("On-Time (1.0x)");
+                    else r.setTimelinessLabel("Delayed / Late (0.5x)");
+                } else {
+                    r.setTimelinessLabel("On-Time");
+                }
+            } else {
+                r.setStatus(SubmissionStatus.OVERDUE);
+                r.setTimelinessLabel(LocalDateTime.now().isAfter(milestone.getDeadline()) ? "Overdue (Not Submitted)" : "Pending Submission");
+            }
+            return r;
+        }).collect(Collectors.toList());
+    }
+
     public SubmissionDto.SubmissionResponse toSubmissionResponse(Submission submission) {
         SubmissionDto.SubmissionResponse response = new SubmissionDto.SubmissionResponse();
         response.setId(submission.getId());

@@ -45,4 +45,18 @@ public class SubjectController {
     public ResponseEntity<SubjectDto.SubjectResponse> getSubjectById(@PathVariable Long id) {
         return ResponseEntity.ok(subjectService.getSubjectById(id));
     }
+
+    @PostMapping("/{id}/students/manual")
+    public ResponseEntity<com.edutrack.dto.AuthDto.UserDto> addStudentToSubject(
+            @PathVariable Long id,
+            @RequestParam String fullName,
+            @RequestParam String email
+    ) {
+        return ResponseEntity.ok(subjectService.addStudentToSubject(id, fullName, email));
+    }
+
+    @GetMapping("/{id}/students")
+    public ResponseEntity<List<com.edutrack.dto.AuthDto.UserDto>> getStudentsBySubject(@PathVariable Long id) {
+        return ResponseEntity.ok(subjectService.getStudentsBySubject(id));
+    }
 }

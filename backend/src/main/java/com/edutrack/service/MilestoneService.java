@@ -34,7 +34,8 @@ public class MilestoneService {
                 request.getDescription(),
                 deadline,
                 request.getBasePoints() != null ? request.getBasePoints() : 100.0,
-                request.getRequiredDeliverables()
+                request.getRequiredDeliverables(),
+                request.getIsMandatory() != null ? request.getIsMandatory() : true
         );
 
         Milestone saved = milestoneRepository.save(milestone);
@@ -70,6 +71,7 @@ public class MilestoneService {
         response.setDeadline(milestone.getDeadline());
         response.setBasePoints(milestone.getBasePoints());
         response.setRequiredDeliverables(milestone.getRequiredDeliverables());
+        response.setIsMandatory(milestone.getIsMandatory() != null ? milestone.getIsMandatory() : true);
         response.setIsOverdue(LocalDateTime.now().isAfter(milestone.getDeadline()));
         return response;
     }

@@ -29,19 +29,27 @@ public class Milestone {
 
     private String requiredDeliverables; // e.g. "Github Repo URL, SRS PDF"
 
+    private Boolean isMandatory = true;
+
     private LocalDateTime createdAt;
 
     public Milestone() {
         this.createdAt = LocalDateTime.now();
+        this.isMandatory = true;
     }
 
     public Milestone(Subject subject, String title, String description, LocalDateTime deadline, Double basePoints, String requiredDeliverables) {
+        this(subject, title, description, deadline, basePoints, requiredDeliverables, true);
+    }
+
+    public Milestone(Subject subject, String title, String description, LocalDateTime deadline, Double basePoints, String requiredDeliverables, Boolean isMandatory) {
         this.subject = subject;
         this.title = title;
         this.description = description;
         this.deadline = deadline;
         this.basePoints = basePoints;
         this.requiredDeliverables = requiredDeliverables;
+        this.isMandatory = isMandatory != null ? isMandatory : true;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -65,6 +73,9 @@ public class Milestone {
 
     public String getRequiredDeliverables() { return requiredDeliverables; }
     public void setRequiredDeliverables(String requiredDeliverables) { this.requiredDeliverables = requiredDeliverables; }
+
+    public Boolean getIsMandatory() { return isMandatory; }
+    public void setIsMandatory(Boolean isMandatory) { this.isMandatory = isMandatory; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

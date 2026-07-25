@@ -44,6 +44,11 @@ public class SubmissionController {
         return ResponseEntity.ok(submissionService.getSubmissionsByMilestone(milestoneId));
     }
 
+    @GetMapping("/milestone/{milestoneId}/roster")
+    public ResponseEntity<List<SubmissionDto.MilestoneRosterResponse>> getMilestoneRoster(@PathVariable Long milestoneId) {
+        return ResponseEntity.ok(submissionService.getMilestoneRoster(milestoneId));
+    }
+
     @GetMapping("/student/{studentId}")
     public ResponseEntity<List<SubmissionDto.SubmissionResponse>> getSubmissionsByStudent(@PathVariable Long studentId) {
         return ResponseEntity.ok(submissionService.getSubmissionsByStudent(studentId));

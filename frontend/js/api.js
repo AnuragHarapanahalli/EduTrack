@@ -75,12 +75,29 @@ class ApiClient {
     }
 
     // Subject & Milestone APIs
+    static async createSubject(data, instructorId) {
+        return this.request(ApiEndpoints.SUBJECTS.CREATE(instructorId), {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
     static async getSubjectsForStudent(studentId) {
         return this.request(ApiEndpoints.SUBJECTS.GET_BY_STUDENT(studentId));
     }
 
     static async getSubjectsForInstructor(instructorId) {
         return this.request(ApiEndpoints.SUBJECTS.GET_BY_INSTRUCTOR(instructorId));
+    }
+
+    static async addStudentToSubjectManual(subjectId, fullName, email) {
+        return this.request(ApiEndpoints.SUBJECTS.ADD_STUDENT_MANUAL(subjectId, fullName, email), {
+            method: 'POST'
+        });
+    }
+
+    static async getStudentsBySubject(subjectId) {
+        return this.request(ApiEndpoints.SUBJECTS.GET_STUDENTS(subjectId));
     }
 
     static async getMilestonesBySubject(subjectId) {
@@ -108,6 +125,10 @@ class ApiClient {
 
     static async getSubmissionsByMilestone(milestoneId) {
         return this.request(ApiEndpoints.SUBMISSIONS.GET_BY_MILESTONE(milestoneId));
+    }
+
+    static async getMilestoneRoster(milestoneId) {
+        return this.request(ApiEndpoints.SUBMISSIONS.GET_MILESTONE_ROSTER(milestoneId));
     }
 
     static async reviewSubmission(submissionId, reviewData) {

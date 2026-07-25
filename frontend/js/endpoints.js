@@ -18,7 +18,9 @@ const ApiEndpoints = {
         GET_ALL: '/subjects',
         GET_BY_INSTRUCTOR: (instructorId) => `/subjects/instructor/${instructorId}`,
         GET_BY_STUDENT: (studentId) => `/subjects/student/${studentId}`,
-        GET_BY_ID: (id) => `/subjects/${id}`
+        GET_BY_ID: (id) => `/subjects/${id}`,
+        ADD_STUDENT_MANUAL: (subjectId, fullName, email) => `/subjects/${subjectId}/students/manual?fullName=${encodeURIComponent(fullName)}&email=${encodeURIComponent(email)}`,
+        GET_STUDENTS: (subjectId) => `/subjects/${subjectId}/students`
     },
 
     // Milestone Endpoints
@@ -34,6 +36,7 @@ const ApiEndpoints = {
         UPLOAD: '/submissions/upload',
         REVIEW: (id) => `/submissions/${id}/review`,
         GET_BY_MILESTONE: (milestoneId) => `/submissions/milestone/${milestoneId}`,
+        GET_MILESTONE_ROSTER: (milestoneId) => `/submissions/milestone/${milestoneId}/roster`,
         GET_BY_STUDENT: (studentId) => `/submissions/student/${studentId}`,
         GET_BY_MILESTONE_AND_STUDENT: (milestoneId, studentId) => `/submissions/milestone/${milestoneId}/student/${studentId}`
     },

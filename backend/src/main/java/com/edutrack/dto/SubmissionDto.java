@@ -90,4 +90,65 @@ public class SubmissionDto {
         public LocalDateTime getReviewedAt() { return reviewedAt; }
         public void setReviewedAt(LocalDateTime reviewedAt) { this.reviewedAt = reviewedAt; }
     }
+
+    public static class MilestoneRosterResponse {
+        private Long studentId;
+        private String studentName;
+        private String studentEmail;
+        private Long submissionId;
+        private SubmissionStatus status;
+        private LocalDateTime submittedAt;
+        private String timelinessLabel;
+        private Double timelinessMultiplier;
+        private String fileUrl;
+        private String submissionLink;
+        private String comments;
+        private Integer qualityRating;
+        private Double finalPoints;
+        private String instructorFeedback;
+
+        public MilestoneRosterResponse() {}
+
+        public Long getStudentId() { return studentId; }
+        public void setStudentId(Long studentId) { this.studentId = studentId; }
+
+        public String getStudentName() { return studentName; }
+        public void setStudentName(String studentName) { this.studentName = studentName; }
+
+        public String getStudentEmail() { return studentEmail; }
+        public void setStudentEmail(String studentEmail) { this.studentEmail = studentEmail; }
+
+        public Long getSubmissionId() { return submissionId; }
+        public void setSubmissionId(Long submissionId) { this.submissionId = submissionId; }
+
+        public SubmissionStatus getStatus() { return status; }
+        public void setStatus(SubmissionStatus status) { this.status = status; }
+
+        public LocalDateTime getSubmittedAt() { return submittedAt; }
+        public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
+
+        public String getTimelinessLabel() { return timelinessLabel; }
+        public void setTimelinessLabel(String timelinessLabel) { this.timelinessLabel = timelinessLabel; }
+
+        public Double getTimelinessMultiplier() { return timelinessMultiplier; }
+        public void setTimelinessMultiplier(Double timelinessMultiplier) { this.timelinessMultiplier = timelinessMultiplier; }
+
+        public String getFileUrl() { return fileUrl; }
+        public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
+
+        public String getSubmissionLink() { return submissionLink; }
+        public void setSubmissionLink(String submissionLink) { this.submissionLink = submissionLink; }
+
+        public String getComments() { return comments; }
+        public void setComments(String comments) { this.comments = comments; }
+
+        public Integer getQualityRating() { return qualityRating; }
+        public void setQualityRating(Integer qualityRating) { this.qualityRating = qualityRating; }
+
+        public Double getFinalPoints() { return finalPoints; }
+        public void setFinalPoints(Double finalPoints) { this.finalPoints = finalPoints; }
+
+        public String getInstructorFeedback() { return instructorFeedback; }
+        public void setInstructorFeedback(String instructorFeedback) { this.instructorFeedback = instructorFeedback; }
+    }
 }

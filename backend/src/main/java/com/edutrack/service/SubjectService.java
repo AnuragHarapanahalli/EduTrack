@@ -1,7 +1,9 @@
 package com.edutrack.service;
 
+import com.edutrack.dto.AuthDto;
 import com.edutrack.dto.SubjectDto;
 import com.edutrack.model.Batch;
+import com.edutrack.model.Role;
 import com.edutrack.model.Subject;
 import com.edutrack.model.User;
 import com.edutrack.repository.BatchRepository;
@@ -65,6 +67,11 @@ public class SubjectService {
         User student = userRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
+        List<Subject> enrolled = subjectRepository.findByEnrolledStudentsContaining(student);
+        if (!enrolled.isEmpty()) {
+            return enrolled.stream().map(this::toSubjectResponse).collect(Collectors.toList());
+        }
+
         if (student.getBatch() == null) {
             return List.of();
         }
@@ -78,6 +85,52 @@ public class SubjectService {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
         return toSubjectResponse(subject);
+    }
+
+    public AuthDto.UserDto addStudentToSubject(Long subjectId, String fullName, String email) {
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new RuntimeException("Subject not found"));
+
+        User student = userRepository.findByEmail(email).orElse(null);
+        if (student == null) {
+            // Register new student account automatically
+            student = new User(
+                    email,
+                    "$2a$10$E2UPv7arXnm8j.JtY8Z9k.kZ8yGvR7O3q6v5F6E3q6v5F6E3q6v5F", // BCrypt encoded "student123"
+                    fullName,
+                    Role.STUDENT,
+                    subject.getBatch()
+            );
+        } else {
+            student.setBatch(subject.getBatch());
+        }
+
+        User savedStudent = userRepository.save(student);
+
+        // Add to subject's enrolled students set
+        if (!subject.getEnrolledStudents().contains(savedStudent)) {
+            subject.getEnrolledStudents().add(savedStudent);
+            subjectRepository.save(subject);
+        }
+
+        return new AuthDto.UserDto(savedStudent.getId(), savedStudent.getEmail(), savedStudent.getFullName(), savedStudent.getRole(), subject.getBatch().getId(), subject.getBatch().getName());
+    }
+
+    public List<AuthDto.UserDto> getStudentsBySubject(Long subjectId) {
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new RuntimeException("Subject not found"));
+
+        if (!subject.getEnrolledStudents().isEmpty()) {
+            return subject.getEnrolledStudents().stream()
+                    .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch() != null ? subject.getBatch().getId() : null, subject.getBatch() != null ? subject.getBatch().getName() : "N/A"))
+                    .collect(Collectors.toList());
+        }
+
+        if (subject.getBatch() == null) return List.of();
+
+        return userRepository.findByBatchIdAndRole(subject.getBatch().getId(), Role.STUDENT).stream()
+                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch().getId(), subject.getBatch().getName()))
+                .collect(Collectors.toList());
     }
 
     public SubjectDto.SubjectResponse toSubjectResponse(Subject subject) {

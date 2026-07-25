@@ -13,5 +13,6 @@ import java.util.Optional;
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
     List<Subject> findByInstructor(User instructor);
     List<Subject> findByBatch(Batch batch);
+    List<Subject> findByEnrolledStudentsContaining(User student);
     Optional<Subject> findByCode(String code);
 }

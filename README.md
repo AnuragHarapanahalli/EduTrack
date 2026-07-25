@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **DEVELOPMENT NOTE**: UI is currently incomplete. Changes need to be made and we need to start using Angular or React for the next iteration.
+
 # EduTrack - Milestone & Progress Monitoring System for PBL Labs
 
 **EduTrack** is a web-based platform built for Project-Based Learning (PBL) lab milestone tracking, submission management, instructor evaluation, and real-time gamified leaderboards.
