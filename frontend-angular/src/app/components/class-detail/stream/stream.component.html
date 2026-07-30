@@ -1,0 +1,60 @@
+<div class="gc-stream-container">
+  <!-- Class Banner -->
+  <div class="gc-class-banner">
+    <div class="gc-banner-content">
+      <h1 class="gc-banner-title">{{ viewStateService.currentSubject()?.name }}</h1>
+      <p class="gc-banner-code">{{ viewStateService.currentSubject()?.code }}</p>
+      <p class="gc-banner-teacher">
+        <i class="fa-solid fa-chalkboard-user"></i> {{ viewStateService.currentSubject()?.instructorName || 'Faculty' }}
+      </p>
+    </div>
+  </div>
+
+  <div class="gc-stream-grid">
+    <!-- Left Sidebar: Upcoming Box -->
+    <div class="gc-stream-upcoming-col">
+      <div class="gc-card gc-upcoming-card">
+        <h3>Upcoming</h3>
+        <ul class="gc-upcoming-list" *ngIf="upcomingMilestones.length > 0">
+          <li *ngFor="let m of upcomingMilestones">
+            <strong>{{ m.title }}</strong>
+            <small><i class="fa-regular fa-clock"></i> Due {{ m.deadline | date:'short' }}</small>
+          </li>
+        </ul>
+        <p class="gc-no-upcoming" *ngIf="upcomingMilestones.length === 0">Woohoo, no work due soon!</p>
+        <button class="gc-btn gc-btn-flat gc-view-all-btn" (click)="goToClasswork()">
+          View all
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Stream Feed -->
+    <div class="gc-stream-feed-col">
+      <div class="gc-card gc-announcement-box">
+        <div class="gc-user-avatar-sm">
+          {{ authService.currentUser()?.fullName?.charAt(0) || 'U' }}
+        </div>
+        <span class="gc-announcement-placeholder">
+          Announce something to your class...
+        </span>
+      </div>
+
+      <div class="gc-feed-list">
+        <div *ngFor="let m of milestones" class="gc-card gc-feed-item" (click)="goToClasswork()">
+          <div class="gc-feed-icon">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <div class="gc-feed-content">
+            <div class="gc-feed-title">
+              <strong>{{ viewStateService.currentSubject()?.instructorName || 'Faculty' }}</strong> posted a new assignment: <span>{{ m.title }}</span>
+            </div>
+            <small class="gc-feed-date">{{ m.deadline | date:'mediumDate' }}</small>
+          </div>
+        </div>
+        <div class="gc-card gc-empty-feed" *ngIf="milestones.length === 0">
+          <p>This is where you can talk to your class and see updates.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

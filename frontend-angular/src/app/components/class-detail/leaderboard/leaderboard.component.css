@@ -1,0 +1,122 @@
+.gc-leaderboard-container {
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.gc-table-card {
+  padding: 1.5rem;
+}
+
+.gc-table-header {
+  margin-bottom: 1.5rem;
+}
+
+.gc-table-header h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--gc-text-main);
+  margin-bottom: 0.25rem;
+}
+
+.gc-table-header p {
+  font-size: 0.85rem;
+  color: var(--gc-text-sub);
+}
+
+.gc-table-responsive {
+  overflow-x: auto;
+}
+
+.gc-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.gc-data-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: var(--gc-background);
+  color: var(--gc-text-sub);
+  font-weight: 500;
+  border-bottom: 2px solid var(--gc-border);
+}
+
+.gc-data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--gc-border);
+  vertical-align: middle;
+}
+
+.gc-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--gc-radius-pill);
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: var(--gc-background);
+  color: var(--gc-text-main);
+}
+
+.rank-1 {
+  background: #fef7e0;
+  color: #b06000;
+  border: 1px solid #f9ab00;
+}
+
+.rank-2 {
+  background: #e8f0fe;
+  color: #1557b0;
+  border: 1px solid #1a73e8;
+}
+
+.rank-3 {
+  background: #e6f4ea;
+  color: #137333;
+  border: 1px solid #34a853;
+}
+
+.gc-student-name {
+  display: block;
+  color: var(--gc-text-main);
+}
+
+.gc-student-email {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--gc-text-sub);
+}
+
+.gc-progress-bar-container {
+  height: 8px;
+  background: var(--gc-border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+  width: 120px;
+}
+
+.gc-progress-bar-fill {
+  height: 100%;
+  background: var(--gc-primary);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+.gc-progress-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.gc-points-val {
+  color: var(--gc-primary);
+  font-size: 1rem;
+}
+
+.gc-table-loading, .gc-empty-table {
+  padding: 3rem;
+  text-align: center;
+  color: var(--gc-text-sub);
+}

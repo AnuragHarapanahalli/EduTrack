@@ -3,194 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduTrack Enterprise - Academic Milestone Engine</title>
-    <meta name="description" content="Enterprise Milestone & Progress Monitoring Platform for Project-Based Learning Labs">
-    <!-- Google Fonts -->
+    <title>EduTrack Classroom - Academic PBL Engine</title>
+    <meta name="description" content="Google Classroom Inspired Milestone & Progress Management System for Project-Based Learning">
+    <!-- Google Fonts: Google Sans / Roboto / Open Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Font Awesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Clean Enterprise Light Theme CSS -->
+    <!-- Google Classroom Style CSS -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="light-theme">
+<body class="google-classroom-theme">
 
-    <!-- Top Corporate Status Header Bar (No subject dropdown here - Sidebar only) -->
-    <header class="top-header">
-        <div class="header-left">
-            <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" title="Toggle Menu">
+    <!-- Google Top Bar (App Header) -->
+    <header class="gc-header">
+        <div class="gc-header-left">
+            <button class="gc-icon-button" id="hamburgerBtn" onclick="toggleSidebar()" title="Main menu">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <div class="brand" onclick="navToTab('dashboardTab')">
-                <div class="brand-logo-pod">
-                    <i class="fa-solid fa-layer-group"></i>
+            <div class="gc-brand" onclick="navigateToClasses()">
+                <div class="gc-logo-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
                 </div>
-                <div class="brand-text">
-                    <span class="brand-name">EduTrack<span class="brand-suffix">PRO</span></span>
-                    <span class="brand-subtext">PBL Lab Engine</span>
-                </div>
+                <span class="gc-brand-title">EduTrack <span class="gc-brand-sub">Classroom</span></span>
             </div>
         </div>
 
-        <div class="header-right">
-            <!-- User Avatar & Status -->
-            <div class="header-user-pod" id="headerUserPod">
-                <!-- User details injected by JS -->
+        <!-- Center Class Tabs (Visible when inside a class) -->
+        <nav class="gc-class-tabs hidden" id="gcClassTabs">
+            <button class="gc-tab-link active" data-tab="streamTab" onclick="switchClassTab('streamTab')">Stream</button>
+            <button class="gc-tab-link" data-tab="classworkTab" onclick="switchClassTab('classworkTab')">Classwork</button>
+            <button class="gc-tab-link" data-tab="peopleTab" onclick="switchClassTab('peopleTab')">People</button>
+            <button class="gc-tab-link" data-tab="leaderboardTab" onclick="switchClassTab('leaderboardTab')">Leaderboard</button>
+        </nav>
+
+        <div class="gc-header-right">
+            <!-- User Profile Avatar & Role -->
+            <div class="gc-user-pod" id="gcUserPod">
+                <!-- Injected via JS -->
             </div>
         </div>
     </header>
 
-    <!-- Sidebar Navigation Drawer -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-inner">
-            <div>
-                <!-- Active Subject Picker (Exclusively in Sidebar) -->
-                <div class="sidebar-section">
-                    <span class="sidebar-label"><i class="fa-solid fa-book-open"></i> Active Subject</span>
-                    <div class="sidebar-subject-box">
-                        <select id="sidebarSubjectSelect" class="sidebar-subject-select" onchange="handleSubjectChange(this.value)">
-                            <option value="">Loading subjects...</option>
-                        </select>
-                    </div>
-                </div>
+    <!-- Google Classroom Left Drawer Sidebar -->
+    <aside class="gc-sidebar" id="gcSidebar">
+        <div class="gc-sidebar-inner">
+            <div class="gc-sidebar-menu">
+                <a href="javascript:void(0)" class="gc-sidebar-item active" onclick="navigateToClasses()">
+                    <i class="fa-solid fa-house gc-sidebar-icon"></i>
+                    <span>Classes</span>
+                </a>
+                <a href="javascript:void(0)" class="gc-sidebar-item" onclick="openDeadlinesModal()">
+                    <i class="fa-regular fa-calendar-check gc-sidebar-icon"></i>
+                    <span>To-do / Deadlines</span>
+                </a>
+            </div>
 
-                <div class="sidebar-section">
-                    <span class="sidebar-label">Navigation</span>
-                    <nav class="sidebar-nav">
-                        <a href="javascript:void(0)" class="sidebar-link active" data-tab="dashboardTab" onclick="navToTab('dashboardTab')">
-                            <div class="link-icon"><i class="fa-solid fa-gauge-high"></i></div>
-                            <span class="link-text">Overview Dashboard</span>
-                        </a>
-                        <a href="javascript:void(0)" class="sidebar-link" data-tab="milestonesTab" onclick="navToTab('milestonesTab')">
-                            <div class="link-icon"><i class="fa-solid fa-route"></i></div>
-                            <span class="link-text">Milestone Pathway</span>
-                        </a>
-                        <a href="javascript:void(0)" class="sidebar-link" data-tab="leaderboardTab" onclick="navToTab('leaderboardTab')">
-                            <div class="link-icon"><i class="fa-solid fa-trophy"></i></div>
-                            <span class="link-text">Leaderboard</span>
-                        </a>
-                        <a href="javascript:void(0)" class="sidebar-link hidden" id="sidebarInstructorLink" data-tab="instructorSubmissionsTab" onclick="navToTab('instructorSubmissionsTab')">
-                            <div class="link-icon"><i class="fa-solid fa-clipboard-user"></i></div>
-                            <span class="link-text">Student Roster</span>
-                        </a>
-                    </nav>
-                </div>
+            <div class="gc-sidebar-divider"></div>
 
-                <!-- Faculty Action Controls -->
-                <div class="sidebar-section hidden" id="sidebarFacultySection">
-                    <span class="sidebar-label">Faculty Controls</span>
-                    <div class="sidebar-actions">
-                        <button class="sidebar-btn" onclick="openModal('createSubjectModal')">
-                            <i class="fa-solid fa-plus-circle"></i> <span>Create Subject</span>
-                        </button>
-                        <button class="sidebar-btn" onclick="openModal('addStudentsModal')">
-                            <i class="fa-solid fa-user-plus"></i> <span>Add Students</span>
-                        </button>
-                        <button class="sidebar-btn sidebar-btn-primary" onclick="openModal('createMilestoneModal')">
-                            <i class="fa-solid fa-flag"></i> <span>Add Milestone</span>
-                        </button>
-                    </div>
+            <!-- Enrolled / Teaching Classes List -->
+            <div class="gc-sidebar-section">
+                <span class="gc-sidebar-label" id="gcSidebarClassesLabel">Enrolled</span>
+                <div class="gc-sidebar-classes-list" id="gcSidebarClassesList">
+                    <!-- Class items injected here -->
                 </div>
             </div>
 
-            <!-- Sidebar Footer User Card -->
-            <div class="sidebar-footer" id="sidebarFooter">
-                <!-- Injected via JS -->
+            <!-- Faculty Quick Actions -->
+            <div class="gc-sidebar-section hidden" id="gcSidebarFacultySection">
+                <div class="gc-sidebar-divider"></div>
+                <span class="gc-sidebar-label">Faculty Tools</span>
+                <button class="gc-sidebar-action-btn" onclick="openModal('createSubjectModal')">
+                    <i class="fa-solid fa-plus"></i> Create Class
+                </button>
+                <button class="gc-sidebar-action-btn" onclick="openModal('addStudentsModal')">
+                    <i class="fa-solid fa-user-plus"></i> Invite Students
+                </button>
+            </div>
+
+            <div class="gc-sidebar-footer" id="gcSidebarFooter">
+                <!-- User details & logout injected via JS -->
             </div>
         </div>
     </aside>
 
-    <!-- Overlay backdrop for mobile sidebar toggle -->
-    <div class="sidebar-backdrop hidden" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+    <!-- Backdrop for mobile drawer -->
+    <div class="gc-sidebar-backdrop hidden" id="gcSidebarBackdrop" onclick="toggleSidebar()"></div>
 
-    <!-- Main Content Work Area -->
-    <main class="main-wrapper" id="mainWrapper">
-        
-        <!-- View 1: Auth Screen (Login / Register) -->
-        <section id="authView" class="view-section active">
-            <div class="auth-container">
-                <div class="auth-left-hero">
-                    <div class="hero-tag">
-                        <i class="fa-solid fa-shield-halved"></i> Enterprise Academic Management
-                    </div>
-                    <h1 class="hero-heading">Milestone Tracking & <span class="highlight">Lab Evaluation</span></h1>
-                    <p class="hero-subheading">A modern, clean platform for tracking project deliverables, evaluating timeliness multipliers, and visualizing student progression.</p>
-                    
-                    <div class="features-list">
-                        <div class="feature-item">
-                            <div class="feature-pod"><i class="fa-solid fa-diagram-next"></i></div>
-                            <div>
-                                <h5>Sequential Progression Pathway</h5>
-                                <p>Milestones unlock sequentially upon approval of previous deliverables.</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-pod"><i class="fa-solid fa-boxes-stacked"></i></div>
-                            <div>
-                                <h5>Multi-Deliverable Management</h5>
-                                <p>Faculty can define multiple deliverable items per milestone with individual mandatory flags.</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-pod"><i class="fa-solid fa-award"></i></div>
-                            <div>
-                                <h5>Automated Timeliness Scoring</h5>
-                                <p>Points calculated dynamically using 1.2x early, 1.0x on-time, and 0.5x delay factors.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Main Container -->
+    <main class="gc-main-container" id="gcMainContainer">
 
-                <div class="auth-right-card card">
-                    <div class="auth-card-header">
-                        <div class="auth-avatar-icon"><i class="fa-solid fa-user-lock"></i></div>
-                        <h2>Sign In to EduTrack</h2>
-                        <p>Select a demo test account or enter your credentials</p>
+        <!-- VIEW 1: Auth Screen (Google Sign-In Style) -->
+        <section id="authView" class="gc-view-section active">
+            <div class="gc-auth-wrapper">
+                <div class="gc-auth-card">
+                    <div class="gc-auth-header">
+                        <div class="gc-auth-logo">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h2>Sign in</h2>
+                        <p>to continue to EduTrack Classroom</p>
                     </div>
 
-                    <div class="auth-tab-bar">
-                        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
-                        <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+                    <div class="gc-auth-tabs">
+                        <button class="gc-auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+                        <button class="gc-auth-tab" onclick="switchAuthTab('register')">Create Account</button>
                     </div>
 
                     <!-- Login Form -->
-                    <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
-                        <div class="form-group">
-                            <label for="loginEmail">Email Address</label>
-                            <div class="input-box">
-                                <i class="fa-solid fa-envelope field-icon"></i>
-                                <input type="email" id="loginEmail" placeholder="student@edutrack.edu" required>
-                            </div>
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="gc-form-field">
+                            <input type="email" id="loginEmail" placeholder="Email or phone" required>
                         </div>
-                        <div class="form-group">
-                            <label for="loginPassword">Password</label>
-                            <div class="input-box">
-                                <i class="fa-solid fa-lock field-icon"></i>
-                                <input type="password" id="loginPassword" placeholder="••••••••" required>
-                            </div>
+                        <div class="gc-form-field">
+                            <input type="password" id="loginPassword" placeholder="Password" required>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <span>Sign In</span> <i class="fa-solid fa-arrow-right"></i>
+                        <button type="submit" class="gc-btn gc-btn-primary gc-btn-block">
+                            Next <i class="fa-solid fa-arrow-right"></i>
                         </button>
 
-                        <!-- Quick Test Accounts -->
-                        <div class="demo-accounts-box">
-                            <span class="demo-label">⚡ Instant Test Accounts:</span>
-                            <div class="demo-chips-grid">
-                                <button type="button" class="chip chip-student" onclick="fillDemo('anurag@edutrack.edu', 'student123')">
+                        <!-- Quick Demo Accounts Chips -->
+                        <div class="gc-demo-box">
+                            <span class="gc-demo-label">Demo Test Accounts:</span>
+                            <div class="gc-demo-chips">
+                                <button type="button" class="gc-chip gc-chip-student" onclick="fillDemo('anurag@edutrack.edu', 'student123')">
                                     <i class="fa-solid fa-user-graduate"></i> Anurag (PBL3 + Web)
                                 </button>
-                                <button type="button" class="chip chip-student" onclick="fillDemo('rahul@edutrack.edu', 'student123')">
+                                <button type="button" class="gc-chip gc-chip-student" onclick="fillDemo('rahul@edutrack.edu', 'student123')">
                                     <i class="fa-solid fa-user-graduate"></i> Rahul (Web Only)
                                 </button>
-                                <button type="button" class="chip chip-student" onclick="fillDemo('priya@edutrack.edu', 'student123')">
+                                <button type="button" class="gc-chip gc-chip-student" onclick="fillDemo('priya@edutrack.edu', 'student123')">
                                     <i class="fa-solid fa-user-graduate"></i> Priya (PBL3 Only)
                                 </button>
-                                <button type="button" class="chip chip-instructor" onclick="fillDemo('sharma@edutrack.edu', 'prof123')">
+                                <button type="button" class="gc-chip gc-chip-teacher" onclick="fillDemo('sharma@edutrack.edu', 'prof123')">
                                     <i class="fa-solid fa-chalkboard-user"></i> Prof. Sharma (PBL3)
                                 </button>
-                                <button type="button" class="chip chip-instructor" onclick="fillDemo('prof.verma@edutrack.edu', 'prof123')">
+                                <button type="button" class="gc-chip gc-chip-teacher" onclick="fillDemo('prof.verma@edutrack.edu', 'prof123')">
                                     <i class="fa-solid fa-chalkboard-user"></i> Dr. Verma (Web Dev)
                                 </button>
                             </div>
@@ -198,122 +147,145 @@
                     </form>
 
                     <!-- Register Form -->
-                    <form id="registerForm" class="auth-form hidden" onsubmit="handleRegister(event)">
-                        <div class="form-group">
-                            <label for="regFullName">Full Name</label>
-                            <input type="text" id="regFullName" placeholder="e.g. John Doe" required>
+                    <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+                        <div class="gc-form-field">
+                            <input type="text" id="regFullName" placeholder="Full name" required>
                         </div>
-                        <div class="form-group">
-                            <label for="regEmail">Email Address</label>
-                            <input type="email" id="regEmail" placeholder="user@edutrack.edu" required>
+                        <div class="gc-form-field">
+                            <input type="email" id="regEmail" placeholder="Email address" required>
                         </div>
-                        <div class="form-group">
-                            <label for="regPassword">Password</label>
-                            <input type="password" id="regPassword" placeholder="••••••••" required>
+                        <div class="gc-form-field">
+                            <input type="password" id="regPassword" placeholder="Create password" required>
                         </div>
-                        <div class="form-group">
-                            <label for="regRole">Role</label>
+                        <div class="gc-form-field">
                             <select id="regRole" required>
                                 <option value="STUDENT">Student</option>
-                                <option value="INSTRUCTOR">Faculty / Instructor</option>
+                                <option value="INSTRUCTOR">Teacher / Instructor</option>
                                 <option value="ADMIN">Administrator</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <span>Create Account</span> <i class="fa-solid fa-user-plus"></i>
+                        <button type="submit" class="gc-btn gc-btn-primary gc-btn-block">
+                            Create account
                         </button>
                     </form>
                 </div>
             </div>
         </section>
 
-        <!-- View 2: Application Portal View -->
-        <section id="dashboardView" class="view-section">
+        <!-- VIEW 2: Google Classroom Classes Home Grid -->
+        <section id="classesHomeView" class="gc-view-section">
+            <div class="gc-classes-header">
+                <h1 class="gc-page-title">Classes</h1>
+                <div id="classesActionBtnContainer">
+                    <!-- Faculty Create Class button injected here -->
+                </div>
+            </div>
+
+            <div class="gc-classes-grid" id="classesHomeGrid">
+                <!-- Google Classroom Style Class Cards Injected Here -->
+            </div>
+        </section>
+
+        <!-- VIEW 3: Inside Class Portal (Stream / Classwork / People / Leaderboard) -->
+        <section id="classDetailView" class="gc-view-section">
             
-            <!-- TAB 0: Dedicated Overview Dashboard Tab -->
-            <div id="dashboardTab" class="tab-pane active">
-                <div class="pane-header">
-                    <div>
-                        <h3 class="pane-title"><i class="fa-solid fa-gauge-high"></i> Overview Dashboard</h3>
-                        <p class="pane-subtitle" id="dashboardRoleSubtitle">Welcome to your academic portal summary</p>
+            <!-- TAB 1: Stream Tab -->
+            <div id="streamTab" class="gc-tab-pane active">
+                <!-- Class Header Banner -->
+                <div class="gc-class-banner" id="gcClassBanner">
+                    <div class="gc-banner-content">
+                        <h1 class="gc-banner-title" id="bannerClassName">Class Name</h1>
+                        <p class="gc-banner-code" id="bannerClassCode">Class Code</p>
+                        <p class="gc-banner-teacher" id="bannerTeacherName">Teacher Name</p>
                     </div>
                 </div>
 
-                <!-- Stat Summary Cards Grid -->
-                <div class="stats-grid" id="heroStatsGrid">
-                    <!-- Dynamically filled stats cards -->
-                </div>
-
-                <!-- Student Deadlines Panel -->
-                <div id="studentDeadlinesPanel" class="card deadlines-card hidden" style="margin-bottom: 1.75rem;">
-                    <div class="card-header">
-                        <h4><i class="fa-solid fa-clock-rotate-left"></i> Upcoming Milestone Deadlines</h4>
-                        <span class="badge badge-warning" id="upcomingCountBadge">0 Pending</span>
-                    </div>
-                    <div class="deadlines-grid" id="upcomingDeadlinesList">
-                        <!-- Dynamic Deadlines Injected Here -->
-                    </div>
-                </div>
-
-                <!-- Enrolled / Created Subjects List Grid -->
-                <div class="section-block">
-                    <div class="block-header">
-                        <h4 class="block-title" id="subjectsGridTitle"><i class="fa-solid fa-book"></i> Enrolled Subjects</h4>
-                        <p class="block-subtitle">Click on any subject card to launch its milestone pathway.</p>
-                    </div>
-                    <div class="subjects-grid" id="subjectsListGrid">
-                        <!-- Subject Cards Injected Here -->
-                    </div>
-                </div>
-
-                <!-- Active Subject Milestone Progression Pathway -->
-                <div class="section-block" style="margin-top: 2rem;">
-                    <div class="block-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
-                        <div>
-                            <h4 class="block-title"><i class="fa-solid fa-route"></i> Active Subject Milestones</h4>
-                            <p class="block-subtitle">Sequential milestone workflow for the currently selected subject.</p>
+                <div class="gc-stream-layout">
+                    <!-- Left Sidebar: Upcoming Deadlines Box -->
+                    <div class="gc-stream-upcoming">
+                        <div class="gc-card gc-upcoming-card">
+                            <h3>Upcoming</h3>
+                            <div id="streamUpcomingList">
+                                <!-- Upcoming deadlines injected here -->
+                            </div>
+                            <a href="javascript:void(0)" class="gc-link-btn" onclick="switchClassTab('classworkTab')">View all</a>
                         </div>
-                        <span class="badge badge-primary" id="dashMilestonesCountBadge">0 Milestones</span>
                     </div>
-                    <div class="flow-container" id="dashMilestonesFlowWrapper">
-                        <!-- Milestone Step Cards Injected Here -->
+
+                    <!-- Right Stream Feed -->
+                    <div class="gc-stream-feed">
+                        <div class="gc-card gc-announcement-box">
+                            <div class="gc-user-avatar-sm" id="streamUserAvatar">U</div>
+                            <span class="gc-announcement-placeholder">Announce something to your class...</span>
+                        </div>
+
+                        <div id="streamFeedList">
+                            <!-- Stream milestone posts injected here -->
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 1: Milestone Connected Progression Pathway -->
-            <div id="milestonesTab" class="tab-pane hidden">
-                <div class="pane-header">
-                    <div>
-                        <h3 class="pane-title"><i class="fa-solid fa-route"></i> Milestone Progression Pathway</h3>
-                        <p class="pane-subtitle">Sequential milestone workflow. Complete & earn approval for each milestone to unlock the next.</p>
+            <!-- TAB 2: Classwork Tab (Milestones Progression) -->
+            <div id="classworkTab" class="gc-tab-pane hidden">
+                <div class="gc-classwork-toolbar">
+                    <div id="classworkCreateContainer">
+                        <!-- Faculty + Create Assignment button -->
                     </div>
-                    <span class="badge badge-primary" id="milestonesCountBadge">0 Milestones</span>
+                    <div class="gc-classwork-info">
+                        <span class="gc-badge gc-badge-info" id="classworkMilestonesCount">0 Milestones</span>
+                    </div>
                 </div>
 
-                <div class="flow-container" id="milestonesFlowWrapper">
-                    <!-- Milestone Step Cards and Arrows Injected Here -->
+                <!-- Sequential Lock Warning Notice -->
+                <div class="gc-notice-banner" id="sequentialNotice">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Sequential Progression Active: Milestones unlock sequentially upon instructor approval of previous deliverables.</span>
+                </div>
+
+                <!-- Milestones / Assignments List -->
+                <div class="gc-classwork-list" id="classworkMilestonesList">
+                    <!-- Milestone Cards Injected Here -->
                 </div>
             </div>
 
-            <!-- TAB 2: Leaderboard View -->
-            <div id="leaderboardTab" class="tab-pane hidden">
-                <div class="pane-header">
-                    <div>
-                        <h3 class="pane-title"><i class="fa-solid fa-award"></i> Subject Leaderboard</h3>
-                        <p class="pane-subtitle">Points = Base Points &times; Timeliness Multiplier (1.2x / 1.0x / 0.5x) &times; (Quality Score / 5)</p>
+            <!-- TAB 3: People Tab (Roster View) -->
+            <div id="peopleTab" class="gc-tab-pane hidden">
+                <div class="gc-people-section">
+                    <div class="gc-people-header">
+                        <h2>Teachers</h2>
+                    </div>
+                    <div class="gc-people-list" id="peopleTeachersList">
+                        <!-- Teacher item -->
                     </div>
                 </div>
 
-                <div class="card table-card">
-                    <div class="table-responsive">
-                        <table class="data-table">
+                <div class="gc-people-section" style="margin-top: 2.5rem;">
+                    <div class="gc-people-header">
+                        <h2>Classmates</h2>
+                        <span class="gc-people-count" id="peopleStudentsCount">0 students</span>
+                    </div>
+                    <div class="gc-people-list" id="peopleStudentsList">
+                        <!-- Student roster list -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: Leaderboard Tab (PBL Gamified Standings) -->
+            <div id="leaderboardTab" class="gc-tab-pane hidden">
+                <div class="gc-card gc-table-card">
+                    <div class="gc-table-header">
+                        <h2>Class Standings & Gamified Leaderboard</h2>
+                        <p>Points = Base Points &times; Timeliness Multiplier &times; (Quality Score / 5)</p>
+                    </div>
+                    <div class="gc-table-responsive">
+                        <table class="gc-data-table">
                             <thead>
                                 <tr>
                                     <th>Rank</th>
-                                    <th>Student</th>
+                                    <th>Student Name</th>
                                     <th>Approved Milestones</th>
-                                    <th>Progress %</th>
+                                    <th>Completion %</th>
                                     <th>Total Points</th>
                                 </tr>
                             </thead>
@@ -324,275 +296,216 @@
                     </div>
                 </div>
             </div>
-
-            <!-- TAB 3: Faculty Student Submissions Roster -->
-            <div id="instructorSubmissionsTab" class="tab-pane hidden">
-                <div class="pane-header">
-                    <div>
-                        <h3 class="pane-title"><i class="fa-solid fa-users-viewfinder"></i> Student Submissions Roster</h3>
-                        <p class="pane-subtitle">Inspect student submissions by milestone, search student names, and verify submission timeliness.</p>
-                    </div>
-                </div>
-
-                <!-- Controls Bar -->
-                <div class="card controls-card">
-                    <div class="control-box">
-                        <label for="rosterMilestoneSelect">Milestone:</label>
-                        <select id="rosterMilestoneSelect" onchange="handleRosterMilestoneChange(this.value)">
-                            <!-- Milestone options -->
-                        </select>
-                    </div>
-                    <div class="control-box search-box">
-                        <label for="rosterSearchInput">Search Student:</label>
-                        <div class="input-box">
-                            <i class="fa-solid fa-magnifying-glass field-icon"></i>
-                            <input type="text" id="rosterSearchInput" placeholder="Search by name, email, or status..." oninput="renderFilteredRoster()">
-                        </div>
-                    </div>
-                    <div class="control-box">
-                        <label for="rosterSortSelect">Sort By:</label>
-                        <select id="rosterSortSelect" onchange="renderFilteredRoster()">
-                            <option value="name">Student Name (A-Z)</option>
-                            <option value="submittedAt">Submission Date (Latest First)</option>
-                            <option value="status">Submission Status</option>
-                            <option value="timeliness">Timeliness Multiplier</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="card table-card">
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Student Details</th>
-                                    <th>Status</th>
-                                    <th>Submission Date & Time</th>
-                                    <th>Timeliness</th>
-                                    <th>Deliverables</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="rosterTableBody">
-                                <!-- Roster Rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </section>
     </main>
 
-    <!-- Modal 1: Create New Subject (Faculty) -->
-    <div class="modal-backdrop hidden" id="createSubjectModal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-plus-circle"></i> Create New Subject</h3>
-                <button class="modal-close-btn" onclick="closeModal('createSubjectModal')">&times;</button>
+    <!-- MODAL 1: Create Class / Subject (Faculty) -->
+    <div class="gc-modal-backdrop hidden" id="createSubjectModal">
+        <div class="gc-modal-card">
+            <div class="gc-modal-header">
+                <h3>Create class</h3>
+                <button class="gc-close-btn" onclick="closeModal('createSubjectModal')">&times;</button>
             </div>
             <form id="createSubjectForm" onsubmit="handleCreateSubject(event)">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="subjName">Subject Name</label>
+                <div class="gc-modal-body">
+                    <div class="gc-form-field">
+                        <label>Class name (required)</label>
                         <input type="text" id="subjName" placeholder="e.g. CSE20140 - Project Based Learning III" required>
                     </div>
-                    <div class="form-group">
-                        <label for="subjCode">Subject Code</label>
+                    <div class="gc-form-field">
+                        <label>Class code (required)</label>
                         <input type="text" id="subjCode" placeholder="e.g. CSE20140-PBL3" required>
                     </div>
-                    <div class="form-group">
-                        <label for="subjDescription">Subject Description</label>
-                        <textarea id="subjDescription" rows="3" placeholder="Overview of PBL objectives..." required></textarea>
+                    <div class="gc-form-field">
+                        <label>Description / Subject Overview</label>
+                        <textarea id="subjDescription" rows="3" placeholder="Course overview and objectives..." required></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('createSubjectModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Subject</button>
+                <div class="gc-modal-footer">
+                    <button type="button" class="gc-btn gc-btn-flat" onclick="closeModal('createSubjectModal')">Cancel</button>
+                    <button type="submit" class="gc-btn gc-btn-primary">Create</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal 2: Add Students to Subject (Faculty) -->
-    <div class="modal-backdrop hidden" id="addStudentsModal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-user-plus"></i> Add Students to Subject</h3>
-                <button class="modal-close-btn" onclick="closeModal('addStudentsModal')">&times;</button>
+    <!-- MODAL 2: Invite / Add Students to Class (Faculty) -->
+    <div class="gc-modal-backdrop hidden" id="addStudentsModal">
+        <div class="gc-modal-card">
+            <div class="gc-modal-header">
+                <h3>Invite students</h3>
+                <button class="gc-close-btn" onclick="closeModal('addStudentsModal')">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="tab-switcher">
-                    <button class="tab-switcher-btn active" id="btnManualTab" onclick="switchImportTab('manual')">Manual Entry</button>
-                    <button class="tab-switcher-btn" id="btnExcelTab" onclick="switchImportTab('excel')">Excel / CSV Import</button>
+            <div class="gc-modal-body">
+                <div class="gc-tab-switcher">
+                    <button class="gc-tab-switcher-btn active" id="btnManualTab" onclick="switchImportTab('manual')">Manual Entry</button>
+                    <button class="gc-tab-switcher-btn" id="btnExcelTab" onclick="switchImportTab('excel')">Import CSV / Excel</button>
                 </div>
 
-                <!-- Manual Student Form -->
+                <!-- Manual Form -->
                 <form id="manualStudentForm" onsubmit="handleManualStudentSubmit(event)">
-                    <div class="form-group">
-                        <label for="stFullName">Student Full Name</label>
+                    <div class="gc-form-field">
+                        <label>Student full name</label>
                         <input type="text" id="stFullName" placeholder="e.g. John Doe" required>
                     </div>
-                    <div class="form-group">
-                        <label for="stEmail">Student Email Address</label>
+                    <div class="gc-form-field">
+                        <label>Student email address</label>
                         <input type="email" id="stEmail" placeholder="johndoe@edutrack.edu" required>
                     </div>
-                    <div class="modal-footer" style="padding-left:0; padding-right:0; background:transparent;">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('addStudentsModal')">Cancel</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Student</button>
+                    <div class="gc-modal-footer" style="padding:0; background:transparent;">
+                        <button type="button" class="gc-btn gc-btn-flat" onclick="closeModal('addStudentsModal')">Cancel</button>
+                        <button type="submit" class="gc-btn gc-btn-primary">Invite</button>
                     </div>
                 </form>
 
-                <!-- Excel Import -->
+                <!-- CSV Import Form -->
                 <div id="excelImportSection" class="hidden">
-                    <div class="template-card">
-                        <div class="template-card-text">
-                            <i class="fa-solid fa-file-excel template-icon"></i>
-                            <div>
-                                <strong>Standard Student CSV Template</strong>
-                                <p>Download CSV format with columns: <code>FullName,Email</code></p>
-                            </div>
+                    <div class="gc-template-box">
+                        <i class="fa-solid fa-file-csv gc-template-icon"></i>
+                        <div>
+                            <strong>Standard Student CSV Template</strong>
+                            <p>Download format with columns: <code>FullName,Email</code></p>
                         </div>
-                        <button class="btn btn-outline" onclick="downloadStudentTemplate()"><i class="fa-solid fa-download"></i> Download</button>
+                        <button class="gc-btn gc-btn-flat" onclick="downloadStudentTemplate()"><i class="fa-solid fa-download"></i> Download</button>
                     </div>
 
-                    <div class="form-group" style="margin-top:1.25rem;">
-                        <label>Upload Excel / CSV File</label>
-                        <div class="drop-zone">
-                            <input type="file" id="excelStudentFile" accept=".csv, .xlsx, .xls" class="drop-zone-input" onchange="handleExcelFileSelected(event)">
-                            <i class="fa-solid fa-cloud-arrow-up drop-zone-icon"></i>
-                            <span id="excelFileLabel">Click to select CSV/Excel file</span>
-                            <small class="help-text">Standard CSV format with FullName and Email columns</small>
+                    <div class="gc-form-field" style="margin-top:1.25rem;">
+                        <label>Upload File</label>
+                        <div class="gc-file-drop">
+                            <input type="file" id="excelStudentFile" accept=".csv, .xlsx, .xls" class="gc-file-drop-input" onchange="handleExcelFileSelected(event)">
+                            <i class="fa-solid fa-cloud-arrow-up gc-drop-icon"></i>
+                            <span id="excelFileLabel">Select CSV or Excel file</span>
                         </div>
                     </div>
-                    <div class="modal-footer" style="padding-left:0; padding-right:0; background:transparent;">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('addStudentsModal')">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="processExcelImport()"><i class="fa-solid fa-upload"></i> Import Roster</button>
+                    <div class="gc-modal-footer" style="padding:0; background:transparent;">
+                        <button type="button" class="gc-btn gc-btn-flat" onclick="closeModal('addStudentsModal')">Cancel</button>
+                        <button type="button" class="gc-btn gc-btn-primary" onclick="processExcelImport()">Upload Roster</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal 3: Create Milestone with Dynamic Multi-Deliverable Rows & Mandatory Checkboxes -->
-    <div class="modal-backdrop hidden" id="createMilestoneModal">
-        <div class="modal-card" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-flag"></i> Create New Milestone</h3>
-                <button class="modal-close-btn" onclick="closeModal('createMilestoneModal')">&times;</button>
+    <!-- MODAL 3: Create Assignment / Milestone (Faculty) -->
+    <div class="gc-modal-backdrop hidden" id="createMilestoneModal">
+        <div class="gc-modal-card" style="max-width: 600px;">
+            <div class="gc-modal-header">
+                <h3><i class="fa-solid fa-file-lines"></i> Create Milestone Assignment</h3>
+                <button class="gc-close-btn" onclick="closeModal('createMilestoneModal')">&times;</button>
             </div>
             <form id="createMilestoneForm" onsubmit="handleCreateMilestone(event)">
-                <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
-                    <div class="form-group">
-                        <label for="msTitle">Milestone Title</label>
-                        <input type="text" id="msTitle" placeholder="e.g. Milestone 4: System Architecture & Testing" required>
+                <div class="gc-modal-body" style="max-height: 75vh; overflow-y: auto;">
+                    <div class="gc-form-field">
+                        <label>Title</label>
+                        <input type="text" id="msTitle" placeholder="e.g. Milestone 1: Problem Statement & SRS" required>
                     </div>
-                    <div class="form-group">
-                        <label for="msDescription">Description & Instructions</label>
-                        <textarea id="msDescription" rows="3" placeholder="Details of requirements..." required></textarea>
+                    <div class="gc-form-field">
+                        <label>Instructions (optional)</label>
+                        <textarea id="msDescription" rows="3" placeholder="Add assignment details..." required></textarea>
                     </div>
-                    <div class="form-grid-2">
-                        <div class="form-group">
-                            <label for="msDeadline">Deadline Date & Time</label>
+                    <div class="gc-form-grid-2">
+                        <div class="gc-form-field">
+                            <label>Due date & time</label>
                             <input type="datetime-local" id="msDeadline" required>
                         </div>
-                        <div class="form-group">
-                            <label for="msBasePoints">Base Points</label>
+                        <div class="gc-form-field">
+                            <label>Points</label>
                             <input type="number" id="msBasePoints" value="100" min="10" step="5" required>
                         </div>
                     </div>
 
-                    <!-- Dynamic Multi-Deliverable Section -->
-                    <div class="form-group">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <label style="margin-bottom: 0;">Required Deliverables List</label>
-                            <button type="button" class="btn btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.78rem;" onclick="addDeliverableInputRow()">
+                    <!-- Deliverable Items List -->
+                    <div class="gc-form-field">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                            <label style="margin:0;">Required Deliverables</label>
+                            <button type="button" class="gc-btn gc-btn-flat" style="padding:0.25rem 0.5rem; font-size:0.8rem;" onclick="addDeliverableInputRow()">
                                 <i class="fa-solid fa-plus"></i> Add Deliverable
                             </button>
                         </div>
-                        <div class="deliverables-input-container" id="deliverablesInputContainer">
-                            <!-- Dynamic Deliverable Rows Injected Here -->
+                        <div id="deliverablesInputContainer">
+                            <!-- Rows injected here -->
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('createMilestoneModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Milestone</button>
+                <div class="gc-modal-footer">
+                    <button type="button" class="gc-btn gc-btn-flat" onclick="closeModal('createMilestoneModal')">Cancel</button>
+                    <button type="submit" class="gc-btn gc-btn-primary">Assign</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal 4: Upload Deliverable (Student - Separate Upload Section per Deliverable Item) -->
-    <div class="modal-backdrop hidden" id="uploadModal">
-        <div class="modal-card" style="max-width: 560px;">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-cloud-arrow-up"></i> Upload Deliverables</h3>
-                <button class="modal-close-btn" onclick="closeModal('uploadModal')">&times;</button>
+    <!-- MODAL 4: Assignment Upload & Work Modal (Student) -->
+    <div class="gc-modal-backdrop hidden" id="uploadModal">
+        <div class="gc-modal-card" style="max-width: 580px;">
+            <div class="gc-modal-header">
+                <h3>Submit Assignment Work</h3>
+                <button class="gc-close-btn" onclick="closeModal('uploadModal')">&times;</button>
             </div>
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
                 <input type="hidden" id="uploadMilestoneId">
-                <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
+                <div class="gc-modal-body" style="max-height: 75vh; overflow-y: auto;">
                     <div id="deliverableSectionsContainer">
-                        <!-- Dynamic Separate Upload Section Per Deliverable Item Injected Here -->
+                        <!-- Separate Upload Box Per Deliverable Item -->
                     </div>
-                    <div class="form-group" style="margin-top: 1rem;">
-                        <label for="uploadComments">Notes / Comments for Instructor</label>
-                        <textarea id="uploadComments" rows="2" placeholder="Submission notes..."></textarea>
+                    <div class="gc-form-field" style="margin-top: 1rem;">
+                        <label>Private comments for teacher</label>
+                        <textarea id="uploadComments" rows="2" placeholder="Add private comment..."></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('uploadModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Submit All Deliverables</button>
+                <div class="gc-modal-footer">
+                    <button type="button" class="gc-btn gc-btn-flat" onclick="closeModal('uploadModal')">Cancel</button>
+                    <button type="submit" class="gc-btn gc-btn-primary"><i class="fa-solid fa-check"></i> Turn in</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal 5: Review Submission (Faculty) -->
-    <div class="modal-backdrop hidden" id="reviewModal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-star"></i> Grade Deliverables</h3>
-                <button class="modal-close-btn" onclick="closeModal('reviewModal')">&times;</button>
+    <!-- MODAL 5: Student Submissions Roster & Grade Modal (Faculty) -->
+    <div class="gc-modal-backdrop hidden" id="reviewModal">
+        <div class="gc-modal-card">
+            <div class="gc-modal-header">
+                <h3>Grade Student Deliverable</h3>
+                <button class="gc-close-btn" onclick="closeModal('reviewModal')">&times;</button>
             </div>
             <form id="reviewForm" onsubmit="handleReviewSubmit(event)">
                 <input type="hidden" id="reviewSubmissionId">
-                <div class="modal-body">
-                    <div class="info-alert" id="reviewMetaBox">
+                <div class="gc-modal-body">
+                    <div class="gc-info-box" id="reviewMetaBox">
                         <!-- Submission info preview -->
                     </div>
-                    <div class="form-group">
-                        <label for="reviewStatus">Evaluation Status</label>
+                    <div class="gc-form-field">
+                        <label>Status</label>
                         <select id="reviewStatus" required>
-                            <option value="APPROVED">APPROVED (Earns Points & Progress)</option>
-                            <option value="NEEDS_REVISION">NEEDS REVISION (0 Points until resubmitted)</option>
+                            <option value="APPROVED">APPROVED (Grants Points & Unlocks Next Step)</option>
+                            <option value="NEEDS_REVISION">NEEDS REVISION (0 Points until revised)</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="reviewQuality">Quality Rating (1 to 5 Stars)</label>
+                    <div class="gc-form-field">
+                        <label>Quality Rating (1 to 5 Stars)</label>
                         <select id="reviewQuality" required>
                             <option value="5">⭐⭐⭐⭐⭐ 5/5 - Exceptional</option>
                             <option value="4">⭐⭐⭐⭐ 4/5 - Good Quality</option>
                             <option value="3">⭐⭐⭐ 3/5 - Average</option>
-                            <option value="2">⭐⭐ 2/5 - Needs Work</option>
+                            <option value="2">⭐⭐ 2/5 - Needs Improvement</option>
                             <option value="1">⭐ 1/5 - Poor</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="reviewFeedback">Instructor Feedback</label>
-                        <textarea id="reviewFeedback" rows="3" placeholder="Constructive feedback for student..."></textarea>
+                    <div class="gc-form-field">
+                        <label>Private feedback for student</label>
+                        <textarea id="reviewFeedback" rows="3" placeholder="Add constructive feedback..."></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('reviewModal')">Cancel</button>
-                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-check-double"></i> Save Grade</button>
+                <div class="gc-modal-footer">
+                    <button type="button" class="gc-btn gc-btn-flat" onclick="closeModal('reviewModal')">Cancel</button>
+                    <button type="submit" class="gc-btn gc-btn-primary">Return Grade</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Toast Notifications -->
-    <div id="toastContainer" class="toast-container"></div>
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="gc-toast-container"></div>
 
     <!-- Application JavaScript Files -->
     <script src="js/endpoints.js"></script>

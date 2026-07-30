@@ -1,0 +1,125 @@
+.gc-auth-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(85vh - 64px);
+  padding: 2rem 1rem;
+}
+
+.gc-auth-card {
+  background: #ffffff;
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-md);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3);
+}
+
+.gc-auth-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.gc-auth-logo {
+  font-size: 2.5rem;
+  color: var(--gc-primary);
+  margin-bottom: 0.5rem;
+}
+
+.gc-auth-header h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--gc-text-main);
+}
+
+.gc-auth-header p {
+  font-size: 0.9rem;
+  color: var(--gc-text-sub);
+}
+
+.gc-auth-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--gc-border);
+  margin-bottom: 1.5rem;
+}
+
+.gc-auth-tab {
+  flex: 1;
+  padding: 0.75rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--gc-font-family);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gc-text-sub);
+  cursor: pointer;
+}
+
+.gc-auth-tab.active {
+  color: var(--gc-primary);
+  border-bottom-color: var(--gc-primary);
+}
+
+.gc-btn-block {
+  width: 100%;
+  padding: 0.75rem;
+}
+
+.gc-auth-error {
+  background: var(--gc-red-bg);
+  color: var(--gc-red);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--gc-radius-sm);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gc-demo-box {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--gc-border);
+}
+
+.gc-demo-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--gc-text-light);
+  display: block;
+  margin-bottom: 0.65rem;
+}
+
+.gc-demo-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.gc-chip {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-pill);
+  background: var(--gc-background);
+  font-size: 0.8rem;
+  color: var(--gc-text-main);
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.gc-chip:hover {
+  background: var(--gc-primary-light);
+  color: var(--gc-primary);
+}
+
+.gc-chip-teacher {
+  border-color: #fce8e6;
+  background: #fef7e0;
+}

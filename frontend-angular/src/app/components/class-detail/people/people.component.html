@@ -1,0 +1,44 @@
+<div class="gc-people-container">
+  <!-- Teachers Section -->
+  <div class="gc-people-section">
+    <div class="gc-people-header">
+      <h2>Teachers</h2>
+    </div>
+    <div class="gc-people-list">
+      <div class="gc-person-item">
+        <div class="gc-avatar-circle">
+          {{ teacherName ? teacherName.charAt(0).toUpperCase() : 'T' }}
+        </div>
+        <span class="gc-person-name">{{ teacherName }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Classmates / Students Section -->
+  <div class="gc-people-section" style="margin-top: 3rem;">
+    <div class="gc-people-header">
+      <h2>Classmates</h2>
+      <div class="gc-people-right">
+        <span class="gc-people-count">{{ students.length }} students</span>
+        <button *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'" class="gc-btn gc-btn-flat" (click)="triggerAddStudents()">
+          <i class="fa-solid fa-user-plus"></i> Invite students
+        </button>
+      </div>
+    </div>
+
+    <div class="gc-people-list">
+      <div *ngFor="let st of students" class="gc-person-item">
+        <div class="gc-avatar-circle gc-avatar-student">
+          {{ st.fullName ? st.fullName.charAt(0).toUpperCase() : 'S' }}
+        </div>
+        <div class="gc-person-info">
+          <span class="gc-person-name">{{ st.fullName }}</span>
+          <small class="gc-person-email">{{ st.email }}</small>
+        </div>
+      </div>
+      <div class="gc-empty-people" *ngIf="students.length === 0">
+        No students enrolled yet.
+      </div>
+    </div>
+  </div>
+</div>

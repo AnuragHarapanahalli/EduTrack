@@ -1,0 +1,48 @@
+<div class="gc-classes-container">
+  <div class="gc-classes-header">
+    <h1 class="gc-classes-title">Classes</h1>
+    <button *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'" class="gc-btn gc-btn-primary" (click)="triggerCreateClass()">
+      <i class="fa-solid fa-plus"></i> Create class
+    </button>
+  </div>
+
+  <div class="gc-classes-grid">
+    <div *ngFor="let subj of viewStateService.userSubjects(); let i = index" class="gc-class-card" (click)="selectClass(subj)">
+      <!-- Google Classroom Style Class Header Banner -->
+      <div class="gc-card-banner" [style.background]="getBannerGradient(i)">
+        <div class="gc-banner-title-group">
+          <h3 class="gc-class-card-name">{{ subj.name }}</h3>
+          <p class="gc-class-card-code">{{ subj.code }}</p>
+        </div>
+        <p class="gc-class-card-teacher">
+          <i class="fa-solid fa-chalkboard-user"></i> {{ subj.instructorName || 'Faculty' }}
+        </p>
+      </div>
+
+      <div class="gc-card-content">
+        <p class="gc-class-card-desc">
+          {{ subj.description || 'No course overview provided.' }}
+        </p>
+        <div class="gc-class-card-meta">
+          <span><i class="fa-solid fa-flag"></i> {{ subj.totalMilestones || 0 }} Milestones</span>
+          <span><i class="fa-solid fa-layer-group"></i> {{ subj.batchName || 'Batch' }}</span>
+        </div>
+      </div>
+
+      <div class="gc-card-actions">
+        <button class="gc-btn gc-btn-flat" (click)="$event.stopPropagation(); selectClass(subj)">
+          Open Classwork <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="gc-empty-classes-card gc-card" *ngIf="viewStateService.userSubjects().length === 0">
+      <i class="fa-solid fa-graduation-cap gc-empty-icon"></i>
+      <h3>No classes found</h3>
+      <p>You are not currently enrolled in or teaching any classes.</p>
+      <button *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'" class="gc-btn gc-btn-primary" (click)="triggerCreateClass()">
+        <i class="fa-solid fa-plus"></i> Create Your First Class
+      </button>
+    </div>
+  </div>
+</div>
