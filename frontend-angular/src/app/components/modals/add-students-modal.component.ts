@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
@@ -13,16 +13,16 @@ import { ViewStateService } from '../../services/view-state.service';
       <div class="gc-modal-card" (click)="$event.stopPropagation()">
         <div class="gc-modal-header">
           <h3>Invite students</h3>
-          <button class="gc-close-btn" (click)="close()">&times;</button>
+          <button type="button" class="gc-close-btn" (click)="close()">&times;</button>
         </div>
         <div class="gc-modal-body">
           <div class="gc-tab-switcher">
-            <button class="gc-tab-switcher-btn" [class.active]="isManual" (click)="isManual = true">Manual Entry</button>
-            <button class="gc-tab-switcher-btn" [class.active]="!isManual" (click)="isManual = false">Import CSV</button>
+            <button type="button" class="gc-tab-switcher-btn" [class.active]="isManual" (click)="setManual(true)">Manual Entry</button>
+            <button type="button" class="gc-tab-switcher-btn" [class.active]="!isManual" (click)="setManual(false)">Import CSV</button>
           </div>
 
-          @if (isManual) {
-            <form (submit)="onManualSubmit()">
+          <div *ngIf="isManual">
+            <form (ngSubmit)="onManualSubmit()">
               <div class="gc-form-field">
                 <label>Student full name</label>
                 <input type="text" [(ngModel)]="fullName" name="fullName" placeholder="e.g. John Doe" required>
@@ -36,28 +36,28 @@ import { ViewStateService } from '../../services/view-state.service';
                 <button type="submit" class="gc-btn gc-btn-primary">Invite</button>
               </div>
             </form>
-          } @else {
-            <div>
-              <div class="gc-template-box">
-                <i class="fa-solid fa-file-csv gc-template-icon"></i>
-                <div>
-                  <strong>Standard Student CSV Template</strong>
-                  <p>Format: <code>FullName,Email</code></p>
-                </div>
-                <button type="button" class="gc-btn gc-btn-flat" (click)="downloadTemplate()"><i class="fa-solid fa-download"></i> Download</button>
-              </div>
+          </div>
 
-              <div class="gc-form-field" style="margin-top:1rem;">
-                <label>Upload CSV File</label>
-                <input type="file" (change)="onFileSelected($event)" accept=".csv">
+          <div *ngIf="!isManual">
+            <div class="gc-template-box">
+              <i class="fa-solid fa-file-csv gc-template-icon"></i>
+              <div>
+                <strong>Standard Student CSV Template</strong>
+                <p>Format: <code>FullName,Email</code></p>
               </div>
-
-              <div class="gc-modal-footer" style="padding:0; background:transparent;">
-                <button type="button" class="gc-btn gc-btn-flat" (click)="close()">Cancel</button>
-                <button type="button" class="gc-btn gc-btn-primary" (click)="processCsv()">Upload Roster</button>
-              </div>
+              <button type="button" class="gc-btn gc-btn-flat" (click)="downloadTemplate()"><i class="fa-solid fa-download"></i> Download</button>
             </div>
-          }
+
+            <div class="gc-form-field" style="margin-top:1rem;">
+              <label>Upload CSV File</label>
+              <input type="file" (change)="onFileSelected($event)" accept=".csv">
+            </div>
+
+            <div class="gc-modal-footer" style="padding:0; background:transparent;">
+              <button type="button" class="gc-btn gc-btn-flat" (click)="close()">Cancel</button>
+              <button type="button" class="gc-btn gc-btn-primary" (click)="processCsv()">Upload Roster</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -81,11 +81,18 @@ export class AddStudentsModalComponent {
 
   constructor(
     private apiService: ApiService,
-    private viewStateService: ViewStateService
+    private viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   close() {
     this.closeModal.emit();
+    this.cdr.detectChanges();
+  }
+
+  setManual(val: boolean) {
+    this.isManual = val;
+    this.cdr.detectChanges();
   }
 
   onManualSubmit() {
@@ -96,6 +103,11 @@ export class AddStudentsModalComponent {
       next: () => {
         this.studentsAdded.emit();
         this.close();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error inviting student:', err);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -115,6 +127,7 @@ export class AddStudentsModalComponent {
   onFileSelected(event: any) {
     if (event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
+      this.cdr.detectChanges();
     }
   }
 
@@ -140,6 +153,7 @@ export class AddStudentsModalComponent {
       }
       this.studentsAdded.emit();
       this.close();
+      this.cdr.detectChanges();
     };
     reader.readAsText(this.selectedFile);
   }

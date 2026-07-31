@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
@@ -15,9 +15,9 @@ import { CreateSubjectRequest } from '../../models/subject.model';
       <div class="gc-modal-card" (click)="$event.stopPropagation()">
         <div class="gc-modal-header">
           <h3>Create class</h3>
-          <button class="gc-close-btn" (click)="close()">&times;</button>
+          <button type="button" class="gc-close-btn" (click)="close()">&times;</button>
         </div>
-        <form (submit)="onSubmit()">
+        <form (ngSubmit)="onSubmit()">
           <div class="gc-modal-body">
             <div class="gc-form-field">
               <label>Class name (required)</label>
@@ -52,11 +52,13 @@ export class CreateSubjectModalComponent {
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
-    private viewStateService: ViewStateService
+    private viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   close() {
     this.closeModal.emit();
+    this.cdr.detectChanges();
   }
 
   onSubmit() {
@@ -75,6 +77,11 @@ export class CreateSubjectModalComponent {
         this.viewStateService.selectSubject(newSubj);
         this.subjectCreated.emit();
         this.close();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error creating class:', err);
+        this.cdr.detectChanges();
       }
     });
   }
