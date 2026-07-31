@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -49,13 +49,15 @@ export class AppComponent implements OnInit {
   showUploadModal = false;
   showRosterModal = false;
 
+  selectedMilestoneForEdit: Milestone | null = null;
   selectedMilestoneForUpload: Milestone | null = null;
   selectedMilestoneForRoster: Milestone | null = null;
 
   constructor(
     public authService: AuthService,
     public viewStateService: ViewStateService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -76,21 +78,37 @@ export class AppComponent implements OnInit {
       next: (subjects) => {
         this.viewStateService.setUserSubjects(subjects);
         this.viewStateService.setView('CLASSES_HOME');
+        this.cdr.detectChanges();
       },
       error: () => {
         this.viewStateService.setView('CLASSES_HOME');
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  openCreateMilestoneDialog() {
+    this.selectedMilestoneForEdit = null;
+    this.showCreateMilestoneModal = true;
+    this.cdr.detectChanges();
+  }
+
+  openEditMilestoneDialog(milestone: Milestone) {
+    this.selectedMilestoneForEdit = milestone;
+    this.showCreateMilestoneModal = true;
+    this.cdr.detectChanges();
   }
 
   openUploadDialog(milestone: Milestone) {
     this.selectedMilestoneForUpload = milestone;
     this.showUploadModal = true;
+    this.cdr.detectChanges();
   }
 
   openRosterDialog(milestone: Milestone) {
     this.selectedMilestoneForRoster = milestone;
     this.showRosterModal = true;
+    this.cdr.detectChanges();
   }
 
   refreshClasses() {
@@ -105,5 +123,6 @@ export class AppComponent implements OnInit {
     if (currentSubj) {
       this.viewStateService.currentSubject.set({ ...currentSubj });
     }
+    this.cdr.detectChanges();
   }
 }

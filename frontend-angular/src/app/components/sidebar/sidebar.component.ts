@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { ViewStateService } from '../../services/view-state.service';
@@ -17,32 +17,38 @@ export class SidebarComponent {
 
   constructor(
     public authService: AuthService,
-    public viewStateService: ViewStateService
+    public viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   onHomeClick() {
     this.viewStateService.setView('CLASSES_HOME');
     this.viewStateService.closeSidebar();
+    this.cdr.detectChanges();
   }
 
   onSelectClass(subj: SubjectModel) {
     this.viewStateService.selectSubject(subj);
     this.viewStateService.closeSidebar();
+    this.cdr.detectChanges();
   }
 
   logout() {
     this.authService.logout();
     this.viewStateService.setView('AUTH');
     this.viewStateService.closeSidebar();
+    this.cdr.detectChanges();
   }
 
   triggerCreateSubject() {
     this.openCreateSubjectModal.emit();
     this.viewStateService.closeSidebar();
+    this.cdr.detectChanges();
   }
 
   triggerAddStudents() {
     this.openAddStudentsModal.emit();
     this.viewStateService.closeSidebar();
+    this.cdr.detectChanges();
   }
 }

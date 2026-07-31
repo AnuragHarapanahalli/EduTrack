@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
@@ -16,26 +16,24 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
           <h3>Submit Assignment Work</h3>
           <button class="gc-close-btn" (click)="close()">&times;</button>
         </div>
-        <form (submit)="onSubmit()">
+        <form (ngSubmit)="onSubmit()">
           <div class="gc-modal-body" style="max-height: 75vh; overflow-y: auto;">
-            @for (item of deliverablesList; track item.title; let i = $index) {
-              <div class="gc-deliverable-upload-box">
-                <div class="gc-upload-header">
-                  <strong>Deliverable {{ i + 1 }}: {{ item.title }}</strong>
-                  <span class="gc-badge" [class.gc-badge-danger]="item.isMandatory" [class.gc-badge-info]="!item.isMandatory">
-                    {{ item.isMandatory ? 'Mandatory' : 'Optional' }}
-                  </span>
-                </div>
-                <div class="gc-form-field">
-                  <label>Upload File</label>
-                  <input type="file" (change)="onFileSelected($event, i)">
-                </div>
-                <div class="gc-form-field" style="margin-bottom:0;">
-                  <label>OR Repository / Video Link</label>
-                  <input type="url" [(ngModel)]="linksMap[i]" [name]="'link_' + i" placeholder="https://github.com/user/project">
-                </div>
+            <div *ngFor="let item of deliverablesList; let i = index" class="gc-deliverable-upload-box">
+              <div class="gc-upload-header">
+                <strong>Deliverable {{ i + 1 }}: {{ item.title }}</strong>
+                <span class="gc-badge" [class.gc-badge-danger]="item.isMandatory" [class.gc-badge-info]="!item.isMandatory">
+                  {{ item.isMandatory ? 'Mandatory' : 'Optional' }}
+                </span>
               </div>
-            }
+              <div class="gc-form-field">
+                <label>Upload File</label>
+                <input type="file" (change)="onFileSelected($event, i)">
+              </div>
+              <div class="gc-form-field" style="margin-bottom:0;">
+                <label>OR Repository / Video Link</label>
+                <input type="url" [(ngModel)]="linksMap[i]" [name]="'link_' + i" placeholder="https://github.com/user/project">
+              </div>
+            </div>
 
             <div class="gc-form-field" style="margin-top: 1rem;">
               <label>Private comments for teacher</label>
@@ -55,7 +53,7 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
     .gc-upload-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.85rem; }
   `]
 })
-export class UploadModalComponent {
+export class UploadModalComponent implements OnInit {
   @Input() milestone!: Milestone;
   @Output() closeModal = new EventEmitter<void>();
   @Output() workSubmitted = new EventEmitter<void>();
@@ -67,7 +65,8 @@ export class UploadModalComponent {
 
   constructor(
     private apiService: ApiService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -85,11 +84,13 @@ export class UploadModalComponent {
 
   close() {
     this.closeModal.emit();
+    this.cdr.detectChanges();
   }
 
   onFileSelected(event: any, index: number) {
     if (event.target.files.length > 0) {
       this.filesMap[index] = event.target.files[0];
+      this.cdr.detectChanges();
     }
   }
 
@@ -115,6 +116,11 @@ export class UploadModalComponent {
       next: () => {
         this.workSubmitted.emit();
         this.close();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error submitting work:', err);
+        this.cdr.detectChanges();
       }
     });
   }

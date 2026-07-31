@@ -71,6 +71,14 @@ export class ApiService {
     return this.http.post<Milestone>(`${this.baseUrl}/milestones`, milestoneData, { headers: this.getHeaders() });
   }
 
+  updateMilestone(id: number, milestoneData: CreateMilestoneRequest): Observable<Milestone> {
+    return this.http.put<Milestone>(`${this.baseUrl}/milestones/${id}`, milestoneData, { headers: this.getHeaders() });
+  }
+
+  deleteMilestone(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/milestones/${id}`, { headers: this.getHeaders() });
+  }
+
   // Submission APIs
   getSubmissionsByStudent(studentId: number): Observable<Submission[]> {
     return this.http.get<Submission[]>(`${this.baseUrl}/submissions/student/${studentId}`, { headers: this.getHeaders() });

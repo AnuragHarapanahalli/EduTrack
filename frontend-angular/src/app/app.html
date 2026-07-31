@@ -22,7 +22,8 @@
 
       <app-classwork 
         *ngIf="viewStateService.activeClassTabVal === 'classwork'"
-        (openCreateMilestoneModal)="showCreateMilestoneModal = true"
+        (openCreateMilestoneModal)="openCreateMilestoneDialog()"
+        (openEditMilestoneModal)="openEditMilestoneDialog($event)"
         (openUploadModal)="openUploadDialog($event)"
         (openRosterModal)="openRosterDialog($event)">
       </app-classwork>
@@ -51,6 +52,7 @@
 
   <app-create-milestone-modal 
     *ngIf="showCreateMilestoneModal"
+    [milestoneToEdit]="selectedMilestoneForEdit"
     (closeModal)="showCreateMilestoneModal = false"
     (milestoneCreated)="refreshCurrentSubjectState()">
   </app-create-milestone-modal>

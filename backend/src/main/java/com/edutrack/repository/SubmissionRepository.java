@@ -17,6 +17,7 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     List<Submission> findByStudent(User student);
     List<Submission> findByMilestone(Milestone milestone);
     Optional<Submission> findByMilestoneAndStudent(Milestone milestone, User student);
+    void deleteByMilestone(Milestone milestone);
     
     List<Submission> findByMilestoneSubjectId(Long subjectId);
 

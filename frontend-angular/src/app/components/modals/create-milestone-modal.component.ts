@@ -1,9 +1,9 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { ViewStateService } from '../../services/view-state.service';
-import { CreateMilestoneRequest, DeliverableItem } from '../../models/milestone.model';
+import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models/milestone.model';
 
 @Component({
   selector: 'app-create-milestone-modal',
@@ -13,10 +13,10 @@ import { CreateMilestoneRequest, DeliverableItem } from '../../models/milestone.
     <div class="gc-modal-backdrop" (click)="close()">
       <div class="gc-modal-card" style="max-width: 600px;" (click)="$event.stopPropagation()">
         <div class="gc-modal-header">
-          <h3>Create Milestone Assignment</h3>
-          <button class="gc-close-btn" (click)="close()">&times;</button>
+          <h3>{{ milestoneToEdit ? 'Edit Milestone Assignment' : 'Create Milestone Assignment' }}</h3>
+          <button type="button" class="gc-close-btn" (click)="close()">&times;</button>
         </div>
-        <form (submit)="onSubmit()">
+        <form (ngSubmit)="onSubmit()">
           <div class="gc-modal-body" style="max-height: 75vh; overflow-y: auto;">
             <div class="gc-form-field">
               <label>Title</label>
@@ -46,22 +46,22 @@ import { CreateMilestoneRequest, DeliverableItem } from '../../models/milestone.
                 </button>
               </div>
 
-              @for (item of deliverables; track $index; let i = $index) {
-                <div class="gc-deliverable-row">
-                  <input type="text" [(ngModel)]="item.title" [name]="'del_title_' + i" placeholder="e.g. SRS PDF Document" required>
-                  <label class="gc-check-label">
-                    <input type="checkbox" [(ngModel)]="item.isMandatory" [name]="'del_mand_' + i"> Mandatory
-                  </label>
-                  <button type="button" class="gc-btn gc-btn-flat" (click)="removeDeliverableRow(i)">
-                    <i class="fa-solid fa-xmark"></i>
-                  </button>
-                </div>
-              }
+              <div *ngFor="let item of deliverables; let i = index" class="gc-deliverable-row">
+                <input type="text" [(ngModel)]="item.title" [name]="'del_title_' + i" placeholder="e.g. SRS PDF Document" required>
+                <label class="gc-check-label">
+                  <input type="checkbox" [(ngModel)]="item.isMandatory" [name]="'del_mand_' + i"> Mandatory
+                </label>
+                <button type="button" class="gc-btn gc-btn-flat" (click)="removeDeliverableRow(i)">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
             </div>
           </div>
           <div class="gc-modal-footer">
             <button type="button" class="gc-btn gc-btn-flat" (click)="close()">Cancel</button>
-            <button type="submit" class="gc-btn gc-btn-primary">Assign</button>
+            <button type="submit" class="gc-btn gc-btn-primary">
+              {{ milestoneToEdit ? 'Save Changes' : 'Assign' }}
+            </button>
           </div>
         </form>
       </div>
@@ -73,7 +73,8 @@ import { CreateMilestoneRequest, DeliverableItem } from '../../models/milestone.
     .gc-check-label { font-size: 0.8rem; white-space: nowrap; }
   `]
 })
-export class CreateMilestoneModalComponent {
+export class CreateMilestoneModalComponent implements OnInit {
+  @Input() milestoneToEdit: Milestone | null = null;
   @Output() closeModal = new EventEmitter<void>();
   @Output() milestoneCreated = new EventEmitter<void>();
 
@@ -88,19 +89,42 @@ export class CreateMilestoneModalComponent {
 
   constructor(
     private apiService: ApiService,
-    private viewStateService: ViewStateService
+    private viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
   ) {}
+
+  ngOnInit() {
+    if (this.milestoneToEdit) {
+      this.title = this.milestoneToEdit.title;
+      this.description = this.milestoneToEdit.description;
+      if (this.milestoneToEdit.deadline) {
+        this.deadline = this.milestoneToEdit.deadline.substring(0, 16);
+      }
+      this.basePoints = this.milestoneToEdit.basePoints || 100;
+      if (this.milestoneToEdit.requiredDeliverables) {
+        try {
+          const parsed = JSON.parse(this.milestoneToEdit.requiredDeliverables);
+          if (Array.isArray(parsed)) this.deliverables = parsed;
+        } catch (e) {
+          this.deliverables = [{ title: this.milestoneToEdit.requiredDeliverables, isMandatory: true }];
+        }
+      }
+    }
+  }
 
   close() {
     this.closeModal.emit();
+    this.cdr.detectChanges();
   }
 
   addDeliverableRow() {
     this.deliverables.push({ title: '', isMandatory: true });
+    this.cdr.detectChanges();
   }
 
   removeDeliverableRow(index: number) {
     this.deliverables.splice(index, 1);
+    this.cdr.detectChanges();
   }
 
   onSubmit() {
@@ -117,11 +141,30 @@ export class CreateMilestoneModalComponent {
       isMandatory: this.deliverables.some(d => d.isMandatory)
     };
 
-    this.apiService.createMilestone(req).subscribe({
-      next: () => {
-        this.milestoneCreated.emit();
-        this.close();
-      }
-    });
+    if (this.milestoneToEdit) {
+      this.apiService.updateMilestone(this.milestoneToEdit.id, req).subscribe({
+        next: () => {
+          this.milestoneCreated.emit();
+          this.close();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error updating milestone:', err);
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      this.apiService.createMilestone(req).subscribe({
+        next: () => {
+          this.milestoneCreated.emit();
+          this.close();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error creating milestone:', err);
+          this.cdr.detectChanges();
+        }
+      });
+    }
   }
 }

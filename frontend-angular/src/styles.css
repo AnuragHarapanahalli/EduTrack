@@ -306,3 +306,168 @@ app-root {
 .hidden {
   display: none !important;
 }
+
+/* Executive Academic Hero Card (Formal & Important) */
+.netflix-hero-card {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  border-radius: var(--gc-radius-lg);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+  border: 1px solid #334155;
+  position: relative;
+  overflow: hidden;
+}
+
+.netflix-hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  background: radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.netflix-hero-badge {
+  background: #1e40af;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--gc-radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.netflix-countdown-badge {
+  background: rgba(234, 179, 8, 0.15);
+  backdrop-filter: blur(8px);
+  color: #facc15;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--gc-radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.netflix-hero-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+}
+
+.netflix-hero-desc {
+  font-size: 0.925rem;
+  color: #94a3b8;
+  max-width: 750px;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+/* Netflix Subject Pathway Rows */
+.netflix-row-container {
+  margin-bottom: 2.5rem;
+}
+
+.netflix-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.netflix-row-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--gc-text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.netflix-row-code {
+  font-size: 0.85rem;
+  color: var(--gc-text-sub);
+  font-weight: 500;
+  background: var(--gc-background);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--gc-radius-pill);
+  border: 1px solid var(--gc-border);
+}
+
+.netflix-cards-scroll-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.75rem 0.25rem 1.5rem 0.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Netflix Milestone Cards */
+.netflix-milestone-card {
+  flex: 0 0 290px;
+  width: 290px;
+  background: #ffffff;
+  border-radius: var(--gc-radius-lg);
+  border: 1px solid var(--gc-border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 320px;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.netflix-milestone-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  border-color: var(--gc-primary);
+  z-index: 10;
+}
+
+.netflix-milestone-card.locked {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  opacity: 0.75;
+}
+
+.netflix-milestone-card.locked:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.netflix-milestone-card.completed {
+  border-left: 4px solid var(--gc-green);
+}
+
+.netflix-milestone-card.active {
+  border-left: 4px solid var(--gc-primary);
+}
+
+/* Pathway Arrow Connector */
+.netflix-pathway-arrow {
+  flex: 0 0 auto;
+  font-size: 1.5rem;
+  color: var(--gc-text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.25rem;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, effect } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../services/api.service';
 import { AuthService } from '../../../services/auth.service';
@@ -21,15 +21,9 @@ export class PeopleComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     public authService: AuthService,
-    public viewStateService: ViewStateService
-  ) {
-    effect(() => {
-      const currentSubject = this.viewStateService.currentSubject();
-      if (currentSubject) {
-        this.loadPeople();
-      }
-    });
-  }
+    public viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.loadPeople();
@@ -44,6 +38,11 @@ export class PeopleComponent implements OnInit {
     this.apiService.getEnrolledStudents(currentSubject.id).subscribe({
       next: (list) => {
         this.students = list;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error loading enrolled students:', err);
+        this.cdr.markForCheck();
       }
     });
   }
