@@ -30,6 +30,7 @@ export interface StudentSubjectRow {
 })
 export class ClassworkComponent implements OnInit {
   @Output() openCreateMilestoneModal = new EventEmitter<void>();
+  @Output() openEditMilestoneModal = new EventEmitter<Milestone>();
   @Output() openUploadModal = new EventEmitter<Milestone>();
   @Output() openRosterModal = new EventEmitter<Milestone>();
 
@@ -190,6 +191,25 @@ export class ClassworkComponent implements OnInit {
 
   triggerCreateMilestone() {
     this.openCreateMilestoneModal.emit();
+  }
+
+  triggerEditMilestone(m: Milestone) {
+    this.openEditMilestoneModal.emit(m);
+  }
+
+  deleteMilestone(m: Milestone) {
+    if (confirm(`Are you sure you want to delete "${m.title}"? This will also remove any student submissions for this milestone.`)) {
+      this.apiService.deleteMilestone(m.id).subscribe({
+        next: () => {
+          this.loadTeacherClasswork();
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error('Error deleting milestone:', err);
+          this.cdr.markForCheck();
+        }
+      });
+    }
   }
 
   triggerUpload(m: Milestone) {

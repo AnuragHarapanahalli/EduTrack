@@ -307,15 +307,15 @@ app-root {
   display: none !important;
 }
 
-/* Netflix Style UI Variables & Components */
+/* Executive Academic Hero Card (Formal & Important) */
 .netflix-hero-card {
-  background: linear-gradient(135deg, #141414 0%, #1f1f1f 50%, #2b0909 100%);
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   color: #ffffff;
   border-radius: var(--gc-radius-lg);
   padding: 2rem;
   margin-bottom: 2.5rem;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+  border: 1px solid #334155;
   position: relative;
   overflow: hidden;
 }
@@ -325,18 +325,18 @@ app-root {
   position: absolute;
   top: 0;
   right: 0;
-  width: 300px;
+  width: 250px;
   height: 100%;
-  background: radial-gradient(circle at 100% 0%, rgba(229, 9, 20, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.18) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .netflix-hero-badge {
-  background: #e50914;
+  background: #1e40af;
   color: #ffffff;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.75px;
+  letter-spacing: 0.5px;
   font-size: 0.75rem;
   padding: 0.35rem 0.85rem;
   border-radius: var(--gc-radius-pill);
@@ -347,12 +347,12 @@ app-root {
 }
 
 .netflix-countdown-badge {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(234, 179, 8, 0.15);
   backdrop-filter: blur(8px);
-  color: #ffcc00;
-  border: 1px solid rgba(255, 204, 0, 0.4);
-  font-weight: 700;
-  font-size: 0.9rem;
+  color: #facc15;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  font-weight: 600;
+  font-size: 0.875rem;
   padding: 0.4rem 1rem;
   border-radius: var(--gc-radius-pill);
   display: inline-flex;
@@ -361,15 +361,16 @@ app-root {
 }
 
 .netflix-hero-title {
-  font-size: 1.85rem;
+  font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
   color: #ffffff;
+  letter-spacing: -0.2px;
 }
 
 .netflix-hero-desc {
-  font-size: 0.95rem;
-  color: #cccccc;
+  font-size: 0.925rem;
+  color: #94a3b8;
   max-width: 750px;
   margin-bottom: 1.5rem;
   line-height: 1.6;

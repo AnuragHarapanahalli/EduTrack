@@ -74,16 +74,18 @@ public class DataInitializer implements CommandLineRunner {
         webDevSubject = subjectRepository.save(webDevSubject);
 
         // 5. Create Milestones for PBL3
+        // Milestone 1: OVERDUE / LATE DEADLINE (2 Days Ago) -> Demonstrates Late Submission Penalty (0.5x Multiplier)
         milestoneRepository.save(new Milestone(
                 pblSubject,
                 "Milestone 1: Project Topic Selection & Problem Statement",
                 "Submit project proposal including domain, problem statement, team roles, and initial feature list.",
-                LocalDateTime.now().plusDays(2),
+                LocalDateTime.now().minusDays(2),
                 100.0,
                 "Proposal PDF, Problem Statement Doc",
                 true
         ));
 
+        // Milestone 2: ON-TIME UPCOMING DEADLINE (7 Days in Future) -> Demonstrates On-Time Successful Submission (1.0x / 1.2x Multiplier)
         milestoneRepository.save(new Milestone(
                 pblSubject,
                 "Milestone 2: Software Requirements Specification (SRS)",

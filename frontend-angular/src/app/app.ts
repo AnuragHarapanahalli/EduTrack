@@ -49,6 +49,7 @@ export class AppComponent implements OnInit {
   showUploadModal = false;
   showRosterModal = false;
 
+  selectedMilestoneForEdit: Milestone | null = null;
   selectedMilestoneForUpload: Milestone | null = null;
   selectedMilestoneForRoster: Milestone | null = null;
 
@@ -84,6 +85,18 @@ export class AppComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  openCreateMilestoneDialog() {
+    this.selectedMilestoneForEdit = null;
+    this.showCreateMilestoneModal = true;
+    this.cdr.detectChanges();
+  }
+
+  openEditMilestoneDialog(milestone: Milestone) {
+    this.selectedMilestoneForEdit = milestone;
+    this.showCreateMilestoneModal = true;
+    this.cdr.detectChanges();
   }
 
   openUploadDialog(milestone: Milestone) {

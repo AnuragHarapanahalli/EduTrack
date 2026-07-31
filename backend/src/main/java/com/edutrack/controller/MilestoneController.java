@@ -23,6 +23,11 @@ public class MilestoneController {
         return ResponseEntity.ok(milestoneService.createMilestone(request));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<MilestoneDto.MilestoneResponse> updateMilestone(@PathVariable Long id, @RequestBody MilestoneDto.CreateMilestoneRequest request) {
+        return ResponseEntity.ok(milestoneService.updateMilestone(id, request));
+    }
+
     @GetMapping("/subject/{subjectId}")
     public ResponseEntity<List<MilestoneDto.MilestoneResponse>> getMilestonesBySubject(@PathVariable Long subjectId) {
         return ResponseEntity.ok(milestoneService.getMilestonesBySubject(subjectId));

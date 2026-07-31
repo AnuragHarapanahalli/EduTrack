@@ -8,15 +8,15 @@
       <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
         <div>
           <div class="netflix-hero-badge">
-            <i class="fa-solid fa-fire"></i> Nearest Upcoming Milestone
+            <i class="fa-solid fa-clock"></i> Nearest Upcoming Milestone
           </div>
-          <span class="gc-badge gc-badge-info" style="margin-left: 0.5rem; vertical-align: middle;">
+          <span class="gc-badge gc-badge-info" style="margin-left: 0.5rem; vertical-align: middle; background: rgba(255,255,255,0.1); color: #e2e8f0;">
             {{ heroSubject?.code }} &bull; {{ heroSubject?.name }}
           </span>
         </div>
 
         <div class="netflix-countdown-badge">
-          <i class="fa-regular fa-clock"></i> {{ heroMilestone.daysRemainingText }}
+          <i class="fa-solid fa-hourglass-half"></i> {{ heroMilestone.daysRemainingText }}
         </div>
       </div>
 
@@ -31,7 +31,7 @@
         </div>
 
         <div>
-          <button *ngIf="!heroMilestone.isLocked && heroMilestone.userSubmission?.status !== 'APPROVED'" type="button" class="gc-btn gc-btn-primary" style="background:#e50914; border:none; padding: 0.65rem 1.5rem; font-weight: 700;" (click)="triggerUpload(heroMilestone)">
+          <button *ngIf="!heroMilestone.isLocked && heroMilestone.userSubmission?.status !== 'APPROVED'" type="button" class="gc-btn gc-btn-primary" style="padding: 0.65rem 1.5rem; font-weight: 600;" (click)="triggerUpload(heroMilestone)">
             <i class="fa-solid fa-upload"></i> {{ heroMilestone.userSubmission ? 'Resubmit Work' : 'Turn In Work Now' }}
           </button>
           <span *ngIf="heroMilestone.userSubmission?.status === 'APPROVED'" class="gc-badge gc-badge-success" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
@@ -152,6 +152,12 @@
           </div>
           <div class="gc-assignment-right">
             <span class="gc-badge gc-badge-info">{{ m.basePoints }} pts</span>
+            <button type="button" class="gc-btn gc-btn-outline" style="padding: 0.25rem 0.65rem; font-size: 0.78rem;" (click)="$event.stopPropagation(); triggerEditMilestone(m)">
+              <i class="fa-solid fa-pen-to-square"></i> Edit
+            </button>
+            <button type="button" class="gc-btn gc-btn-outline" style="padding: 0.25rem 0.65rem; font-size: 0.78rem; color: var(--gc-red); border-color: var(--gc-red);" (click)="$event.stopPropagation(); deleteMilestone(m)">
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
             <i class="fa-solid" [class.fa-chevron-down]="expandedMilestoneId !== m.id" [class.fa-chevron-up]="expandedMilestoneId === m.id"></i>
           </div>
         </div>
