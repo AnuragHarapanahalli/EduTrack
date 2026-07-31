@@ -1,10 +1,17 @@
-import { Component, OnInit, Output, EventEmitter, effect, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { AuthService } from '../../../services/auth.service';
 import { ViewStateService } from '../../../services/view-state.service';
 import { Milestone, DeliverableItem } from '../../../models/milestone.model';
 import { Submission } from '../../../models/submission.model';
+
+export interface MilestoneUI extends Milestone {
+  deliverablesList: DeliverableItem[];
+  isLocked: boolean;
+  userSubmission?: Submission;
+}
 
 @Component({
   selector: 'app-classwork',
@@ -18,8 +25,7 @@ export class ClassworkComponent implements OnInit {
   @Output() openUploadModal = new EventEmitter<Milestone>();
   @Output() openRosterModal = new EventEmitter<Milestone>();
 
-  milestones: Milestone[] = [];
-  submissionsMap: { [milestoneId: number]: Submission } = {};
+  milestones: MilestoneUI[] = [];
   expandedMilestoneId: number | null = null;
 
   constructor(
@@ -27,14 +33,7 @@ export class ClassworkComponent implements OnInit {
     public authService: AuthService,
     public viewStateService: ViewStateService,
     private cdr: ChangeDetectorRef
-  ) {
-    effect(() => {
-      const currentSubject = this.viewStateService.currentSubject();
-      if (currentSubject) {
-        this.loadClasswork();
-      }
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.loadClasswork();
@@ -44,9 +43,18 @@ export class ClassworkComponent implements OnInit {
     const currentSubject = this.viewStateService.currentSubject();
     if (!currentSubject) return;
 
-    this.apiService.getMilestonesBySubject(currentSubject.id).subscribe({
-      next: (ms) => {
-        this.milestones = ms.map(m => {
+    const user = this.authService.currentUser();
+    const milestones$ = this.apiService.getMilestonesBySubject(currentSubject.id);
+    const submissions$ = (user && user.role === 'STUDENT')
+      ? this.apiService.getSubmissionsByStudent(user.id)
+      : of([]);
+
+    forkJoin({ ms: milestones$, subs: submissions$ }).subscribe({
+      next: ({ ms, subs }) => {
+        const map: { [id: number]: Submission } = {};
+        subs.forEach(s => map[s.milestoneId] = s);
+
+        this.milestones = ms.map((m, idx) => {
           let deliverablesList: DeliverableItem[] = [];
           if (m.requiredDeliverables) {
             try {
@@ -56,48 +64,32 @@ export class ClassworkComponent implements OnInit {
               deliverablesList = [{ title: m.requiredDeliverables, isMandatory: true }];
             }
           }
-          return { ...m, deliverablesList };
+
+          let isLocked = false;
+          if (user && user.role === 'STUDENT' && idx > 0) {
+            const prevMilestone = ms[idx - 1];
+            const prevSub = map[prevMilestone.id];
+            isLocked = (!prevSub || prevSub.status !== 'APPROVED');
+          }
+
+          return { ...m, deliverablesList, isLocked, userSubmission: map[m.id] };
         });
 
         if (this.milestones.length > 0 && !this.expandedMilestoneId) {
           this.expandedMilestoneId = this.milestones[0].id;
         }
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (err) => {
-        console.error('Error fetching milestones:', err);
-        this.cdr.detectChanges();
+        console.error('Error loading classwork:', err);
+        this.cdr.markForCheck();
       }
     });
-
-    const user = this.authService.currentUser();
-    if (user && user.role === 'STUDENT') {
-      this.apiService.getSubmissionsByStudent(user.id).subscribe({
-        next: (subs) => {
-          this.submissionsMap = {};
-          subs.forEach(s => this.submissionsMap[s.milestoneId] = s);
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error fetching submissions:', err);
-          this.cdr.detectChanges();
-        }
-      });
-    }
   }
 
   toggleExpand(id: number) {
     this.expandedMilestoneId = (this.expandedMilestoneId === id) ? null : id;
-  }
-
-  isMilestoneLocked(index: number): boolean {
-    const user = this.authService.currentUser();
-    if (!user || user.role !== 'STUDENT') return false;
-    if (index === 0) return false;
-
-    const prevMilestone = this.milestones[index - 1];
-    const prevSub = this.submissionsMap[prevMilestone.id];
-    return (!prevSub || prevSub.status !== 'APPROVED');
+    this.cdr.markForCheck();
   }
 
   triggerCreateMilestone() {

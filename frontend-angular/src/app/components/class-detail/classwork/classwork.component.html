@@ -1,7 +1,7 @@
 <div class="gc-classwork-container">
   <!-- Classwork Toolbar -->
   <div class="gc-classwork-toolbar">
-    <button *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'" class="gc-btn gc-btn-primary gc-create-btn" (click)="triggerCreateMilestone()">
+    <button *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'" type="button" class="gc-btn gc-btn-primary gc-create-btn" (click)="triggerCreateMilestone()">
       <i class="fa-solid fa-plus"></i> Create Milestone
     </button>
     <div class="gc-classwork-info">
@@ -19,18 +19,18 @@
   <div class="gc-assignments-list">
     <div *ngFor="let m of milestones; let idx = index" 
          class="gc-card gc-assignment-card" 
-         [class.locked]="isMilestoneLocked(idx)" 
-         [class.completed]="submissionsMap[m.id]?.status === 'APPROVED'">
+         [class.locked]="m.isLocked" 
+         [class.completed]="m.userSubmission?.status === 'APPROVED'">
       
-      <!-- Card Header Header Row -->
+      <!-- Card Header Row -->
       <div class="gc-assignment-header-row" (click)="toggleExpand(m.id)">
         <div class="gc-assignment-left">
           <div class="gc-assignment-icon-pod" 
-               [class.locked]="isMilestoneLocked(idx)" 
-               [class.completed]="submissionsMap[m.id]?.status === 'APPROVED'">
-            <i *ngIf="isMilestoneLocked(idx)" class="fa-solid fa-lock"></i>
-            <i *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'APPROVED'" class="fa-solid fa-check"></i>
-            <i *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status !== 'APPROVED'" class="fa-solid fa-file-lines"></i>
+               [class.locked]="m.isLocked" 
+               [class.completed]="m.userSubmission?.status === 'APPROVED'">
+            <i *ngIf="m.isLocked" class="fa-solid fa-lock"></i>
+            <i *ngIf="!m.isLocked && m.userSubmission?.status === 'APPROVED'" class="fa-solid fa-check"></i>
+            <i *ngIf="!m.isLocked && m.userSubmission?.status !== 'APPROVED'" class="fa-solid fa-file-lines"></i>
           </div>
 
           <div>
@@ -40,11 +40,11 @@
         </div>
 
         <div class="gc-assignment-right">
-          <span *ngIf="isMilestoneLocked(idx)" class="gc-badge gc-badge-danger"><i class="fa-solid fa-lock"></i> Locked</span>
-          <span *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'APPROVED'" class="gc-badge gc-badge-success"><i class="fa-solid fa-circle-check"></i> Turned in ({{ submissionsMap[m.id]?.finalPoints }} pts)</span>
-          <span *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'NEEDS_REVISION'" class="gc-badge gc-badge-danger"><i class="fa-solid fa-triangle-exclamation"></i> Needs Revision</span>
-          <span *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'SUBMITTED'" class="gc-badge gc-badge-warning"><i class="fa-solid fa-clock"></i> Turned in</span>
-          <span *ngIf="!isMilestoneLocked(idx) && !submissionsMap[m.id]" class="gc-badge gc-badge-info">Assigned</span>
+          <span *ngIf="m.isLocked" class="gc-badge gc-badge-danger"><i class="fa-solid fa-lock"></i> Locked</span>
+          <span *ngIf="!m.isLocked && m.userSubmission?.status === 'APPROVED'" class="gc-badge gc-badge-success"><i class="fa-solid fa-circle-check"></i> Turned in ({{ m.userSubmission?.finalPoints }} pts)</span>
+          <span *ngIf="!m.isLocked && m.userSubmission?.status === 'NEEDS_REVISION'" class="gc-badge gc-badge-danger"><i class="fa-solid fa-triangle-exclamation"></i> Needs Revision</span>
+          <span *ngIf="!m.isLocked && m.userSubmission?.status === 'SUBMITTED'" class="gc-badge gc-badge-warning"><i class="fa-solid fa-clock"></i> Turned in</span>
+          <span *ngIf="!m.isLocked && !m.userSubmission" class="gc-badge gc-badge-info">Assigned</span>
 
           <i class="fa-solid" [class.fa-chevron-down]="expandedMilestoneId !== m.id" [class.fa-chevron-up]="expandedMilestoneId === m.id"></i>
         </div>
@@ -72,9 +72,9 @@
             </div>
           </div>
 
-          <div class="gc-feedback-box" *ngIf="submissionsMap[m.id]?.instructorFeedback">
+          <div class="gc-feedback-box" *ngIf="m.userSubmission?.instructorFeedback">
             <strong>Private Feedback from Teacher:</strong>
-            <p>{{ submissionsMap[m.id]?.instructorFeedback }}</p>
+            <p>{{ m.userSubmission?.instructorFeedback }}</p>
           </div>
         </div>
 
@@ -84,16 +84,16 @@
             <div class="gc-your-work-header">
               <h4>Your work</h4>
               <span class="gc-badge" 
-                    [class.gc-badge-success]="submissionsMap[m.id]?.status === 'APPROVED'" 
-                    [class.gc-badge-warning]="submissionsMap[m.id]?.status === 'SUBMITTED'">
-                {{ submissionsMap[m.id]?.status || (isMilestoneLocked(idx) ? 'Locked' : 'Assigned') }}
+                    [class.gc-badge-success]="m.userSubmission?.status === 'APPROVED'" 
+                    [class.gc-badge-warning]="m.userSubmission?.status === 'SUBMITTED'">
+                {{ m.userSubmission?.status || (m.isLocked ? 'Locked' : 'Assigned') }}
               </span>
             </div>
 
-            <p *ngIf="isMilestoneLocked(idx)" class="gc-locked-msg"><i class="fa-solid fa-lock"></i> Complete Milestone {{ idx }} first to unlock.</p>
-            <p *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'APPROVED'" class="gc-approved-msg"><i class="fa-solid fa-circle-check"></i> Milestone approved & completed!</p>
-            <button *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status !== 'APPROVED'" class="gc-btn gc-btn-primary gc-btn-block" (click)="triggerUpload(m)">
-              <i class="fa-solid fa-upload"></i> {{ submissionsMap[m.id] ? 'Resubmit Work' : '+ Add or submit work' }}
+            <p *ngIf="m.isLocked" class="gc-locked-msg"><i class="fa-solid fa-lock"></i> Complete previous milestone first to unlock.</p>
+            <p *ngIf="!m.isLocked && m.userSubmission?.status === 'APPROVED'" class="gc-approved-msg"><i class="fa-solid fa-circle-check"></i> Milestone approved & completed!</p>
+            <button *ngIf="!m.isLocked && m.userSubmission?.status !== 'APPROVED'" type="button" class="gc-btn gc-btn-primary gc-btn-block" (click)="triggerUpload(m)">
+              <i class="fa-solid fa-upload"></i> {{ m.userSubmission ? 'Resubmit Work' : '+ Add or submit work' }}
             </button>
           </div>
 
@@ -101,7 +101,7 @@
             <div class="gc-your-work-header">
               <h4>Student Submissions</h4>
             </div>
-            <button class="gc-btn gc-btn-outline gc-btn-block" (click)="triggerRoster(m)">
+            <button type="button" class="gc-btn gc-btn-outline gc-btn-block" (click)="triggerRoster(m)">
               <i class="fa-solid fa-users"></i> View Submissions Roster
             </button>
           </div>

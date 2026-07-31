@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../services/api.service';
 import { AuthService } from '../../../services/auth.service';
@@ -23,14 +23,7 @@ export class StreamComponent implements OnInit {
     public authService: AuthService,
     public viewStateService: ViewStateService,
     private cdr: ChangeDetectorRef
-  ) {
-    effect(() => {
-      const currentSubject = this.viewStateService.currentSubject();
-      if (currentSubject) {
-        this.loadStreamData();
-      }
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.loadStreamData();
@@ -44,11 +37,11 @@ export class StreamComponent implements OnInit {
       next: (ms) => {
         this.milestones = ms;
         this.upcomingMilestones = ms.filter(m => !m.isOverdue).slice(0, 3);
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error loading stream data:', err);
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       }
     });
 
@@ -58,11 +51,11 @@ export class StreamComponent implements OnInit {
         next: (subs) => {
           this.studentSubmissionsMap = {};
           subs.forEach(s => this.studentSubmissionsMap[s.milestoneId] = s);
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
         },
         error: (err) => {
           console.error('Error loading student submissions:', err);
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
         }
       });
     }
