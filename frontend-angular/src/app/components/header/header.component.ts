@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { ViewStateService, ClassTab } from '../../services/view-state.service';
@@ -13,18 +13,22 @@ import { ViewStateService, ClassTab } from '../../services/view-state.service';
 export class HeaderComponent {
   constructor(
     public authService: AuthService,
-    public viewStateService: ViewStateService
+    public viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   onLogoClick() {
     this.viewStateService.setView('CLASSES_HOME');
+    this.cdr.detectChanges();
   }
 
   onTabClick(tab: ClassTab) {
     this.viewStateService.setClassTab(tab);
+    this.cdr.detectChanges();
   }
 
   toggleSidebar() {
     this.viewStateService.toggleSidebar();
+    this.cdr.detectChanges();
   }
 }

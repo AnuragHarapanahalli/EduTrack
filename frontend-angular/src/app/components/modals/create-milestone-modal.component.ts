@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
@@ -16,7 +16,7 @@ import { CreateMilestoneRequest, DeliverableItem } from '../../models/milestone.
           <h3>Create Milestone Assignment</h3>
           <button class="gc-close-btn" (click)="close()">&times;</button>
         </div>
-        <form (submit)="onSubmit()">
+        <form (ngSubmit)="onSubmit()">
           <div class="gc-modal-body" style="max-height: 75vh; overflow-y: auto;">
             <div class="gc-form-field">
               <label>Title</label>
@@ -46,17 +46,15 @@ import { CreateMilestoneRequest, DeliverableItem } from '../../models/milestone.
                 </button>
               </div>
 
-              @for (item of deliverables; track $index; let i = $index) {
-                <div class="gc-deliverable-row">
-                  <input type="text" [(ngModel)]="item.title" [name]="'del_title_' + i" placeholder="e.g. SRS PDF Document" required>
-                  <label class="gc-check-label">
-                    <input type="checkbox" [(ngModel)]="item.isMandatory" [name]="'del_mand_' + i"> Mandatory
-                  </label>
-                  <button type="button" class="gc-btn gc-btn-flat" (click)="removeDeliverableRow(i)">
-                    <i class="fa-solid fa-xmark"></i>
-                  </button>
-                </div>
-              }
+              <div *ngFor="let item of deliverables; let i = index" class="gc-deliverable-row">
+                <input type="text" [(ngModel)]="item.title" [name]="'del_title_' + i" placeholder="e.g. SRS PDF Document" required>
+                <label class="gc-check-label">
+                  <input type="checkbox" [(ngModel)]="item.isMandatory" [name]="'del_mand_' + i"> Mandatory
+                </label>
+                <button type="button" class="gc-btn gc-btn-flat" (click)="removeDeliverableRow(i)">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
             </div>
           </div>
           <div class="gc-modal-footer">
@@ -88,19 +86,23 @@ export class CreateMilestoneModalComponent {
 
   constructor(
     private apiService: ApiService,
-    private viewStateService: ViewStateService
+    private viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   close() {
     this.closeModal.emit();
+    this.cdr.detectChanges();
   }
 
   addDeliverableRow() {
     this.deliverables.push({ title: '', isMandatory: true });
+    this.cdr.detectChanges();
   }
 
   removeDeliverableRow(index: number) {
     this.deliverables.splice(index, 1);
+    this.cdr.detectChanges();
   }
 
   onSubmit() {
@@ -121,6 +123,11 @@ export class CreateMilestoneModalComponent {
       next: () => {
         this.milestoneCreated.emit();
         this.close();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error creating milestone:', err);
+        this.cdr.detectChanges();
       }
     });
   }
