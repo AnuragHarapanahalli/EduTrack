@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, effect } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, effect, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../services/api.service';
 import { AuthService } from '../../../services/auth.service';
@@ -25,7 +25,8 @@ export class ClassworkComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     public authService: AuthService,
-    public viewStateService: ViewStateService
+    public viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
   ) {
     effect(() => {
       const currentSubject = this.viewStateService.currentSubject();
@@ -61,6 +62,11 @@ export class ClassworkComponent implements OnInit {
         if (this.milestones.length > 0 && !this.expandedMilestoneId) {
           this.expandedMilestoneId = this.milestones[0].id;
         }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error fetching milestones:', err);
+        this.cdr.detectChanges();
       }
     });
 
@@ -70,6 +76,11 @@ export class ClassworkComponent implements OnInit {
         next: (subs) => {
           this.submissionsMap = {};
           subs.forEach(s => this.submissionsMap[s.milestoneId] = s);
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error fetching submissions:', err);
+          this.cdr.detectChanges();
         }
       });
     }

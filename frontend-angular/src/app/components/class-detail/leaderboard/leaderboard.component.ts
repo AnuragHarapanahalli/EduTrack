@@ -1,4 +1,4 @@
-import { Component, OnInit, effect } from '@angular/core';
+import { Component, OnInit, effect, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../services/api.service';
 import { ViewStateService } from '../../../services/view-state.service';
@@ -17,7 +17,8 @@ export class LeaderboardComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    public viewStateService: ViewStateService
+    public viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
   ) {
     effect(() => {
       const currentSubject = this.viewStateService.currentSubject();
@@ -40,9 +41,12 @@ export class LeaderboardComponent implements OnInit {
       next: (list) => {
         this.leaderboardEntries = list;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error loading leaderboard:', err);
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }

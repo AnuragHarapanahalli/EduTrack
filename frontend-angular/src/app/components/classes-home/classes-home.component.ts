@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, effect } from '@angular/core';
+import { Component, Output, EventEmitter, effect, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -18,7 +18,8 @@ export class ClassesHomeComponent {
   constructor(
     private apiService: ApiService,
     public authService: AuthService,
-    public viewStateService: ViewStateService
+    public viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
   ) {
     effect(() => {
       const user = this.authService.currentUser();
@@ -37,6 +38,11 @@ export class ClassesHomeComponent {
     stream.subscribe({
       next: (subjects) => {
         this.viewStateService.setUserSubjects(subjects);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading subjects:', err);
+        this.cdr.detectChanges();
       }
     });
   }
