@@ -13,24 +13,30 @@
 
   <!-- Center Tabs (Visible when inside a class detail) -->
   <nav class="gc-class-tabs" *ngIf="viewStateService.currentView() === 'CLASS_DETAIL'">
+    <!-- Stream Tab (Visible for Instructors) -->
     <button 
+      *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'"
       class="gc-tab-link" 
       [class.active]="viewStateService.activeClassTab() === 'stream'"
       (click)="onTabClick('stream')">
       Stream
     </button>
+    
+    <!-- Classwork Tab -->
     <button 
       class="gc-tab-link" 
       [class.active]="viewStateService.activeClassTab() === 'classwork'"
       (click)="onTabClick('classwork')">
-      Classwork
+      {{ authService.currentUser()?.role === 'STUDENT' ? 'Classwork Pathway' : 'Classwork' }}
     </button>
+
     <button 
       class="gc-tab-link" 
       [class.active]="viewStateService.activeClassTab() === 'people'"
       (click)="onTabClick('people')">
       People
     </button>
+    
     <button 
       class="gc-tab-link" 
       [class.active]="viewStateService.activeClassTab() === 'leaderboard'"
