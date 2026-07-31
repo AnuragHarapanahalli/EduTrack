@@ -1,0 +1,69 @@
+.gc-people-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.gc-people-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--gc-primary);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.gc-people-header h2 {
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--gc-primary);
+}
+
+.gc-people-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.gc-people-count {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gc-text-sub);
+}
+
+.gc-people-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.gc-person-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--gc-border);
+}
+
+.gc-avatar-student {
+  background: var(--gc-text-sub);
+}
+
+.gc-person-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.gc-person-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--gc-text-main);
+}
+
+.gc-person-email {
+  font-size: 0.78rem;
+  color: var(--gc-text-sub);
+}
+
+.gc-empty-people {
+  padding: 2rem 0;
+  color: var(--gc-text-sub);
+}

@@ -1,0 +1,63 @@
+<div class="gc-sidebar-backdrop" [class.hidden]="!viewStateService.isSidebarOpen()" (click)="viewStateService.closeSidebar()"></div>
+
+<aside class="gc-sidebar" [class.open]="viewStateService.isSidebarOpen()">
+  <div class="gc-sidebar-inner">
+    <div class="gc-sidebar-menu">
+      <a class="gc-sidebar-item" [class.active]="viewStateService.currentView() === 'CLASSES_HOME'" (click)="onHomeClick()">
+        <i class="fa-solid fa-house gc-sidebar-icon"></i>
+        <span>Classes</span>
+      </a>
+    </div>
+
+    <div class="gc-sidebar-divider"></div>
+
+    <div class="gc-sidebar-section">
+      <span class="gc-sidebar-label">
+        {{ authService.currentUser()?.role === 'INSTRUCTOR' ? 'Teaching' : 'Enrolled' }}
+      </span>
+      <div class="gc-sidebar-classes-list">
+        <a *ngFor="let subj of viewStateService.userSubjects()"
+           class="gc-sidebar-item" 
+           [class.active]="viewStateService.currentSubject()?.id === subj.id"
+           (click)="onSelectClass(subj)">
+          <div class="gc-class-badge-icon">
+            {{ subj.code ? subj.code.charAt(0) : 'C' }}
+          </div>
+          <div class="gc-class-item-text">
+            <strong>{{ subj.name }}</strong>
+            <small>{{ subj.code }}</small>
+          </div>
+        </a>
+        <div class="gc-empty-sidebar-msg" *ngIf="viewStateService.userSubjects().length === 0">
+          No classes found
+        </div>
+      </div>
+    </div>
+
+    <div class="gc-sidebar-section" *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'">
+      <div class="gc-sidebar-divider"></div>
+      <span class="gc-sidebar-label">Faculty Controls</span>
+      <button class="gc-sidebar-action-btn" (click)="triggerCreateSubject()">
+        <i class="fa-solid fa-plus"></i> Create Class
+      </button>
+      <button class="gc-sidebar-action-btn" (click)="triggerAddStudents()">
+        <i class="fa-solid fa-user-plus"></i> Invite Students
+      </button>
+    </div>
+
+    <div class="gc-sidebar-footer">
+      <div class="gc-footer-user" *ngIf="authService.currentUser() as user">
+        <div class="gc-avatar-circle">
+          {{ user.fullName.charAt(0).toUpperCase() }}
+        </div>
+        <div class="gc-user-info">
+          <strong>{{ user.fullName }}</strong>
+          <small>{{ user.email }}</small>
+        </div>
+        <button class="gc-logout-btn" (click)="logout()" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</aside>

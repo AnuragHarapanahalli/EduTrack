@@ -1,0 +1,118 @@
+<div class="gc-classwork-container">
+  <!-- Classwork Toolbar -->
+  <div class="gc-classwork-toolbar">
+    <button *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'" class="gc-btn gc-btn-primary gc-create-btn" (click)="triggerCreateMilestone()">
+      <i class="fa-solid fa-plus"></i> Create Milestone
+    </button>
+    <div class="gc-classwork-info">
+      <span class="gc-badge gc-badge-info">{{ milestones.length }} Milestones</span>
+    </div>
+  </div>
+
+  <!-- Sequential Progression Warning Notice -->
+  <div class="gc-notice-banner">
+    <i class="fa-solid fa-shield-halved"></i>
+    <span><strong>Sequential Progression Enforced:</strong> Each milestone must be submitted & approved by faculty to unlock the next milestone.</span>
+  </div>
+
+  <!-- Milestones / Assignments List -->
+  <div class="gc-assignments-list">
+    <div *ngFor="let m of milestones; let idx = index" 
+         class="gc-card gc-assignment-card" 
+         [class.locked]="isMilestoneLocked(idx)" 
+         [class.completed]="submissionsMap[m.id]?.status === 'APPROVED'">
+      
+      <!-- Card Header Header Row -->
+      <div class="gc-assignment-header-row" (click)="toggleExpand(m.id)">
+        <div class="gc-assignment-left">
+          <div class="gc-assignment-icon-pod" 
+               [class.locked]="isMilestoneLocked(idx)" 
+               [class.completed]="submissionsMap[m.id]?.status === 'APPROVED'">
+            <i *ngIf="isMilestoneLocked(idx)" class="fa-solid fa-lock"></i>
+            <i *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'APPROVED'" class="fa-solid fa-check"></i>
+            <i *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status !== 'APPROVED'" class="fa-solid fa-file-lines"></i>
+          </div>
+
+          <div>
+            <h3 class="gc-assignment-title">{{ m.title }}</h3>
+            <small class="gc-assignment-due">Due {{ m.deadline | date:'short' }}</small>
+          </div>
+        </div>
+
+        <div class="gc-assignment-right">
+          <span *ngIf="isMilestoneLocked(idx)" class="gc-badge gc-badge-danger"><i class="fa-solid fa-lock"></i> Locked</span>
+          <span *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'APPROVED'" class="gc-badge gc-badge-success"><i class="fa-solid fa-circle-check"></i> Turned in ({{ submissionsMap[m.id]?.finalPoints }} pts)</span>
+          <span *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'NEEDS_REVISION'" class="gc-badge gc-badge-danger"><i class="fa-solid fa-triangle-exclamation"></i> Needs Revision</span>
+          <span *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'SUBMITTED'" class="gc-badge gc-badge-warning"><i class="fa-solid fa-clock"></i> Turned in</span>
+          <span *ngIf="!isMilestoneLocked(idx) && !submissionsMap[m.id]" class="gc-badge gc-badge-info">Assigned</span>
+
+          <i class="fa-solid" [class.fa-chevron-down]="expandedMilestoneId !== m.id" [class.fa-chevron-up]="expandedMilestoneId === m.id"></i>
+        </div>
+      </div>
+
+      <!-- Expanded Body (Google Classroom Assignment Details & Work Box) -->
+      <div class="gc-assignment-body" *ngIf="expandedMilestoneId === m.id">
+        <div class="gc-assignment-details-col">
+          <div class="gc-assignment-points">
+            <span>{{ m.basePoints }} points</span>
+          </div>
+          <p class="gc-assignment-instructions">{{ m.description }}</p>
+
+          <!-- Deliverable Items -->
+          <div class="gc-deliverables-section">
+            <span class="gc-deliverables-label">Required Deliverables:</span>
+            <div class="gc-deliverables-chips">
+              <div *ngFor="let item of m.deliverablesList" class="gc-deliverable-chip">
+                <i class="fa-solid fa-box"></i>
+                <span>{{ item.title }}</span>
+                <span class="gc-badge" [class.gc-badge-danger]="item.isMandatory" [class.gc-badge-info]="!item.isMandatory">
+                  {{ item.isMandatory ? 'Mandatory' : 'Optional' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gc-feedback-box" *ngIf="submissionsMap[m.id]?.instructorFeedback">
+            <strong>Private Feedback from Teacher:</strong>
+            <p>{{ submissionsMap[m.id]?.instructorFeedback }}</p>
+          </div>
+        </div>
+
+        <!-- Right Column: "Your Work" Box (For Students) / Roster Action (For Faculty) -->
+        <div class="gc-assignment-work-col">
+          <div *ngIf="authService.currentUser()?.role === 'STUDENT'" class="gc-card gc-your-work-card">
+            <div class="gc-your-work-header">
+              <h4>Your work</h4>
+              <span class="gc-badge" 
+                    [class.gc-badge-success]="submissionsMap[m.id]?.status === 'APPROVED'" 
+                    [class.gc-badge-warning]="submissionsMap[m.id]?.status === 'SUBMITTED'">
+                {{ submissionsMap[m.id]?.status || (isMilestoneLocked(idx) ? 'Locked' : 'Assigned') }}
+              </span>
+            </div>
+
+            <p *ngIf="isMilestoneLocked(idx)" class="gc-locked-msg"><i class="fa-solid fa-lock"></i> Complete Milestone {{ idx }} first to unlock.</p>
+            <p *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status === 'APPROVED'" class="gc-approved-msg"><i class="fa-solid fa-circle-check"></i> Milestone approved & completed!</p>
+            <button *ngIf="!isMilestoneLocked(idx) && submissionsMap[m.id]?.status !== 'APPROVED'" class="gc-btn gc-btn-primary gc-btn-block" (click)="triggerUpload(m)">
+              <i class="fa-solid fa-upload"></i> {{ submissionsMap[m.id] ? 'Resubmit Work' : '+ Add or submit work' }}
+            </button>
+          </div>
+
+          <div *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'" class="gc-card gc-your-work-card">
+            <div class="gc-your-work-header">
+              <h4>Student Submissions</h4>
+            </div>
+            <button class="gc-btn gc-btn-outline gc-btn-block" (click)="triggerRoster(m)">
+              <i class="fa-solid fa-users"></i> View Submissions Roster
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gc-card gc-empty-classwork" *ngIf="milestones.length === 0">
+      <i class="fa-solid fa-file-lines gc-empty-icon"></i>
+      <h3>This is where you'll see work for this class</h3>
+      <p>No milestones or assignments have been posted yet.</p>
+    </div>
+  </div>
+</div>

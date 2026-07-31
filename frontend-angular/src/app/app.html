@@ -1,0 +1,71 @@
+<div class="gc-app-wrapper">
+  <!-- Top App Bar Header -->
+  <app-header></app-header>
+
+  <!-- Left Drawer Sidebar -->
+  <app-sidebar 
+    (openCreateSubjectModal)="showCreateSubjectModal = true"
+    (openAddStudentsModal)="showAddStudentsModal = true">
+  </app-sidebar>
+
+  <!-- Main Body Content Work Area -->
+  <main class="gc-main-body">
+    <app-auth *ngIf="viewStateService.currentViewVal === 'AUTH'"></app-auth>
+
+    <app-classes-home 
+      *ngIf="viewStateService.currentViewVal === 'CLASSES_HOME'"
+      (openCreateSubjectModal)="showCreateSubjectModal = true">
+    </app-classes-home>
+
+    <ng-container *ngIf="viewStateService.currentViewVal === 'CLASS_DETAIL'">
+      <app-stream *ngIf="viewStateService.activeClassTabVal === 'stream'"></app-stream>
+
+      <app-classwork 
+        *ngIf="viewStateService.activeClassTabVal === 'classwork'"
+        (openCreateMilestoneModal)="showCreateMilestoneModal = true"
+        (openUploadModal)="openUploadDialog($event)"
+        (openRosterModal)="openRosterDialog($event)">
+      </app-classwork>
+
+      <app-people
+        *ngIf="viewStateService.activeClassTabVal === 'people'"
+        (openAddStudentsModal)="showAddStudentsModal = true">
+      </app-people>
+
+      <app-leaderboard *ngIf="viewStateService.activeClassTabVal === 'leaderboard'"></app-leaderboard>
+    </ng-container>
+  </main>
+
+  <!-- Modals Overlay Container -->
+  <app-create-subject-modal 
+    *ngIf="showCreateSubjectModal"
+    (closeModal)="showCreateSubjectModal = false"
+    (subjectCreated)="refreshClasses()">
+  </app-create-subject-modal>
+
+  <app-add-students-modal 
+    *ngIf="showAddStudentsModal"
+    (closeModal)="showAddStudentsModal = false"
+    (studentsAdded)="refreshCurrentSubjectState()">
+  </app-add-students-modal>
+
+  <app-create-milestone-modal 
+    *ngIf="showCreateMilestoneModal"
+    (closeModal)="showCreateMilestoneModal = false"
+    (milestoneCreated)="refreshCurrentSubjectState()">
+  </app-create-milestone-modal>
+
+  <app-upload-modal 
+    *ngIf="showUploadModal && selectedMilestoneForUpload"
+    [milestone]="selectedMilestoneForUpload"
+    (closeModal)="showUploadModal = false"
+    (workSubmitted)="refreshCurrentSubjectState()">
+  </app-upload-modal>
+
+  <app-review-roster-modal 
+    *ngIf="showRosterModal && selectedMilestoneForRoster"
+    [milestone]="selectedMilestoneForRoster"
+    (closeModal)="showRosterModal = false"
+    (gradeReturned)="refreshCurrentSubjectState()">
+  </app-review-roster-modal>
+</div>

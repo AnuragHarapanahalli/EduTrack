@@ -1,0 +1,120 @@
+.gc-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--gc-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  z-index: 100;
+}
+
+.gc-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.gc-icon-btn {
+  background: transparent;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--gc-text-sub);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gc-icon-btn:hover {
+  background: var(--gc-background);
+}
+
+.gc-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.gc-logo-pod {
+  color: var(--gc-primary);
+  font-size: 1.4rem;
+}
+
+.gc-brand-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--gc-text-main);
+}
+
+.gc-brand-sub {
+  color: var(--gc-text-sub);
+}
+
+.gc-class-tabs {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.gc-tab-link {
+  height: 64px;
+  padding: 0 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-family: var(--gc-font-family);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gc-text-sub);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.gc-tab-link:hover {
+  background: rgba(0,0,0,0.02);
+  color: var(--gc-text-main);
+}
+
+.gc-tab-link.active {
+  color: var(--gc-primary);
+  border-bottom-color: var(--gc-primary);
+}
+
+.gc-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.gc-user-pod {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.gc-avatar-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gc-primary);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gc-user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gc-text-main);
+}

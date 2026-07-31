@@ -1,0 +1,53 @@
+<header class="gc-header">
+  <div class="gc-header-left">
+    <button class="gc-icon-btn" (click)="toggleSidebar()" title="Main menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="gc-brand" (click)="onLogoClick()">
+      <div class="gc-logo-pod">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <span class="gc-brand-title">EduTrack <span class="gc-brand-sub">Classroom</span></span>
+    </div>
+  </div>
+
+  <!-- Center Tabs (Visible when inside a class detail) -->
+  <nav class="gc-class-tabs" *ngIf="viewStateService.currentView() === 'CLASS_DETAIL'">
+    <button 
+      class="gc-tab-link" 
+      [class.active]="viewStateService.activeClassTab() === 'stream'"
+      (click)="onTabClick('stream')">
+      Stream
+    </button>
+    <button 
+      class="gc-tab-link" 
+      [class.active]="viewStateService.activeClassTab() === 'classwork'"
+      (click)="onTabClick('classwork')">
+      Classwork
+    </button>
+    <button 
+      class="gc-tab-link" 
+      [class.active]="viewStateService.activeClassTab() === 'people'"
+      (click)="onTabClick('people')">
+      People
+    </button>
+    <button 
+      class="gc-tab-link" 
+      [class.active]="viewStateService.activeClassTab() === 'leaderboard'"
+      (click)="onTabClick('leaderboard')">
+      Leaderboard
+    </button>
+  </nav>
+
+  <div class="gc-header-right">
+    <div class="gc-user-pod" *ngIf="authService.currentUser() as user">
+      <div class="gc-avatar-circle">
+        {{ user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' }}
+      </div>
+      <span class="gc-user-name">{{ user.fullName }}</span>
+      <span class="gc-badge" [class.gc-badge-warning]="user.role === 'INSTRUCTOR'" [class.gc-badge-info]="user.role === 'STUDENT'">
+        {{ user.role }}
+      </span>
+    </div>
+  </div>
+</header>

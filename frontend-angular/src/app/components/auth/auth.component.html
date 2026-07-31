@@ -1,0 +1,75 @@
+<div class="gc-auth-wrapper">
+  <div class="gc-auth-card">
+    <div class="gc-auth-header">
+      <div class="gc-auth-logo">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <h2>Sign in</h2>
+      <p>to continue to EduTrack Classroom</p>
+    </div>
+
+    <div class="gc-auth-tabs">
+      <button class="gc-auth-tab" [class.active]="isLoginTab" (click)="switchTab(true)">Sign In</button>
+      <button class="gc-auth-tab" [class.active]="!isLoginTab" (click)="switchTab(false)">Create Account</button>
+    </div>
+
+    <div class="gc-auth-error" *ngIf="errorMessage">
+      <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onLogin()" *ngIf="isLoginTab">
+      <div class="gc-form-field">
+        <input type="email" [(ngModel)]="loginEmail" name="loginEmail" placeholder="Email address" required>
+      </div>
+      <div class="gc-form-field">
+        <input type="password" [(ngModel)]="loginPassword" name="loginPassword" placeholder="Password" required>
+      </div>
+      <button type="submit" class="gc-btn gc-btn-primary gc-btn-block">
+        Next <i class="fa-solid fa-arrow-right"></i>
+      </button>
+
+      <div class="gc-demo-box">
+        <span class="gc-demo-label">Demo Test Accounts:</span>
+        <div class="gc-demo-chips">
+          <button type="button" class="gc-chip" (click)="fillDemo('anurag@edutrack.edu', 'student123')">
+            <i class="fa-solid fa-user-graduate"></i> Anurag (PBL3 + Web)
+          </button>
+          <button type="button" class="gc-chip" (click)="fillDemo('rahul@edutrack.edu', 'student123')">
+            <i class="fa-solid fa-user-graduate"></i> Rahul (Web Only)
+          </button>
+          <button type="button" class="gc-chip" (click)="fillDemo('priya@edutrack.edu', 'student123')">
+            <i class="fa-solid fa-user-graduate"></i> Priya (PBL3 Only)
+          </button>
+          <button type="button" class="gc-chip gc-chip-teacher" (click)="fillDemo('sharma@edutrack.edu', 'prof123')">
+            <i class="fa-solid fa-chalkboard-user"></i> Prof. Sharma (PBL3)
+          </button>
+          <button type="button" class="gc-chip gc-chip-teacher" (click)="fillDemo('prof.verma@edutrack.edu', 'prof123')">
+            <i class="fa-solid fa-chalkboard-user"></i> Dr. Verma (Web Dev)
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <form (ngSubmit)="onRegister()" *ngIf="!isLoginTab">
+      <div class="gc-form-field">
+        <input type="text" [(ngModel)]="regFullName" name="regFullName" placeholder="Full name" required>
+      </div>
+      <div class="gc-form-field">
+        <input type="email" [(ngModel)]="regEmail" name="regEmail" placeholder="Email address" required>
+      </div>
+      <div class="gc-form-field">
+        <input type="password" [(ngModel)]="regPassword" name="regPassword" placeholder="Create password" required>
+      </div>
+      <div class="gc-form-field">
+        <select [(ngModel)]="regRole" name="regRole" required>
+          <option value="STUDENT">Student</option>
+          <option value="INSTRUCTOR">Teacher / Instructor</option>
+          <option value="ADMIN">Administrator</option>
+        </select>
+      </div>
+      <button type="submit" class="gc-btn gc-btn-primary gc-btn-block">
+        Create account
+      </button>
+    </form>
+  </div>
+</div>
