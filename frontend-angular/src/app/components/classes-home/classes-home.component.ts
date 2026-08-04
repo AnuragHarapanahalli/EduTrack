@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, effect, ChangeDetectorRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
-import { ViewStateService } from '../../services/view-state.service';
+import { ViewStateService, ClassTab } from '../../services/view-state.service';
 import { Subject as SubjectModel } from '../../models/subject.model';
 
 @Component({
@@ -13,7 +13,9 @@ import { Subject as SubjectModel } from '../../models/subject.model';
   styleUrl: './classes-home.component.css'
 })
 export class ClassesHomeComponent {
-  @Output() openCreateSubjectModal = new EventEmitter<void>();
+
+  @Output()
+  openCreateSubjectModal = new EventEmitter<void>();
 
   constructor(
     private apiService: ApiService,
@@ -21,48 +23,178 @@ export class ClassesHomeComponent {
     public viewStateService: ViewStateService,
     private cdr: ChangeDetectorRef
   ) {
+
+    /*
+      Reload classes whenever:
+      - user logs in
+      - dashboard becomes active
+    */
     effect(() => {
       const user = this.authService.currentUser();
       const currentView = this.viewStateService.currentView();
+
       if (user && currentView === 'CLASSES_HOME') {
         this.loadSubjects(user.id, user.role);
       }
     });
+
   }
 
-  loadSubjects(userId: number, role: string) {
-    const stream = (role === 'INSTRUCTOR')
+  // ============================
+  // LOAD CLASSES
+  // ============================
+  loadSubjects(userId: number, role: string): void {
+    const request = role === 'INSTRUCTOR'
       ? this.apiService.getSubjectsForInstructor(userId)
       : this.apiService.getSubjectsForStudent(userId);
 
-    stream.subscribe({
+    request.subscribe({
       next: (subjects) => {
         this.viewStateService.setUserSubjects(subjects);
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Error loading subjects:', err);
+      error: (error) => {
+        console.error("Error loading subjects:", error);
+        this.viewStateService.setUserSubjects([]);
         this.cdr.detectChanges();
       }
     });
   }
 
-  selectClass(subj: SubjectModel) {
-    this.viewStateService.selectSubject(subj);
+  // ============================
+  // OPEN CLASS
+  // ============================
+  selectClass(subject: SubjectModel): void {
+    this.viewStateService.selectSubject(subject);
   }
 
-  triggerCreateClass() {
-    this.openCreateSubjectModal.emit();
+  selectClassAndTab(subject: SubjectModel, tab: ClassTab): void {
+    this.viewStateService.selectSubject(subject);
+    this.viewStateService.setCurrentTab(tab);
   }
 
-  getBannerGradient(index: number): string {
+
+
+
+
+  // ============================
+  // CREATE CLASS MODAL
+  // ============================
+
+
+  triggerCreateClass():void {
+
+
+    this.openCreateSubjectModal
+    .emit();
+
+
+  }
+
+
+
+
+
+  // ============================
+  // DASHBOARD STATISTICS
+  // ============================
+
+
+  getTotalMilestones():number {
+
+
+    return this.viewStateService
+    .subjects()
+    .reduce(
+
+      (total,subject)=>{
+
+        return total +
+        (subject.totalMilestones || 0);
+
+      },
+
+      0
+
+    );
+
+
+  }
+
+
+
+
+  getTotalStudents(): number {
+
+  return this.viewStateService
+    .subjects()
+    .reduce((total, subject) => {
+
+      return total + 
+      ((subject as any).studentCount || 0);
+
+    }, 0);
+
+}
+
+
+
+
+  getTotalClasses():number {
+
+
+    return this.viewStateService
+    .subjects()
+    .length;
+
+
+  }
+
+
+
+
+
+  // ============================
+  // CARD COLORS
+  // ============================
+
+
+  getBannerGradient(
+    index:number
+  ):string {
+
+
     const gradients = [
-      'linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)', // Blue Math
-      'linear-gradient(135deg, #00897b 0%, #004d40 100%)', // Teal Science
-      'linear-gradient(135deg, #5e35b1 0%, #311b92 100%)', // Indigo CS
-      'linear-gradient(135deg, #d81b60 0%, #880e4f 100%)', // Pink Art
-      'linear-gradient(135deg, #fb8c00 0%, #e65100 100%)'  // Amber Engineering
+
+
+      'linear-gradient(135deg,#2563eb,#4f46e5)',
+
+
+      'linear-gradient(135deg,#0f766e,#14b8a6)',
+
+
+      'linear-gradient(135deg,#9333ea,#7c3aed)',
+
+
+      'linear-gradient(135deg,#ea580c,#f97316)',
+
+
+      'linear-gradient(135deg,#059669,#10b981)',
+
+
+      'linear-gradient(135deg,#dc2626,#ef4444)'
+
+
     ];
-    return gradients[index % gradients.length];
+
+
+    return gradients[
+      index % gradients.length
+    ];
+
+
   }
+
+
+
 }

@@ -1,7 +1,8 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import { ViewStateService, ClassTab } from '../../services/view-state.service';
+import { ViewStateService } from '../../services/view-state.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -11,24 +12,80 @@ import { ViewStateService, ClassTab } from '../../services/view-state.service';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
+
   constructor(
     public authService: AuthService,
     public viewStateService: ViewStateService,
+    public themeService: ThemeService,
     private cdr: ChangeDetectorRef
   ) {}
 
-  onLogoClick() {
-    this.viewStateService.setView('CLASSES_HOME');
+  // Current logged-in user
+  get user() {
+    return this.authService.currentUser();
+  }
+
+  // Avatar initials
+  get initials(): string {
+
+    const fullName = this.user?.fullName?.trim();
+
+    if (!fullName) {
+      return 'U';
+    }
+
+    return fullName
+      .split(' ')
+      .filter(name => name.length > 0)
+      .map(name => name[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  }
+
+
+  // Logo click
+  goToDashboard(): void {
+    this.viewStateService.goDashboard();
     this.cdr.detectChanges();
   }
 
-  onTabClick(tab: ClassTab) {
-    this.viewStateService.setClassTab(tab);
+
+  // Tabs
+  openStream(): void {
+    this.viewStateService.setClassTab('STREAM');
     this.cdr.detectChanges();
   }
 
-  toggleSidebar() {
+
+  openClasswork(): void {
+    this.viewStateService.setClassTab('CLASSWORK');
+    this.cdr.detectChanges();
+  }
+
+
+  openPeople(): void {
+    this.viewStateService.setClassTab('PEOPLE');
+    this.cdr.detectChanges();
+  }
+
+
+  openLeaderboard(): void {
+    this.viewStateService.setClassTab('LEADERBOARD');
+    this.cdr.detectChanges();
+  }
+
+
+  toggleSidebar(): void {
     this.viewStateService.toggleSidebar();
+    this.cdr.detectChanges();
+  }
+
+
+  logout(): void {
+    this.authService.logout();
+    this.viewStateService.selectSubject(null);
+    this.viewStateService.setView('AUTH');
     this.cdr.detectChanges();
   }
 }

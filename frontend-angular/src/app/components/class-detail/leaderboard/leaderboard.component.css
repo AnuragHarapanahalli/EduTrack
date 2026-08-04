@@ -1,122 +1,474 @@
-.gc-leaderboard-container {
-  max-width: 950px;
-  margin: 0 auto;
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.gc-leaderboard-container{
+
+    max-width:1100px;
+
+    margin:0 auto;
+
+    padding-bottom:2rem;
+
 }
 
-.gc-table-card {
-  padding: 1.5rem;
+
+
+/* =====================================================
+   MAIN CARD
+===================================================== */
+
+.gc-card{
+
+    background:var(--gc-card);
+
+    border:1px solid rgba(148,163,184,.22);
+
+    border-radius:26px;
+
+    box-shadow:
+    0 15px 40px rgba(15,23,42,.07);
+
 }
 
-.gc-table-header {
-  margin-bottom: 1.5rem;
+
+
+.gc-table-card{
+
+    overflow:hidden;
+
 }
 
-.gc-table-header h2 {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: var(--gc-text-main);
-  margin-bottom: 0.25rem;
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+
+.gc-table-header{
+
+    padding:2rem 2.2rem;
+
+    background:
+
+    linear-gradient(
+        135deg,
+        rgba(37,99,235,.08),
+        rgba(99,102,241,.05)
+    );
+
+    border-bottom:
+
+    1px solid rgba(148,163,184,.2);
+
 }
 
-.gc-table-header p {
-  font-size: 0.85rem;
-  color: var(--gc-text-sub);
+
+
+.gc-table-header h2{
+
+    margin:0;
+
+    font-size:1.65rem;
+
+    font-weight:750;
+
+    letter-spacing:-.03em;
+
+    color:var(--gc-text-main);
+
 }
 
-.gc-table-responsive {
-  overflow-x: auto;
+
+
+.gc-table-header p{
+
+    margin-top:.7rem;
+
+    color:var(--gc-text-sub);
+
+    line-height:1.7;
+
+    font-size:.9rem;
+
 }
 
-.gc-data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+
+.gc-table-responsive{
+
+    overflow-x:auto;
+
 }
 
-.gc-data-table th {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  background: var(--gc-background);
-  color: var(--gc-text-sub);
-  font-weight: 500;
-  border-bottom: 2px solid var(--gc-border);
+
+
+.gc-data-table{
+
+    width:100%;
+
+    border-collapse:separate;
+
+    border-spacing:0;
+
 }
 
-.gc-data-table td {
-  padding: 1rem;
-  border-bottom: 1px solid var(--gc-border);
-  vertical-align: middle;
+
+
+.gc-data-table th{
+
+    padding:1.2rem 1.5rem;
+
+    background:
+
+    rgba(248,250,252,.8);
+
+    color:#64748b;
+
+    text-transform:uppercase;
+
+    letter-spacing:.05em;
+
+    font-size:.75rem;
+
+    font-weight:700;
+
+    text-align:left;
+
 }
 
-.gc-rank-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.65rem;
-  border-radius: var(--gc-radius-pill);
-  font-weight: 700;
-  font-size: 0.85rem;
-  background: var(--gc-background);
-  color: var(--gc-text-main);
+
+
+.gc-data-table td{
+
+    padding:1.3rem 1.5rem;
+
+    border-top:
+
+    1px solid rgba(148,163,184,.15);
+
+    color:var(--gc-text-main);
+
 }
 
-.rank-1 {
-  background: #fef7e0;
-  color: #b06000;
-  border: 1px solid #f9ab00;
+
+
+.gc-data-table tbody tr{
+
+    transition:.25s ease;
+
 }
 
-.rank-2 {
-  background: #e8f0fe;
-  color: #1557b0;
-  border: 1px solid #1a73e8;
+
+
+.gc-data-table tbody tr:hover{
+
+    background:
+
+    rgba(59,130,246,.05);
+
+    transform:scale(1.005);
+
 }
 
-.rank-3 {
-  background: #e6f4ea;
-  color: #137333;
-  border: 1px solid #34a853;
+
+
+/* =====================================================
+   RANK BADGE
+===================================================== */
+
+
+.gc-rank-badge{
+
+    min-width:60px;
+
+    height:38px;
+
+    padding:0 .8rem;
+
+    border-radius:14px;
+
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    font-weight:750;
+
+    font-size:.85rem;
+
+
+    background:
+
+    rgba(148,163,184,.12);
+
 }
 
-.gc-student-name {
-  display: block;
-  color: var(--gc-text-main);
+
+
+.rank-1{
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #facc15,
+        #f59e0b
+    );
+
+    color:#422006;
+
+    box-shadow:
+
+    0 6px 15px rgba(245,158,11,.25);
+
 }
 
-.gc-student-email {
-  display: block;
-  font-size: 0.78rem;
-  color: var(--gc-text-sub);
+
+
+.rank-2{
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #e2e8f0,
+        #94a3b8
+    );
+
+    color:#334155;
+
 }
 
-.gc-progress-bar-container {
-  height: 8px;
-  background: var(--gc-border);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 0.25rem;
-  width: 120px;
+
+
+.rank-3{
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #fdba74,
+        #fb923c
+    );
+
+    color:#431407;
+
 }
 
-.gc-progress-bar-fill {
-  height: 100%;
-  background: var(--gc-primary);
-  border-radius: 4px;
-  transition: width 0.3s;
+
+
+/* =====================================================
+   STUDENT DETAILS
+===================================================== */
+
+
+.gc-student-name{
+
+    font-size:1rem;
+
+    font-weight:700;
+
 }
 
-.gc-progress-text {
-  font-size: 0.8rem;
-  font-weight: 500;
+
+
+.gc-student-email{
+
+    margin-top:.3rem;
+
+    font-size:.8rem;
+
+    color:var(--gc-text-sub);
+
 }
 
-.gc-points-val {
-  color: var(--gc-primary);
-  font-size: 1rem;
+
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+
+.gc-progress-bar-container{
+
+    width:170px;
+
+    height:10px;
+
+    border-radius:999px;
+
+    background:
+
+    rgba(148,163,184,.18);
+
+    overflow:hidden;
+
 }
 
-.gc-table-loading, .gc-empty-table {
-  padding: 3rem;
-  text-align: center;
-  color: var(--gc-text-sub);
+
+
+.gc-progress-bar-fill{
+
+    height:100%;
+
+    border-radius:999px;
+
+
+    background:
+
+    linear-gradient(
+        90deg,
+        #2563eb,
+        #6366f1
+    );
+
+
+    transition:
+
+    width .5s ease;
+
+}
+
+
+
+.gc-progress-text{
+
+    margin-top:.45rem;
+
+    font-size:.8rem;
+
+    font-weight:600;
+
+    color:var(--gc-text-sub);
+
+}
+
+
+
+/* =====================================================
+   POINTS
+===================================================== */
+
+
+.gc-points-val{
+
+    display:inline-flex;
+
+    align-items:center;
+
+
+    padding:.45rem .8rem;
+
+
+    border-radius:12px;
+
+
+    background:
+
+    rgba(37,99,235,.1);
+
+
+    color:
+
+    var(--gc-primary);
+
+
+    font-weight:750;
+
+}
+
+
+
+/* =====================================================
+   LOADING / EMPTY
+===================================================== */
+
+
+.gc-table-loading,
+.gc-empty-table{
+
+    padding:4rem 2rem;
+
+    text-align:center;
+
+    color:var(--gc-text-sub);
+
+}
+
+
+
+.gc-table-loading i,
+.gc-empty-table i{
+
+    font-size:2.5rem;
+
+    margin-bottom:1rem;
+
+    color:var(--gc-primary);
+
+}
+
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+
+@media(max-width:768px){
+
+
+.gc-table-header{
+
+    padding:1.5rem;
+
+}
+
+
+
+.gc-table-header h2{
+
+    font-size:1.3rem;
+
+}
+
+
+
+.gc-data-table th,
+.gc-data-table td{
+
+    padding:.9rem;
+
+}
+
+
+
+.gc-progress-bar-container{
+
+    width:110px;
+
+}
+
+
+.gc-rank-badge{
+
+    min-width:45px;
+
+    height:32px;
+
+    font-size:.75rem;
+
+}
+
+
 }

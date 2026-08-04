@@ -1,53 +1,118 @@
 <div class="gc-leaderboard-container">
+
   <div class="gc-card gc-table-card">
+
+    <!-- Header -->
     <div class="gc-table-header">
-      <h2>Class Standings & Gamified Leaderboard</h2>
-      <p>Points = Base Points &times; Timeliness Multipliers (1.2x / 1.0x / 0.5x) &times; (Quality Score / 5)</p>
+      <h2>🏆 Class Standings & Gamified Leaderboard</h2>
+      <p>
+        Points = Base Points × Timeliness Multiplier
+        (1.2× / 1.0× / 0.5×) × (Quality Score / 5)
+      </p>
     </div>
 
-    <div class="gc-table-loading" *ngIf="isLoading">Loading class standings...</div>
+    <!-- Loading -->
+    <div class="gc-table-loading" *ngIf="isLoading">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      Loading class standings...
+    </div>
 
+    <!-- Leaderboard -->
     <div class="gc-table-responsive" *ngIf="!isLoading">
+
       <table class="gc-data-table">
+
         <thead>
           <tr>
             <th>Rank</th>
-            <th>Student Name</th>
-            <th>Approved Milestones</th>
-            <th>Completion %</th>
-            <th>Total Points</th>
+            <th>Student</th>
+            <th>Approved</th>
+            <th>Completion</th>
+            <th>Points</th>
           </tr>
         </thead>
+
         <tbody>
+
           <tr *ngFor="let entry of leaderboardEntries">
+
+            <!-- Rank -->
             <td>
-              <span class="gc-rank-badge" 
+              <span class="gc-rank-badge"
                     [class.rank-1]="entry.rank === 1"
                     [class.rank-2]="entry.rank === 2"
                     [class.rank-3]="entry.rank === 3">
-                {{ entry.rank === 1 ? '🥇 1' : (entry.rank === 2 ? '🥈 2' : (entry.rank === 3 ? '🥉 3' : '#' + entry.rank)) }}
+
+                {{
+                  entry.rank === 1 ? '🥇 1'
+                  : entry.rank === 2 ? '🥈 2'
+                  : entry.rank === 3 ? '🥉 3'
+                  : '#' + entry.rank
+                }}
+
               </span>
             </td>
+
+            <!-- Student -->
             <td>
-              <strong class="gc-student-name">{{ entry.studentName }}</strong>
-              <small class="gc-student-email">{{ entry.studentEmail }}</small>
-            </td>
-            <td>{{ entry.approvedMilestonesCount }} / {{ entry.totalSubjectMilestonesCount }}</td>
-            <td>
-              <div class="gc-progress-bar-container">
-                <div class="gc-progress-bar-fill" [style.width.%]="entry.completionPercentage"></div>
+              <div class="gc-student-name">
+                {{ entry.studentName }}
               </div>
-              <span class="gc-progress-text">{{ entry.completionPercentage }}%</span>
+
+              <div class="gc-student-email">
+                {{ entry.studentEmail }}
+              </div>
             </td>
+
+            <!-- Approved -->
             <td>
-              <strong class="gc-points-val">{{ entry.totalPoints | number:'1.1-1' }} pts</strong>
+              {{ entry.approvedMilestonesCount }}
+              /
+              {{ entry.totalSubjectMilestonesCount }}
+            </td>
+
+            <!-- Progress -->
+            <td>
+
+              <div class="gc-progress-bar-container">
+
+                <div
+                  class="gc-progress-bar-fill"
+                  [style.width.%]="entry.completionPercentage">
+                </div>
+
+              </div>
+
+              <div class="gc-progress-text">
+                {{ entry.completionPercentage }}%
+              </div>
+
+            </td>
+
+            <!-- Points -->
+            <td>
+              <span class="gc-points-val">
+                {{ entry.totalPoints | number:'1.1-1' }} pts
+              </span>
+            </td>
+
+          </tr>
+
+          <!-- Empty -->
+          <tr *ngIf="leaderboardEntries.length === 0">
+            <td colspan="5" class="gc-empty-table">
+              <i class="fa-solid fa-trophy"></i>
+              <br><br>
+              No student standings calculated yet.
             </td>
           </tr>
-          <tr *ngIf="leaderboardEntries.length === 0">
-            <td colspan="5" class="gc-empty-table">No student standings calculated yet.</td>
-          </tr>
+
         </tbody>
+
       </table>
+
     </div>
+
   </div>
+
 </div>

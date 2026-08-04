@@ -1,54 +1,80 @@
-import { Component, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { ViewStateService } from '../../services/view-state.service';
-import { Subject as SubjectModel } from '../../models/subject.model';
+import { Subject } from '../../models/subject.model';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
+
   @Output() openCreateSubjectModal = new EventEmitter<void>();
   @Output() openAddStudentsModal = new EventEmitter<void>();
 
+  get isSidebarOpen(): boolean {
+    return this.viewStateService.isSidebarOpen();
+  }
+
   constructor(
     public authService: AuthService,
-    public viewStateService: ViewStateService,
-    private cdr: ChangeDetectorRef
+    public viewStateService: ViewStateService
   ) {}
 
-  onHomeClick() {
-    this.viewStateService.setView('CLASSES_HOME');
-    this.viewStateService.closeSidebar();
-    this.cdr.detectChanges();
+  get user() {
+    return this.authService.currentUser();
   }
 
-  onSelectClass(subj: SubjectModel) {
-    this.viewStateService.selectSubject(subj);
-    this.viewStateService.closeSidebar();
-    this.cdr.detectChanges();
+  get subjects(): Subject[] {
+    return this.viewStateService.subjects();
   }
 
-  logout() {
-    this.authService.logout();
-    this.viewStateService.setView('AUTH');
-    this.viewStateService.closeSidebar();
-    this.cdr.detectChanges();
+  get selectedSubject(): Subject | null {
+    return this.viewStateService.currentSubject();
   }
 
-  triggerCreateSubject() {
+  toggleSidebar(): void {
+    this.viewStateService.toggleSidebar();
+  }
+
+  selectSubject(subject: Subject): void {
+    this.viewStateService.selectSubject(subject);
+    this.viewStateService.setCurrentTab('STREAM');
+  }
+
+  goDashboard(): void {
+    this.viewStateService.goDashboard();
+  }
+
+  createClass(): void {
     this.openCreateSubjectModal.emit();
-    this.viewStateService.closeSidebar();
-    this.cdr.detectChanges();
   }
 
-  triggerAddStudents() {
+  inviteStudents(): void {
     this.openAddStudentsModal.emit();
-    this.viewStateService.closeSidebar();
-    this.cdr.detectChanges();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.viewStateService.selectSubject(null);
+    this.viewStateService.setView('AUTH');
+  }
+
+  getInitials(name: string): string {
+    if (!name?.trim()) {
+      return '?';
+    }
+
+    return name
+      .trim()
+      .split(/\s+/)
+      .map(word => word.charAt(0))
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
   }
 }

@@ -1,63 +1,167 @@
-<div class="gc-sidebar-backdrop" [class.hidden]="!viewStateService.isSidebarOpen()" (click)="viewStateService.closeSidebar()"></div>
+<div
+  class="gc-sidebar-backdrop"
+  *ngIf="isSidebarOpen"
+  (click)="toggleSidebar()">
+</div>
 
-<aside class="gc-sidebar" [class.open]="viewStateService.isSidebarOpen()">
+<aside
+  class="gc-sidebar"
+  [class.open]="isSidebarOpen">
+
   <div class="gc-sidebar-inner">
+
+    <!-- ================= MENU ================= -->
+
     <div class="gc-sidebar-menu">
-      <a class="gc-sidebar-item" [class.active]="viewStateService.currentView() === 'CLASSES_HOME'" (click)="onHomeClick()">
+
+      <a
+        class="gc-sidebar-item"
+        [class.active]="!selectedSubject"
+        (click)="goDashboard()">
+
         <i class="fa-solid fa-house gc-sidebar-icon"></i>
-        <span>Classes</span>
+        <span>Dashboard</span>
+
       </a>
+
     </div>
 
     <div class="gc-sidebar-divider"></div>
 
-    <div class="gc-sidebar-section">
+    <!-- ================= TEACHER ACTIONS ================= -->
+
+    <div
+  class="gc-sidebar-section"
+  *ngIf="user?.role === 'INSTRUCTOR'">
+
+  <button
+        class="gc-sidebar-action-btn"
+        (click)="createClass()">
+
+        <i class="fa-solid fa-plus"></i>
+        <span>Create Class</span>
+
+      </button>
+
+      <button
+        class="gc-sidebar-action-btn"
+        *ngIf="selectedSubject"
+        (click)="inviteStudents()">
+
+        <i class="fa-solid fa-user-plus"></i>
+        <span>Add Students</span>
+
+      </button>
+
+      <div class="gc-sidebar-divider"></div>
+
       <span class="gc-sidebar-label">
-        {{ authService.currentUser()?.role === 'INSTRUCTOR' ? 'Teaching' : 'Enrolled' }}
+        Your Classes
       </span>
-      <div class="gc-sidebar-classes-list">
-        <a *ngFor="let subj of viewStateService.userSubjects()"
-           class="gc-sidebar-item" 
-           [class.active]="viewStateService.currentSubject()?.id === subj.id"
-           (click)="onSelectClass(subj)">
+
+      <ng-container *ngIf="subjects.length > 0; else noClasses">
+
+        <a
+          *ngFor="let subject of subjects"
+          class="gc-sidebar-item"
+          [class.active]="selectedSubject?.id === subject.id"
+          (click)="selectSubject(subject)">
+
           <div class="gc-class-badge-icon">
-            {{ subj.code ? subj.code.charAt(0) : 'C' }}
+            {{ getInitials(subject.name) }}
           </div>
+
           <div class="gc-class-item-text">
-            <strong>{{ subj.name }}</strong>
-            <small>{{ subj.code }}</small>
+
+            <strong>{{ subject.name }}</strong>
+
+            <small>{{ subject.code }}</small>
+
           </div>
+
         </a>
-        <div class="gc-empty-sidebar-msg" *ngIf="viewStateService.userSubjects().length === 0">
-          No classes found
-        </div>
-      </div>
+
+      </ng-container>
+
     </div>
 
-    <div class="gc-sidebar-section" *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'">
-      <div class="gc-sidebar-divider"></div>
-      <span class="gc-sidebar-label">Faculty Controls</span>
-      <button class="gc-sidebar-action-btn" (click)="triggerCreateSubject()">
-        <i class="fa-solid fa-plus"></i> Create Class
-      </button>
-      <button class="gc-sidebar-action-btn" (click)="triggerAddStudents()">
-        <i class="fa-solid fa-user-plus"></i> Invite Students
-      </button>
+    <!-- ================= STUDENT VIEW ================= -->
+
+    <div
+      class="gc-sidebar-section"
+      *ngIf="user?.role === 'STUDENT'">
+
+      <span class="gc-sidebar-label">
+
+        Enrolled Classes
+
+      </span>
+
+      <ng-container *ngIf="subjects.length > 0; else noClasses">
+
+        <a
+          *ngFor="let subject of subjects"
+          class="gc-sidebar-item"
+          [class.active]="selectedSubject?.id === subject.id"
+          (click)="selectSubject(subject)">
+
+          <div class="gc-class-badge-icon">
+            {{ getInitials(subject.name) }}
+          </div>
+
+          <div class="gc-class-item-text">
+
+            <strong>{{ subject.name }}</strong>
+
+            <small>{{ subject.code }}</small>
+
+          </div>
+
+        </a>
+
+      </ng-container>
+
     </div>
+
+    <!-- ================= EMPTY ================= -->
+
+    <ng-template #noClasses>
+
+      <div class="gc-empty-sidebar-msg">
+
+        No classes available.
+
+      </div>
+
+    </ng-template>
+
+    <!-- ================= FOOTER ================= -->
 
     <div class="gc-sidebar-footer">
-      <div class="gc-footer-user" *ngIf="authService.currentUser() as user">
-        <div class="gc-avatar-circle">
-          {{ user.fullName.charAt(0).toUpperCase() }}
-        </div>
+
+      <div class="gc-footer-user">
+
         <div class="gc-user-info">
-          <strong>{{ user.fullName }}</strong>
-          <small>{{ user.email }}</small>
+
+          <strong>{{ user?.fullName }}</strong>
+
+          <small>{{ user?.email }}</small>
+
         </div>
-        <button class="gc-logout-btn" (click)="logout()" title="Sign Out">
+
+        <button
+          class="gc-logout-btn"
+          title="Logout"
+          (click)="logout()">
+
           <i class="fa-solid fa-right-from-bracket"></i>
+
         </button>
+
       </div>
+
     </div>
+
   </div>
+
 </aside>

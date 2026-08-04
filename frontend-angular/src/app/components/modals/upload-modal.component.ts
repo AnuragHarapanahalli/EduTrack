@@ -14,7 +14,7 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
       <div class="gc-modal-card" style="max-width: 560px;" (click)="$event.stopPropagation()">
         <div class="gc-modal-header">
           <h3>Submit Assignment Work</h3>
-          <button class="gc-close-btn" (click)="close()">&times;</button>
+          <button type="button" class="gc-close-btn" (click)="close()">&times;</button>
         </div>
         <form (ngSubmit)="onSubmit()">
           <div class="gc-modal-body" style="max-height: 75vh; overflow-y: auto;">
@@ -93,35 +93,53 @@ export class UploadModalComponent implements OnInit {
       this.cdr.detectChanges();
     }
   }
+onSubmit() {
+  const user = this.authService.currentUser();
+  if (!user || !this.milestone) return;
 
-  onSubmit() {
-    const user = this.authService.currentUser();
-    if (!user || !this.milestone) return;
+  const hasFile = Object.keys(this.filesMap).length > 0;
+  const hasLink = Object.values(this.linksMap).some(
+    link => link && link.trim().length > 0
+  );
 
-    const formData = new FormData();
-    formData.append('milestoneId', this.milestone.id.toString());
-    formData.append('studentId', user.id.toString());
-
-    let firstFile: File | null = null;
-    let firstLink = '';
-
-    Object.values(this.filesMap).forEach(f => { if (f && !firstFile) firstFile = f; });
-    Object.values(this.linksMap).forEach(l => { if (l && l.trim() && !firstLink) firstLink = l.trim(); });
-
-    if (firstFile) formData.append('file', firstFile);
-    if (firstLink) formData.append('submissionLink', firstLink);
-    if (this.comments) formData.append('comments', this.comments);
-
-    this.apiService.uploadSubmission(formData).subscribe({
-      next: () => {
-        this.workSubmitted.emit();
-        this.close();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error submitting work:', err);
-        this.cdr.detectChanges();
-      }
-    });
+  if (!hasFile && !hasLink) {
+    alert('Please upload at least one file or provide one submission link.');
+    return;
   }
+
+  const formData = new FormData();
+  formData.append('milestoneId', this.milestone.id.toString());
+  formData.append('studentId', user.id.toString());
+
+  // Upload first file (backend currently accepts one file)
+  const firstFile = Object.values(this.filesMap)[0];
+  if (firstFile) {
+    formData.append('file', firstFile);
+  }
+
+  // Upload first link
+  const firstLink = Object.values(this.linksMap).find(
+    link => link && link.trim().length > 0
+  );
+  if (firstLink) {
+    formData.append('submissionLink', firstLink.trim());
+  }
+
+  if (this.comments.trim()) {
+    formData.append('comments', this.comments.trim());
+  }
+
+  this.apiService.uploadSubmission(formData).subscribe({
+    next: () => {
+      alert('Assignment submitted successfully.');
+      this.workSubmitted.emit();
+      this.close();
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Failed to submit assignment.');
+    }
+  });
+}
+  
 }

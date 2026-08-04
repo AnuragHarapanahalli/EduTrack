@@ -1,120 +1,465 @@
+/* ===================================================
+   HEADER
+=================================================== */
+
 .gc-header {
+
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  background: #ffffff;
-  border-bottom: 1px solid var(--gc-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.25rem;
-  z-index: 100;
+
+  top:0;
+  left:0;
+  right:0;
+
+  height:68px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding:0 32px;
+
+  background: var(--gc-card);
+
+  backdrop-filter:blur(12px);
+
+  border-bottom:1px solid var(--gc-border);
+
+  z-index:999;
+
 }
 
-.gc-header-left {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+
+/* ===================================================
+   LEFT BRAND
+=================================================== */
+
+
+.gc-header-left{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:16px;
+
 }
 
-.gc-icon-btn {
-  background: transparent;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  color: var(--gc-text-sub);
+.gc-hamburger-btn {
   font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: var(--gc-card-sub, #f8fafc);
+  color: var(--gc-text-main, #1e293b);
+  border: 1px solid var(--gc-border, #e2e8f0);
 }
 
-.gc-icon-btn:hover {
-  background: var(--gc-background);
+.gc-hamburger-btn:hover {
+  background: var(--gc-primary-light, #eff6ff);
+  color: var(--gc-primary, #2563eb);
 }
 
-.gc-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  cursor: pointer;
+
+.gc-brand{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+  cursor:pointer;
+
 }
 
-.gc-logo-pod {
-  color: var(--gc-primary);
-  font-size: 1.4rem;
+
+.gc-logo-pod{
+
+
+  width:42px;
+
+  height:42px;
+
+  border-radius:12px;
+
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+
+  background:
+
+  linear-gradient(
+    135deg,
+    #0f766e,
+    #14b8a6
+  );
+
+
+  color:white;
+
+
+  font-size:20px;
+
+
 }
 
-.gc-brand-title {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: var(--gc-text-main);
+
+.gc-brand-title{
+
+
+  font-size:21px;
+
+  font-weight:750;
+
+  letter-spacing:-.3px;
+
+  color:var(--gc-text-main);
+
 }
 
-.gc-brand-sub {
-  color: var(--gc-text-sub);
+
+.gc-brand-sub{
+
+
+  font-size:11px;
+
+  color:var(--gc-text-sub);
+
 }
 
-.gc-class-tabs {
-  display: flex;
-  align-items: center;
-  height: 100%;
+
+
+/* ===================================================
+   CENTER TABS
+=================================================== */
+
+
+.gc-class-tabs{
+
+
+  display:flex;
+
+  align-items:center;
+
+  gap:6px;
+
+  background:#f8fafc;
+
+  padding:5px;
+
+  border-radius:14px;
+
 }
 
-.gc-tab-link {
-  height: 64px;
-  padding: 0 1.5rem;
-  background: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-  font-family: var(--gc-font-family);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--gc-text-sub);
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+
+.gc-tab-link{
+
+
+  border:none;
+
+  background:transparent;
+
+
+  padding:8px 18px;
+
+
+  border-radius:10px;
+
+
+  color:#64748b;
+
+
+  font-size:.88rem;
+
+
+  font-weight:600;
+
+
+  cursor:pointer;
+
+
+  transition:.25s;
+
+
 }
 
-.gc-tab-link:hover {
-  background: rgba(0,0,0,0.02);
-  color: var(--gc-text-main);
+
+
+.gc-tab-link:hover{
+
+
+  color:#0f766e;
+
+  background:white;
+
+
 }
 
-.gc-tab-link.active {
-  color: var(--gc-primary);
-  border-bottom-color: var(--gc-primary);
+
+
+.gc-tab-link.active{
+
+
+  background:white;
+
+
+  color:#0f766e;
+
+
+  box-shadow:
+
+  0 3px 10px rgba(0,0,0,.08);
+
+
 }
 
-.gc-header-right {
-  display: flex;
-  align-items: center;
+
+
+/* ===================================================
+   RIGHT ACTIONS
+=================================================== */
+
+
+.gc-header-right{
+
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+
 }
 
-.gc-user-pod {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+
+
+.gc-header-action{
+
+
+  width:40px;
+
+  height:40px;
+
+
+  border:none;
+
+  border-radius:12px;
+
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+
+  background: var(--gc-card-sub, #f8fafc);
+
+
+  color: var(--gc-text-main, #475569);
+
+
+  cursor:pointer;
+
+
+  transition:.25s;
+
+
 }
 
-.gc-avatar-circle {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--gc-primary);
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+
+.gc-header-action:hover{
+
+
+  background: var(--gc-primary-light, #e6fffb);
+
+
+  color: var(--gc-primary, #0f766e);
+
+
+  transform:translateY(-2px);
+
+
 }
 
-.gc-user-name {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--gc-text-main);
+
+
+/* ===================================================
+   USER PROFILE
+=================================================== */
+
+
+.gc-user-pod{
+
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+
+  padding:6px 12px;
+
+
+  border-radius:14px;
+
+
+  background: var(--gc-card-sub, #f8fafc);
+
+
+}
+
+
+
+.gc-avatar-circle{
+
+
+  width:38px;
+
+  height:38px;
+
+
+  border-radius:50%;
+
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+
+  background:
+
+  linear-gradient(
+    135deg,
+    #0f766e,
+    #2dd4bf
+  );
+
+
+  color:white;
+
+
+  font-weight:700;
+
+
+  font-size:14px;
+
+
+}
+
+
+
+.gc-user-info{
+
+
+  display:flex;
+
+  flex-direction:column;
+
+
+}
+
+
+.gc-user-name{
+
+
+  font-size:.85rem;
+
+
+  font-weight:700;
+
+
+  color: var(--gc-text-main, #111827);
+
+
+}
+
+
+
+.gc-user-role{
+
+
+  font-size:.72rem;
+
+
+  color:#64748b;
+
+
+  text-transform:capitalize;
+
+
+}
+
+
+
+/* ===================================================
+   RESPONSIVE
+=================================================== */
+
+
+@media(max-width:1000px){
+
+
+.gc-class-tabs{
+
+ display:none;
+
+}
+
+
+}
+
+
+
+@media(max-width:700px){
+
+
+.gc-header{
+
+ padding:0 16px;
+
+}
+
+
+
+.gc-brand-sub{
+
+ display:none;
+
+}
+
+
+
+.gc-user-info{
+
+ display:none;
+
+}
+
+
+
+.gc-header-right{
+
+ gap:6px;
+
+}
+
+
+.gc-header-action{
+
+ width:36px;
+
+ height:36px;
+
+}
+
+
 }

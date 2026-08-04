@@ -1,75 +1,319 @@
-<div class="gc-auth-wrapper">
-  <div class="gc-auth-card">
-    <div class="gc-auth-header">
-      <div class="gc-auth-logo">
+<div class="gc-login-page">
+
+  <div class="gc-left-panel">
+
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+
+    <div class="gc-brand">
+
+      <div class="gc-brand-icon">
         <i class="fa-solid fa-graduation-cap"></i>
       </div>
-      <h2>Sign in</h2>
-      <p>to continue to EduTrack Classroom</p>
-    </div>
 
-    <div class="gc-auth-tabs">
-      <button class="gc-auth-tab" [class.active]="isLoginTab" (click)="switchTab(true)">Sign In</button>
-      <button class="gc-auth-tab" [class.active]="!isLoginTab" (click)="switchTab(false)">Create Account</button>
-    </div>
+      <h1>EduTrack</h1>
+      <h3>Project Management Portal</h3>
 
-    <div class="gc-auth-error" *ngIf="errorMessage">
-      <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
-    </div>
+      <p>
+        A collaborative workspace where students and faculty manage projects,
+        assignments, milestones and submissions in one unified platform.
+      </p>
 
-    <form (ngSubmit)="onLogin()" *ngIf="isLoginTab">
-      <div class="gc-form-field">
-        <input type="email" [(ngModel)]="loginEmail" name="loginEmail" placeholder="Email address" required>
-      </div>
-      <div class="gc-form-field">
-        <input type="password" [(ngModel)]="loginPassword" name="loginPassword" placeholder="Password" required>
-      </div>
-      <button type="submit" class="gc-btn gc-btn-primary gc-btn-block">
-        Next <i class="fa-solid fa-arrow-right"></i>
-      </button>
+      <div class="gc-feature-list">
 
-      <div class="gc-demo-box">
-        <span class="gc-demo-label">Demo Test Accounts:</span>
-        <div class="gc-demo-chips">
-          <button type="button" class="gc-chip" (click)="fillDemo('anurag@edutrack.edu', 'student123')">
-            <i class="fa-solid fa-user-graduate"></i> Anurag (PBL3 + Web)
-          </button>
-          <button type="button" class="gc-chip" (click)="fillDemo('rahul@edutrack.edu', 'student123')">
-            <i class="fa-solid fa-user-graduate"></i> Rahul (Web Only)
-          </button>
-          <button type="button" class="gc-chip" (click)="fillDemo('priya@edutrack.edu', 'student123')">
-            <i class="fa-solid fa-user-graduate"></i> Priya (PBL3 Only)
-          </button>
-          <button type="button" class="gc-chip gc-chip-teacher" (click)="fillDemo('sharma@edutrack.edu', 'prof123')">
-            <i class="fa-solid fa-chalkboard-user"></i> Prof. Sharma (PBL3)
-          </button>
-          <button type="button" class="gc-chip gc-chip-teacher" (click)="fillDemo('prof.verma@edutrack.edu', 'prof123')">
-            <i class="fa-solid fa-chalkboard-user"></i> Dr. Verma (Web Dev)
-          </button>
+        <div class="gc-feature">
+          <i class="fa-solid fa-diagram-project"></i>
+          <span>Track Project Milestones</span>
         </div>
-      </div>
-    </form>
 
-    <form (ngSubmit)="onRegister()" *ngIf="!isLoginTab">
-      <div class="gc-form-field">
-        <input type="text" [(ngModel)]="regFullName" name="regFullName" placeholder="Full name" required>
+        <div class="gc-feature">
+          <i class="fa-solid fa-users"></i>
+          <span>Faculty & Student Collaboration</span>
+        </div>
+
+        <div class="gc-feature">
+          <i class="fa-solid fa-ranking-star"></i>
+          <span>Leaderboard & Performance Analytics</span>
+        </div>
+
+        <div class="gc-feature">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Assignment Submission Portal</span>
+        </div>
+
       </div>
-      <div class="gc-form-field">
-        <input type="email" [(ngModel)]="regEmail" name="regEmail" placeholder="Email address" required>
-      </div>
-      <div class="gc-form-field">
-        <input type="password" [(ngModel)]="regPassword" name="regPassword" placeholder="Create password" required>
-      </div>
-      <div class="gc-form-field">
-        <select [(ngModel)]="regRole" name="regRole" required>
-          <option value="STUDENT">Student</option>
-          <option value="INSTRUCTOR">Teacher / Instructor</option>
-          <option value="ADMIN">Administrator</option>
-        </select>
-      </div>
-      <button type="submit" class="gc-btn gc-btn-primary gc-btn-block">
-        Create account
-      </button>
-    </form>
+
+    </div>
+
   </div>
+
+  <div class="gc-right-panel">
+
+    <button
+      class="gc-theme-toggle"
+      type="button"
+      (click)="toggleTheme()">
+
+      <i
+        class="fa-solid"
+        [ngClass]="themeService.isDark() ? 'fa-sun' : 'fa-moon'">
+      </i>
+
+      {{ themeService.isDark() ? 'Light Mode' : 'Dark Mode' }}
+
+    </button>
+
+    <div class="gc-auth-card">
+
+      <!-- Auth Tab Selector -->
+      <div class="gc-auth-tabs">
+        <button
+          type="button"
+          class="gc-tab-btn"
+          [class.active]="isLoginTab"
+          (click)="switchTab(true)">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Sign In
+        </button>
+        <button
+          type="button"
+          class="gc-tab-btn"
+          [class.active]="!isLoginTab"
+          (click)="switchTab(false)">
+          <i class="fa-solid fa-user-plus"></i>
+          Create Account
+        </button>
+      </div>
+
+      <div class="gc-auth-header">
+        <h2>{{ isLoginTab ? 'Welcome Back' : 'Create an Account' }}</h2>
+        <p>{{ isLoginTab ? 'Sign in to access your EduTrack dashboard' : 'Join EduTrack as a student or instructor' }}</p>
+      </div>
+
+      <div class="gc-auth-error" *ngIf="errorMessage">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Sign In Form -->
+      <form *ngIf="isLoginTab" (ngSubmit)="onLogin()">
+
+        <div class="gc-form-field">
+          <label>Email Address</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-envelope gc-input-icon"></i>
+            <input
+              type="email"
+              name="loginEmail"
+              [(ngModel)]="loginEmail"
+              placeholder="Enter your email"
+              required>
+          </div>
+        </div>
+
+        <div class="gc-form-field">
+          <label>Password</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-lock gc-input-icon"></i>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              name="loginPassword"
+              [(ngModel)]="loginPassword"
+              placeholder="Enter your password"
+              required>
+            <button
+              type="button"
+              class="gc-pwd-toggle-btn"
+              (click)="togglePasswordVisibility()"
+              title="Toggle password visibility">
+              <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="gc-btn-primary" type="submit" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">
+            Sign In
+            <i class="fa-solid fa-arrow-right"></i>
+          </span>
+          <span *ngIf="isSubmitting">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            Signing In...
+          </span>
+        </button>
+
+      </form>
+
+      <!-- Register Form -->
+      <form *ngIf="!isLoginTab" (ngSubmit)="onRegister()">
+
+        <div class="gc-form-field">
+          <label>Full Name</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-user gc-input-icon"></i>
+            <input
+              type="text"
+              name="regFullName"
+              [(ngModel)]="regFullName"
+              placeholder="e.g. Anurag Sharma"
+              required>
+          </div>
+        </div>
+
+        <div class="gc-form-field">
+          <label>Email Address</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-envelope gc-input-icon"></i>
+            <input
+              type="email"
+              name="regEmail"
+              [(ngModel)]="regEmail"
+              placeholder="student@edutrack.edu"
+              required>
+          </div>
+        </div>
+
+        <div class="gc-form-field">
+          <label>Password</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-lock gc-input-icon"></i>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              name="regPassword"
+              [(ngModel)]="regPassword"
+              placeholder="Create a strong password"
+              required>
+            <button
+              type="button"
+              class="gc-pwd-toggle-btn"
+              (click)="togglePasswordVisibility()"
+              title="Toggle password visibility">
+              <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="gc-form-field">
+          <label>Account Type</label>
+          <div class="gc-role-selector">
+            <button
+              type="button"
+              class="gc-role-btn"
+              [class.active]="regRole === 'STUDENT'"
+              (click)="setRegRole('STUDENT')">
+              <i class="fa-solid fa-user-graduate"></i>
+              Student
+            </button>
+            <button
+              type="button"
+              class="gc-role-btn"
+              [class.active]="regRole === 'INSTRUCTOR'"
+              (click)="setRegRole('INSTRUCTOR')">
+              <i class="fa-solid fa-chalkboard-user"></i>
+              Instructor / Teacher
+            </button>
+          </div>
+        </div>
+
+        <button class="gc-btn-primary" type="submit" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">
+            Create Account
+            <i class="fa-solid fa-arrow-right"></i>
+          </span>
+          <span *ngIf="isSubmitting">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            Creating Account...
+          </span>
+        </button>
+
+      </form>
+
+      <div class="gc-divider">
+        <span>Quick Demo Login</span>
+      </div>
+
+      <div class="gc-demo-grid">
+
+        <button
+          class="gc-demo-card"
+          [class.active]="loginEmail === 'anurag@edutrack.edu'"
+          type="button"
+          (click)="fillDemo('anurag@edutrack.edu','student123')">
+
+          <i class="fa-solid fa-user-graduate"></i>
+
+          <div>
+            <strong>Anurag</strong>
+            <small>Student</small>
+          </div>
+
+        </button>
+
+        <button
+          class="gc-demo-card"
+          [class.active]="loginEmail === 'rahul@edutrack.edu'"
+          type="button"
+          (click)="fillDemo('rahul@edutrack.edu','student123')">
+
+          <i class="fa-solid fa-user-graduate"></i>
+
+          <div>
+            <strong>Rahul</strong>
+            <small>Student</small>
+          </div>
+
+        </button>
+
+        <button
+          class="gc-demo-card"
+          [class.active]="loginEmail === 'priya@edutrack.edu'"
+          type="button"
+          (click)="fillDemo('priya@edutrack.edu','student123')">
+
+          <i class="fa-solid fa-user-graduate"></i>
+
+          <div>
+            <strong>Priya</strong>
+            <small>Student</small>
+          </div>
+
+        </button>
+
+        <button
+          class="gc-demo-card"
+          [class.active]="loginEmail === 'sharma@edutrack.edu'"
+          type="button"
+          (click)="fillDemo('sharma@edutrack.edu','prof123')">
+
+          <i class="fa-solid fa-chalkboard-user"></i>
+
+          <div>
+            <strong>Prof. Sharma</strong>
+            <small>Instructor</small>
+          </div>
+
+        </button>
+
+        <button
+          class="gc-demo-card"
+          [class.active]="loginEmail === 'prof.verma@edutrack.edu'"
+          type="button"
+          (click)="fillDemo('prof.verma@edutrack.edu','prof123')">
+
+          <i class="fa-solid fa-chalkboard-user"></i>
+
+          <div>
+            <strong>Dr. Verma</strong>
+            <small>Instructor</small>
+          </div>
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
