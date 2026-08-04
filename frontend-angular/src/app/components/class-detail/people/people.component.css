@@ -1,69 +1,454 @@
-.gc-people-container {
-  max-width: 800px;
-  margin: 0 auto;
+/* =====================================================
+   PEOPLE CONTAINER
+===================================================== */
+
+.gc-people-container{
+    max-width:1000px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    gap:2rem;
+    padding-bottom:2rem;
 }
 
-.gc-people-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 2px solid var(--gc-primary);
-  padding-bottom: 0.75rem;
-  margin-bottom: 1rem;
+
+/* =====================================================
+   SECTION CARD
+===================================================== */
+
+.gc-people-section{
+
+    background:var(--gc-card);
+
+    border:1px solid rgba(148,163,184,.25);
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 10px 30px rgba(15,23,42,.06);
+
 }
 
-.gc-people-header h2 {
-  font-size: 1.75rem;
-  font-weight: 400;
-  color: var(--gc-primary);
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.gc-people-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:1.6rem 2rem;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(59,130,246,.08),
+        rgba(99,102,241,.04)
+    );
+
+    border-bottom:
+    1px solid rgba(148,163,184,.18);
+
 }
 
-.gc-people-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+
+.gc-people-header h2{
+
+    margin:0;
+
+    font-size:1.35rem;
+
+    font-weight:750;
+
+    letter-spacing:-.02em;
+
+    color:var(--gc-text-main);
+
 }
 
-.gc-people-count {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--gc-text-sub);
+
+
+.gc-people-count{
+
+    padding:.35rem .8rem;
+
+    border-radius:999px;
+
+    background:
+    rgba(59,130,246,.10);
+
+    color:
+    var(--gc-primary);
+
+    font-size:.8rem;
+
+    font-weight:600;
+
 }
 
-.gc-people-list {
-  display: flex;
-  flex-direction: column;
+
+
+.gc-people-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:1rem;
+
 }
 
-.gc-person-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.9rem 0;
-  border-bottom: 1px solid var(--gc-border);
+
+
+/* =====================================================
+   LIST
+===================================================== */
+
+
+.gc-people-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    padding:.5rem 0;
+
 }
 
-.gc-avatar-student {
-  background: var(--gc-text-sub);
+
+
+/* =====================================================
+   PERSON ROW
+===================================================== */
+
+
+.gc-person-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:1.2rem;
+
+    margin:.35rem 1rem;
+
+    padding:1rem 1.2rem;
+
+    border-radius:16px;
+
+    transition:.25s ease;
+
 }
 
-.gc-person-info {
-  display: flex;
-  flex-direction: column;
+
+
+.gc-person-item:hover{
+
+    background:
+    rgba(59,130,246,.06);
+
+    transform:translateX(4px);
+
 }
 
-.gc-person-name {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--gc-text-main);
+
+
+.gc-person-item:last-child{
+
+    border-bottom:none;
+
 }
 
-.gc-person-email {
-  font-size: 0.78rem;
-  color: var(--gc-text-sub);
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+
+.gc-avatar-circle{
+
+    width:54px;
+
+    height:54px;
+
+    border-radius:50%;
+
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #4f46e5,
+        #2563eb
+    );
+
+
+    color:white;
+
+    font-size:1.1rem;
+
+    font-weight:700;
+
+
+    box-shadow:
+
+    0 8px 18px rgba(37,99,235,.25);
+
 }
 
-.gc-empty-people {
-  padding: 2rem 0;
-  color: var(--gc-text-sub);
+
+
+.gc-avatar-student{
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #0891b2,
+        #2563eb
+    );
+
+
+}
+
+
+
+/* =====================================================
+   INFO
+===================================================== */
+
+
+.gc-person-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:.25rem;
+
+}
+
+
+.gc-person-name{
+
+    font-size:1rem;
+
+    font-weight:650;
+
+    color:var(--gc-text-main);
+
+}
+
+
+
+.gc-person-role{
+
+    display:inline-flex;
+
+    width:max-content;
+
+    padding:.2rem .65rem;
+
+    border-radius:999px;
+
+    background:
+    rgba(99,102,241,.12);
+
+    color:#6366f1;
+
+    font-size:.72rem;
+
+    font-weight:600;
+
+}
+
+
+
+.gc-person-email{
+
+    font-size:.82rem;
+
+    color:var(--gc-text-sub);
+
+}
+
+
+
+
+/* =====================================================
+   INVITE BUTTON
+===================================================== */
+
+
+.gc-btn-flat{
+
+
+    display:flex;
+
+    align-items:center;
+
+    gap:.45rem;
+
+
+    padding:.65rem 1.1rem;
+
+
+    border-radius:14px;
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+
+    color:white;
+
+
+    font-weight:600;
+
+
+    font-size:.85rem;
+
+
+    border:none;
+
+
+    cursor:pointer;
+
+
+    box-shadow:
+
+    0 8px 20px rgba(37,99,235,.22);
+
+
+    transition:.25s;
+
+}
+
+
+
+.gc-btn-flat:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+
+    0 12px 25px rgba(37,99,235,.35);
+
+}
+
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+
+.gc-empty-people{
+
+    padding:4rem 2rem;
+
+    text-align:center;
+
+    color:var(--gc-text-sub);
+
+}
+
+
+
+.gc-empty-people i{
+
+    font-size:3rem;
+
+    margin-bottom:1rem;
+
+    color:var(--gc-primary);
+
+}
+
+
+
+.gc-empty-people h3{
+
+    margin:.5rem 0;
+
+    color:var(--gc-text-main);
+
+}
+
+
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+
+@media(max-width:768px){
+
+
+.gc-people-header{
+
+    padding:1.2rem;
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:1rem;
+
+}
+
+
+
+.gc-people-right{
+
+    width:100%;
+
+    justify-content:space-between;
+
+}
+
+
+
+.gc-person-item{
+
+    margin:.3rem .6rem;
+
+    padding:.9rem;
+
+}
+
+
+
+.gc-avatar-circle{
+
+    width:45px;
+
+    height:45px;
+
+}
+
+
+
 }

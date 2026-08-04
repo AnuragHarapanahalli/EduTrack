@@ -1,8 +1,15 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
+
 import { ApiService } from '../../../services/api.service';
 import { AuthService } from '../../../services/auth.service';
 import { ViewStateService } from '../../../services/view-state.service';
+
 import { Milestone } from '../../../models/milestone.model';
 import { Submission } from '../../../models/submission.model';
 
@@ -11,12 +18,16 @@ import { Submission } from '../../../models/submission.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './stream.component.html',
-  styleUrl: './stream.component.css'
+  styleUrls: ['./stream.component.css']
 })
 export class StreamComponent implements OnInit {
+
   milestones: Milestone[] = [];
   upcomingMilestones: Milestone[] = [];
+
   studentSubmissionsMap: { [milestoneId: number]: Submission } = {};
+
+  loading = true;
 
   constructor(
     private apiService: ApiService,
@@ -25,43 +36,95 @@ export class StreamComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadStreamData();
   }
 
-  loadStreamData() {
-    const currentSubject = this.viewStateService.currentSubject();
-    if (!currentSubject) return;
+  loadStreamData(): void {
 
-    this.apiService.getMilestonesBySubject(currentSubject.id).subscribe({
-      next: (ms) => {
-        this.milestones = ms;
-        this.upcomingMilestones = ms.filter(m => !m.isOverdue).slice(0, 3);
-        this.cdr.markForCheck();
+    const subject = this.viewStateService.currentSubject();
+
+    if (!subject) {
+      this.loading = false;
+      return;
+    }
+
+    this.loading = true;
+
+    this.apiService.getMilestonesBySubject(subject.id).subscribe({
+
+      next: (milestones) => {
+
+        this.milestones = milestones;
+
+        this.upcomingMilestones = milestones
+          .filter(m => !m.isOverdue)
+          .sort((a, b) =>
+            new Date(a.deadline).getTime() -
+            new Date(b.deadline).getTime()
+          )
+          .slice(0, 3);
+
+        this.loading = false;
+
+        this.cdr.detectChanges();
+
       },
-      error: (err) => {
-        console.error('Error loading stream data:', err);
-        this.cdr.markForCheck();
+
+      error: err => {
+
+        console.error(err);
+
+        this.loading = false;
+
+        this.cdr.detectChanges();
+
       }
+
     });
 
     const user = this.authService.currentUser();
-    if (user && user.role === 'STUDENT') {
+
+    if (user?.role === 'STUDENT') {
+
       this.apiService.getSubmissionsByStudent(user.id).subscribe({
-        next: (subs) => {
+
+        next: submissions => {
+
           this.studentSubmissionsMap = {};
-          subs.forEach(s => this.studentSubmissionsMap[s.milestoneId] = s);
-          this.cdr.markForCheck();
+
+          submissions.forEach(sub => {
+
+            this.studentSubmissionsMap[sub.milestoneId] = sub;
+
+          });
+
+          this.cdr.detectChanges();
+
         },
-        error: (err) => {
-          console.error('Error loading student submissions:', err);
-          this.cdr.markForCheck();
+
+        error: err => {
+
+          console.error(err);
+
         }
+
       });
+
     }
+
   }
 
-  goToClasswork() {
-    this.viewStateService.setClassTab('classwork');
+  goToClasswork(): void {
+
+    this.viewStateService.setCurrentTab('CLASSWORK');
+
   }
+
+  getSubmission(id: number): Submission | undefined {
+
+    return this.studentSubmissionsMap[id];
+
+  }
+
 }

@@ -1,48 +1,232 @@
-<div class="gc-classes-container">
-  <div class="gc-classes-header">
-    <h1 class="gc-classes-title">Classes</h1>
-    <button *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'" class="gc-btn gc-btn-primary" (click)="triggerCreateClass()">
-      <i class="fa-solid fa-plus"></i> Create class
+<div class="gc-dashboard">
+
+  <!-- Welcome Section -->
+  <div class="gc-dashboard-header">
+
+    <div>
+
+      <h1>
+        Welcome,
+        {{ authService.currentUser()?.fullName }} 👋
+      </h1>
+
+      <p>
+        {{
+          authService.currentUser()?.role === 'INSTRUCTOR'
+            ? 'Manage your classes, assignments and students.'
+            : 'Continue your learning journey.'
+        }}
+      </p>
+
+    </div>
+
+    <button
+      *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'"
+      class="gc-btn gc-btn-primary"
+      (click)="triggerCreateClass()">
+
+      <i class="fa-solid fa-plus"></i>
+
+      Create Class
+
     </button>
+
   </div>
+
+  <!-- Stats -->
+
+  <div class="gc-stats">
+
+  <div class="gc-stat-card">
+
+    <i class="fa-solid fa-chalkboard"></i>
+
+    <div>
+      <h3>
+        {{viewStateService.userSubjects().length}}
+      </h3>
+
+      <p>Active Classes</p>
+    </div>
+
+  </div>
+
+
+  <div class="gc-stat-card">
+
+    <i class="fa-solid fa-users"></i>
+
+    <div>
+      <h3>
+        {{getTotalStudents()}}
+      </h3>
+
+      <p>Total Students</p>
+    </div>
+
+  </div>
+
+
+  <div class="gc-stat-card">
+
+    <i class="fa-solid fa-list-check"></i>
+
+    <div>
+      <h3>
+        {{getTotalMilestones()}}
+      </h3>
+
+      <p>Assignments Created</p>
+    </div>
+
+  </div>
+
+
+</div>
+
+  <!-- Class Cards -->
 
   <div class="gc-classes-grid">
-    <div *ngFor="let subj of viewStateService.userSubjects(); let i = index" class="gc-class-card" (click)="selectClass(subj)">
-      <!-- Google Classroom Style Class Header Banner -->
-      <div class="gc-card-banner" [style.background]="getBannerGradient(i)">
-        <div class="gc-banner-title-group">
-          <h3 class="gc-class-card-name">{{ subj.name }}</h3>
-          <p class="gc-class-card-code">{{ subj.code }}</p>
+
+    <div
+      *ngFor="let subj of viewStateService.userSubjects(); let i=index"
+      class="gc-class-card"
+      (click)="selectClass(subj)">
+
+      <div
+        class="gc-card-banner"
+        [style.background]="getBannerGradient(i)">
+
+        <div class="gc-banner-overlay">
+
+          <div>
+
+            <h2>{{subj.name}}</h2>
+
+            <p>{{subj.code}}</p>
+
+          </div>
+
+          <div class="gc-avatar">
+
+            {{subj.code?.charAt(0)}}
+
+          </div>
+
         </div>
-        <p class="gc-class-card-teacher">
-          <i class="fa-solid fa-chalkboard-user"></i> {{ subj.instructorName || 'Faculty' }}
-        </p>
+
       </div>
 
-      <div class="gc-card-content">
-        <p class="gc-class-card-desc">
-          {{ subj.description || 'No course overview provided.' }}
+      <div class="gc-card-body">
+
+        <p class="gc-description">
+
+          {{subj.description || 'No course description available.'}}
+
         </p>
-        <div class="gc-class-card-meta">
-          <span><i class="fa-solid fa-flag"></i> {{ subj.totalMilestones || 0 }} Milestones</span>
-          <span><i class="fa-solid fa-layer-group"></i> {{ subj.batchName || 'Batch' }}</span>
+        <div class="gc-owner-badge"
+ *ngIf="authService.currentUser()?.role==='INSTRUCTOR'">
+
+<i class="fa-solid fa-crown"></i>
+
+Your Class
+
+</div>
+        <div class="gc-info">
+
+          <span>
+
+            <i class="fa-solid fa-chalkboard-user"></i>
+
+            {{subj.instructorName || 'Faculty'}}
+
+          </span>
+
+          <span>
+
+            <i class="fa-solid fa-layer-group"></i>
+
+            {{subj.batchName || 'Batch'}}
+
+          </span>
+
         </div>
+
+        <div class="gc-progress">
+
+          <div
+            class="gc-progress-fill"
+            [style.width.%]="(subj.totalMilestones || 0)*10">
+          </div>
+
+        </div>
+
+        <div class="gc-bottom">
+
+          <div class="gc-bottom">
+
+<span>
+<i class="fa-solid fa-list-check"></i>
+{{subj.totalMilestones || 0}} Assignments
+</span>
+
+
+<div class="gc-actions">
+
+<button
+class="gc-secondary-btn"
+(click)="$event.stopPropagation()">
+
+<i class="fa-solid fa-users"></i>
+
+Students
+
+</button>
+
+
+<button
+class="gc-open-btn"
+(click)="$event.stopPropagation();selectClass(subj)">
+
+Manage →
+
+</button>
+
+</div>
+
+</div>
+
+        </div>
+
       </div>
 
-      <div class="gc-card-actions">
-        <button class="gc-btn gc-btn-flat" (click)="$event.stopPropagation(); selectClass(subj)">
-          Open Classwork <i class="fa-solid fa-arrow-right"></i>
-        </button>
-      </div>
     </div>
 
-    <div class="gc-empty-classes-card gc-card" *ngIf="viewStateService.userSubjects().length === 0">
-      <i class="fa-solid fa-graduation-cap gc-empty-icon"></i>
-      <h3>No classes found</h3>
-      <p>You are not currently enrolled in or teaching any classes.</p>
-      <button *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'" class="gc-btn gc-btn-primary" (click)="triggerCreateClass()">
-        <i class="fa-solid fa-plus"></i> Create Your First Class
+    <div
+      class="gc-empty-card"
+      *ngIf="viewStateService.userSubjects().length===0">
+
+      <i class="fa-solid fa-graduation-cap"></i>
+
+      <h2>No Classes Yet</h2>
+
+      <p>
+
+        You aren't enrolled in any class.
+
+      </p>
+
+      <button
+        *ngIf="authService.currentUser()?.role==='INSTRUCTOR'"
+        class="gc-btn gc-btn-primary"
+        (click)="triggerCreateClass()">
+
+        Create Class
+
       </button>
+
     </div>
+
   </div>
+
 </div>

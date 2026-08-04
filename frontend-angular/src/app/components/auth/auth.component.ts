@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { ViewStateService } from '../../services/view-state.service';
+import { ThemeService } from '../../services/theme.service';
+
 import { Role } from '../../models/auth.model';
 
 @Component({
@@ -14,72 +17,66 @@ import { Role } from '../../models/auth.model';
   styleUrl: './auth.component.css'
 })
 export class AuthComponent {
-  isLoginTab = true;
+
   loginEmail = '';
   loginPassword = '';
-
-  regFullName = '';
-  regEmail = '';
-  regPassword = '';
-  regRole: Role = 'STUDENT';
-
   errorMessage = '';
 
   constructor(
-    private apiService: ApiService,
     private authService: AuthService,
-    private viewStateService: ViewStateService
+    private apiService: ApiService,
+    public viewStateService: ViewStateService,
+    public themeService: ThemeService
   ) {}
 
-  switchTab(isLogin: boolean) {
-    this.isLoginTab = isLogin;
-    this.errorMessage = '';
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 
-  fillDemo(email: string, pass: string) {
+  fillDemo(email: string, password: string) {
     this.loginEmail = email;
-    this.loginPassword = pass;
+    this.loginPassword = password;
   }
 
   onLogin() {
+
     this.errorMessage = '';
+
     this.apiService.login(this.loginEmail, this.loginPassword).subscribe({
-      next: (res) => {
-        this.authService.setCurrentUser(res.user, res.token);
-        this.loadUserSubjects(res.user.id, res.user.role);
+
+      next: ({ user, token }) => {
+
+        this.authService.setCurrentUser(user, token);
+
+        const request =
+          user.role === 'INSTRUCTOR'
+            ? this.apiService.getSubjectsForInstructor(user.id)
+            : this.apiService.getSubjectsForStudent(user.id);
+
+        request.subscribe({
+
+          next: subjects => {
+
+            this.viewStateService.setUserSubjects(subjects);
+            this.viewStateService.setView('CLASSES_HOME');
+
+          },
+
+          error: () => this.viewStateService.setView('CLASSES_HOME')
+
+        });
+
       },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Login failed. Check server status.';
+
+      error: err => {
+
+        this.errorMessage =
+          err.error?.message || 'Login failed. Check server status.';
+
       }
+
     });
+
   }
 
-  onRegister() {
-    this.errorMessage = '';
-    this.apiService.register(this.regFullName, this.regEmail, this.regPassword, this.regRole, 1).subscribe({
-      next: (res) => {
-        this.authService.setCurrentUser(res.user, res.token);
-        this.loadUserSubjects(res.user.id, res.user.role);
-      },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Registration failed.';
-      }
-    });
-  }
-
-  private loadUserSubjects(userId: number, role: Role) {
-    const stream = (role === 'INSTRUCTOR')
-      ? this.apiService.getSubjectsForInstructor(userId)
-      : this.apiService.getSubjectsForStudent(userId);
-
-    stream.subscribe({
-      next: (subjects) => {
-        this.viewStateService.setUserSubjects(subjects);
-        this.viewStateService.setView('CLASSES_HOME');
-      },
-      error: () => {
-        this.viewStateService.setView('CLASSES_HOME');
-      }
-    });
-  }
 }
