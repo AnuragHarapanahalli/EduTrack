@@ -25,29 +25,24 @@ export class ThemeService {
 
   setTheme(theme: ThemeMode) {
     this.currentTheme.set(theme);
-
     localStorage.setItem('edutrack_theme', theme);
 
     document.body.classList.remove('light-theme', 'dark-theme');
+    document.documentElement.classList.remove('light-theme', 'dark-theme');
 
-    document.body.classList.add(
-      theme === 'dark'
-        ? 'dark-theme'
-        : 'light-theme'
-    );
+    const themeClass = theme === 'dark' ? 'dark-theme' : 'light-theme';
+    document.body.classList.add(themeClass);
+    document.documentElement.classList.add(themeClass);
+    document.documentElement.setAttribute('data-theme', theme);
   }
 
   toggleTheme() {
-
-  alert("Theme Service Called");
-
-  if (this.currentTheme() === 'light') {
-    this.setTheme('dark');
-  } else {
-    this.setTheme('light');
+    if (this.currentTheme() === 'light') {
+      this.setTheme('dark');
+    } else {
+      this.setTheme('light');
+    }
   }
-
-}
 
   isDark() {
     return this.currentTheme() === 'dark';

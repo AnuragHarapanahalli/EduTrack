@@ -14,7 +14,7 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
       <div class="gc-modal-card" style="max-width: 560px;" (click)="$event.stopPropagation()">
         <div class="gc-modal-header">
           <h3>Submit Assignment Work</h3>
-          <button class="gc-close-btn" (click)="close()">&times;</button>
+          <button type="button" class="gc-close-btn" (click)="close()">&times;</button>
         </div>
         <form (ngSubmit)="onSubmit()">
           <div class="gc-modal-body" style="max-height: 75vh; overflow-y: auto;">

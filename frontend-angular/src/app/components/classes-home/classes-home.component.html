@@ -162,40 +162,25 @@ Your Class
         </div>
 
         <div class="gc-bottom">
+          <span>
+            <i class="fa-solid fa-list-check"></i>
+            {{subj.totalMilestones || 0}} Assignments
+          </span>
 
-          <div class="gc-bottom">
+          <div class="gc-actions">
+            <button
+              class="gc-secondary-btn"
+              (click)="$event.stopPropagation(); selectClassAndTab(subj, 'PEOPLE')">
+              <i class="fa-solid fa-users"></i>
+              Students
+            </button>
 
-<span>
-<i class="fa-solid fa-list-check"></i>
-{{subj.totalMilestones || 0}} Assignments
-</span>
-
-
-<div class="gc-actions">
-
-<button
-class="gc-secondary-btn"
-(click)="$event.stopPropagation()">
-
-<i class="fa-solid fa-users"></i>
-
-Students
-
-</button>
-
-
-<button
-class="gc-open-btn"
-(click)="$event.stopPropagation();selectClass(subj)">
-
-Manage →
-
-</button>
-
-</div>
-
-</div>
-
+            <button
+              class="gc-open-btn"
+              (click)="$event.stopPropagation(); selectClass(subj)">
+              {{ authService.currentUser()?.role === 'INSTRUCTOR' ? 'Manage →' : 'View →' }}
+            </button>
+          </div>
         </div>
 
       </div>

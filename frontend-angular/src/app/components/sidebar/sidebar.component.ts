@@ -16,7 +16,9 @@ export class SidebarComponent {
   @Output() openCreateSubjectModal = new EventEmitter<void>();
   @Output() openAddStudentsModal = new EventEmitter<void>();
 
-  sidebarOpen = true;
+  get isSidebarOpen(): boolean {
+    return this.viewStateService.isSidebarOpen();
+  }
 
   constructor(
     public authService: AuthService,
@@ -28,15 +30,15 @@ export class SidebarComponent {
   }
 
   get subjects(): Subject[] {
-  return this.viewStateService.subjects();
-}
+    return this.viewStateService.subjects();
+  }
 
-get selectedSubject(): Subject | null {
-  return this.viewStateService.currentSubject();
-}
+  get selectedSubject(): Subject | null {
+    return this.viewStateService.currentSubject();
+  }
 
   toggleSidebar(): void {
-    this.sidebarOpen = !this.sidebarOpen;
+    this.viewStateService.toggleSidebar();
   }
 
   selectSubject(subject: Subject): void {
@@ -58,6 +60,8 @@ get selectedSubject(): Subject | null {
 
   logout(): void {
     this.authService.logout();
+    this.viewStateService.selectSubject(null);
+    this.viewStateService.setView('AUTH');
   }
 
   getInitials(name: string): string {

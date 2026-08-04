@@ -59,6 +59,7 @@ import { CreateSubjectRequest } from '../../models/subject.model';
 
 
       <button
+        type="button"
         class="gc-modal-close"
         (click)="close()">
 

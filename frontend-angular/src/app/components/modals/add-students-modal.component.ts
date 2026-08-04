@@ -59,6 +59,7 @@ Add students to your classroom
 
 
 <button
+type="button"
 class="gc-modal-close"
 (click)="close()">
 
@@ -791,25 +792,51 @@ this.selectedFile=input.files[0];
 
 
 
-processCsv(){
+  processCsv() {
+    if (!this.selectedFile) {
+      alert("Please select a CSV file first.");
+      return;
+    }
 
-if(!this.selectedFile){
+    const subject = this.viewStateService.currentSubject();
+    if (!subject) {
+      alert("No active class selected.");
+      return;
+    }
 
-alert("Select CSV file");
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const text = e.target.result as string;
+      const lines = text.split(/\r\n|\n/);
+      let enrolledCount = 0;
+      const promises: any[] = [];
 
-return;
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line || i === 0 && line.toLowerCase().includes('email')) {
+          continue; // Skip header or empty line
+        }
 
-}
+        const parts = line.split(',');
+        if (parts.length >= 2) {
+          const fullName = parts[0].trim();
+          const email = parts[1].trim();
+          if (fullName && email) {
+            promises.push(
+              this.apiService.addStudentToSubjectManual(subject.id, fullName, email).toPromise()
+            );
+            enrolledCount++;
+          }
+        }
+      }
 
+      Promise.allSettled(promises).then(() => {
+        alert(`Successfully processed CSV. Added ${enrolledCount} students.`);
+        this.studentsAdded.emit();
+        this.close();
+      });
+    };
 
-alert("CSV import started");
-
-this.studentsAdded.emit();
-
-this.close();
-
-}
-
-
-
+    reader.readAsText(this.selectedFile);
+  }
 }

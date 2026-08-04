@@ -4,7 +4,8 @@ import {
   Output,
   EventEmitter,
   ChangeDetectorRef,
-  OnDestroy
+  OnDestroy,
+  effect
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -25,109 +26,57 @@ import {
   Subject as SubjectModel
 } from '../../../models/subject.model';
 
-
-
 export interface MilestoneUI extends Milestone {
-
   isLocked: boolean;
-
   isDueSoon?: boolean;
-
   daysRemainingText?: string;
-
   deliverablesList: DeliverableItem[];
-
 }
-
-
 
 export interface StudentSubjectRow {
-
   subject: SubjectModel;
-
   milestones: MilestoneUI[];
-
 }
 
-
-
 @Component({
-
   selector: 'app-classwork',
-
   standalone: true,
-
   imports: [
     CommonModule
   ],
-
   templateUrl: './classwork.component.html',
-
   styleUrls: ['./classwork.component.css']
-
 })
+export class ClassworkComponent implements OnInit, OnDestroy {
 
-export class ClassworkComponent
-implements OnInit, OnDestroy {
-
-
-
-  @Output()
-  openCreateMilestoneModal =
-    new EventEmitter<void>();
-
-
-  @Output()
-  openEditMilestoneModal =
-    new EventEmitter<Milestone>();
-
-
-  @Output()
-  openUploadModal =
-    new EventEmitter<Milestone>();
-
-
-  @Output()
-  openRosterModal =
-    new EventEmitter<Milestone>();
-
-
+  @Output() openCreateMilestoneModal = new EventEmitter<void>();
+  @Output() openEditMilestoneModal = new EventEmitter<Milestone>();
+  @Output() openUploadModal = new EventEmitter<Milestone>();
+  @Output() openRosterModal = new EventEmitter<Milestone>();
 
   loading = true;
-
-
   teacherMilestones: MilestoneUI[] = [];
+  expandedMilestoneId: number | null = null;
+  studentSubjectRows: StudentSubjectRow[] = [];
+  heroMilestone: MilestoneUI | null = null;
+  heroSubject: SubjectModel | null = null;
 
-
-  expandedMilestoneId:number|null = null;
-
-
-  studentSubjectRows:StudentSubjectRow[]=[];
-
-
-  heroMilestone:MilestoneUI|null=null;
-
-
-  heroSubject:SubjectModel|null=null;
-
-
-
-  private destroy$ =
-    new Subject<void>();
-
-
+  private destroy$ = new Subject<void>();
 
   constructor(
-
-    private apiService:ApiService,
-
-    public authService:AuthService,
-
-    public viewStateService:ViewStateService,
-
-    private cdr:ChangeDetectorRef
-
-  ){}
+    private apiService: ApiService,
+    public authService: AuthService,
+    public viewStateService: ViewStateService,
+    private cdr: ChangeDetectorRef
+  ) {
+    effect(() => {
+      const subject = this.viewStateService.currentSubject();
+      const user = this.authService.currentUser();
+      if (user && user.role === 'INSTRUCTOR' && subject) {
+        this.loadTeacherClasswork();
+      }
+    });
+  }
 
 
 

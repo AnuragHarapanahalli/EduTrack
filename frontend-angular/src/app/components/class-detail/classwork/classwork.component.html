@@ -96,42 +96,25 @@
 
 
             <div>
-
-
                 <button
                 *ngIf="!heroMilestone.isLocked &&
                 heroMilestone.userSubmission?.status !== 'APPROVED'"
-                class="gc-btn gc-btn-primary"
+                class="gc-btn-turn-in"
                 (click)="triggerUpload(heroMilestone)">
-
-
-                    <i class="fa-solid fa-upload"></i>
-
-
+                    <i class="fa-solid" [ngClass]="heroMilestone.userSubmission ? 'fa-rotate' : 'fa-cloud-arrow-up'"></i>
                     {{
                     heroMilestone.userSubmission
                     ? 'Resubmit Work'
                     : 'Turn In Work'
                     }}
-
-
                 </button>
-
-
 
                 <span
                 *ngIf="heroMilestone.userSubmission?.status==='APPROVED'"
                 class="gc-badge gc-badge-success">
-
-
                     <i class="fa-solid fa-circle-check"></i>
-
                     Completed
-
-
                 </span>
-
-
             </div>
 
 
@@ -290,20 +273,16 @@
                         <button
                         *ngIf="!m.isLocked &&
                         m.userSubmission?.status!=='APPROVED'"
-                        class="gc-btn gc-btn-primary gc-btn-block"
+                        class="gc-btn-turn-in gc-btn-block"
                         (click)="$event.stopPropagation();triggerUpload(m)">
-
-
+                            <span>
                             {{
                             m.userSubmission
                             ? 'Resubmit'
                             :'Turn In Work'
                             }}
-
-
+                            </span>
                             <i class="fa-solid fa-arrow-right"></i>
-
-
                         </button>
 
 
@@ -372,259 +351,99 @@
 
 
     <div class="gc-classwork-toolbar">
-
-
         <button
-        class="gc-btn gc-create-btn"
+        type="button"
+        class="gc-btn-create-milestone"
         (click)="triggerCreateMilestone()">
-
-
-
             <i class="fa-solid fa-plus"></i>
-
-
             Create Milestone
-
-
-
         </button>
 
-
-
         <span class="gc-badge">
-
-            {{teacherMilestones.length}}
-            Milestones
-
-
+            {{teacherMilestones.length}} Milestones
         </span>
-
-
-
     </div>
 
-
-
-
-
-
     <div class="gc-assignments-list">
-
-
-
         <div
         *ngFor="let m of teacherMilestones"
         class="gc-card gc-assignment-card">
-
-
 
             <div
             class="gc-assignment-header-row"
             (click)="toggleExpand(m.id)">
 
-
-
                 <div class="gc-assignment-left">
-
-
                     <div class="gc-assignment-icon-pod">
-
-
                         <i class="fa-solid fa-file-lines"></i>
-
-
                     </div>
-
-
 
                     <div>
-
-
-                        <h3>
-
-                            {{m.title}}
-
-                        </h3>
-
-
-                        <small>
-
-                            Due {{m.deadline | date:'short'}}
-
-                        </small>
-
-
+                        <h3>{{m.title}}</h3>
+                        <small>Due {{m.deadline | date:'short'}}</small>
                     </div>
-
-
-
                 </div>
 
-
-
-
-
                 <div class="gc-assignment-right">
-
-
                     <div class="gc-point-badge">
-
-
                         <i class="fa-solid fa-star"></i>
-
                         {{m.basePoints}} pts
-
-
                     </div>
 
-
-
-
                     <button
-                    class="gc-btn gc-btn-outline"
+                    type="button"
+                    class="gc-btn-action-edit"
                     (click)="$event.stopPropagation();triggerEditMilestone(m)">
-
-
-
-                        <i class="fa-solid fa-pen"></i>
-
+                        <i class="fa-solid fa-pen-to-square"></i>
                         Edit
-
-
-
                     </button>
-
-
-
 
                     <button
-                    class="gc-btn gc-btn-outline delete"
+                    type="button"
+                    class="gc-btn-action-delete"
                     (click)="$event.stopPropagation();deleteMilestone(m)">
-
-
-
-                        <i class="fa-solid fa-trash"></i>
-
+                        <i class="fa-solid fa-trash-can"></i>
                         Delete
-
-
-
                     </button>
-
-
 
                     <i class="fa-solid"
                     [class.fa-chevron-down]="expandedMilestoneId!==m.id"
                     [class.fa-chevron-up]="expandedMilestoneId===m.id">
-
-
                     </i>
-
-
-
                 </div>
 
-
-
             </div>
-
-
-
-
-
-
 
             <div
             class="gc-assignment-body"
             *ngIf="expandedMilestoneId===m.id">
 
-
                 <div>
-
-
-                    <p>
-
-                        {{m.description}}
-
-                    </p>
-
-
-                    <h4>
-
-                        Required Deliverables
-
-                    </h4>
-
-
+                    <p>{{m.description}}</p>
+                    <h4>Required Deliverables</h4>
                     <div class="deliverable-list">
-
-
                         <span
                         *ngFor="let item of m.deliverablesList"
                         class="gc-badge">
-
-
                             {{item.title}}
-
-
                         </span>
-
-
                     </div>
-
-
                 </div>
-
-
-
-
 
                 <div class="gc-your-work-card">
-
-
-                    <h4>
-
-                        Student Submissions
-
-                    </h4>
-
-
-
+                    <h4>Student Submissions</h4>
                     <button
-                    class="gc-btn gc-btn-outline gc-btn-block"
+                    type="button"
+                    class="gc-btn-view-roster"
                     (click)="triggerRoster(m)">
-
-
-
-                        <i class="fa-solid fa-users"></i>
-
-
-                        View Roster
-
-
-
+                        <i class="fa-solid fa-users-rectangle"></i>
+                        View Student Roster & Grade
                     </button>
-
-
-
                 </div>
-
-
 
             </div>
 
-
-
-
         </div>
-
-
-
     </div>
-
-
 </div>
-
-
-
 </div>

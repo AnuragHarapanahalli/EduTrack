@@ -1,12 +1,12 @@
 <div
   class="gc-sidebar-backdrop"
-  *ngIf="sidebarOpen"
+  *ngIf="isSidebarOpen"
   (click)="toggleSidebar()">
 </div>
 
 <aside
   class="gc-sidebar"
-  [class.open]="sidebarOpen">
+  [class.open]="isSidebarOpen">
 
   <div class="gc-sidebar-inner">
 
