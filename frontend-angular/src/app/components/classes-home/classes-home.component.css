@@ -1,127 +1,776 @@
-.gc-classes-container {
-  max-width: 1200px;
-  margin: 0 auto;
+/* =====================================================
+   DASHBOARD CONTAINER
+===================================================== */
+
+.gc-dashboard {
+
+    max-width:1400px;
+    margin:auto;
+    padding:40px;
+
 }
 
-.gc-classes-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.75rem;
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.gc-dashboard-header {
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:25px;
+    margin-bottom:45px;
+    flex-wrap:wrap;
+
 }
 
-.gc-classes-title {
-  font-size: 1.75rem;
-  font-weight: 400;
-  color: var(--gc-text-main);
+
+.gc-dashboard-header h1 {
+
+    margin:0 0 10px;
+
+    font-size:2.35rem;
+
+    font-weight:750;
+
+    letter-spacing:-.5px;
+
+    color:var(--gc-text-main);
+
 }
+
+
+.gc-dashboard-header p {
+
+    margin:0;
+
+    color:var(--gc-text-sub);
+
+    font-size:1rem;
+
+}
+
+
+
+
+/* =====================================================
+   PRIMARY BUTTON
+===================================================== */
+
+
+.gc-btn-primary {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:13px 22px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    color:white;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+
+.gc-btn-primary:hover {
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 12px 25px rgba(37,99,235,.22);
+
+}
+
+
+
+
+
+/* =====================================================
+   STATISTICS
+===================================================== */
+
+
+.gc-stats {
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(250px,1fr));
+
+    gap:25px;
+
+    margin-bottom:50px;
+
+}
+
+
+
+.gc-stat-card {
+
+
+    background:var(--gc-card);
+
+    border:1px solid var(--gc-border);
+
+    border-radius:22px;
+
+    padding:25px;
+
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+
+    transition:.25s;
+
+
+}
+
+
+
+.gc-stat-card:hover {
+
+
+    transform:translateY(-5px);
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.08);
+
+}
+
+
+
+.gc-stat-card i {
+
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:18px;
+
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #60a5fa
+    );
+
+
+    color:white;
+
+    font-size:24px;
+
+}
+
+
+
+.gc-stat-card h3 {
+
+
+    margin:0;
+
+    font-size:30px;
+
+    font-weight:750;
+
+    color:var(--gc-text-main);
+
+}
+
+
+
+.gc-stat-card p {
+
+    margin:5px 0 0;
+
+    color:var(--gc-text-sub);
+
+    font-size:.9rem;
+
+}
+
+
+
+
+
+/* =====================================================
+   CLASS GRID
+===================================================== */
+
 
 .gc-classes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+
+
+    display:grid;
+
+
+    grid-template-columns:
+
+    repeat(
+        auto-fill,
+        minmax(360px,1fr)
+    );
+
+
+    gap:32px;
+
+
 }
+
+
+
+
+
+/* =====================================================
+   CLASS CARD
+===================================================== */
+
 
 .gc-class-card {
-  background: #ffffff;
-  border: 1px solid var(--gc-border);
-  border-radius: var(--gc-radius-md);
-  overflow: hidden;
-  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.1);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 300px;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+
+    background:var(--gc-card);
+
+    border:
+
+    1px solid var(--gc-border);
+
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+
+    cursor:pointer;
+
+
+    transition:.3s;
+
+
 }
+
+
 
 .gc-class-card:hover {
-  box-shadow: var(--gc-shadow-md);
-  transform: translateY(-2px);
+
+
+    transform:translateY(-7px);
+
+
+    box-shadow:
+
+    0 20px 45px rgba(0,0,0,.12);
+
+
 }
+
+
+
+
+/* =====================================================
+   CARD BANNER
+===================================================== */
+
 
 .gc-card-banner {
-  padding: 1.25rem 1.5rem;
-  color: #ffffff;
-  height: 110px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+
+
+    height:165px;
+
+    padding:28px;
+
+    color:white;
+
+
 }
 
-.gc-class-card-name {
-  font-size: 1.25rem;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+
+.gc-banner-overlay {
+
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+
 }
 
-.gc-class-card-code {
-  font-size: 0.85rem;
-  opacity: 0.9;
+
+
+.gc-banner-overlay h2 {
+
+
+    margin:0;
+
+    font-size:1.45rem;
+
+    font-weight:750;
+
+
 }
 
-.gc-class-card-teacher {
-  font-size: 0.8rem;
-  opacity: 0.95;
+
+
+.gc-banner-overlay p {
+
+
+    margin-top:8px;
+
+    opacity:.85;
+
 }
 
-.gc-card-content {
-  padding: 1.25rem 1.5rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+
+
+.gc-avatar {
+
+
+    width:62px;
+
+    height:62px;
+
+
+    border-radius:18px;
+
+
+    background:
+
+    rgba(255,255,255,.2);
+
+
+    backdrop-filter:blur(8px);
+
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    font-size:24px;
+
+    font-weight:700;
+
+
 }
 
-.gc-class-card-desc {
-  font-size: 0.85rem;
-  color: var(--gc-text-sub);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+
+
+
+
+/* =====================================================
+   CARD BODY
+===================================================== */
+
+
+.gc-card-body {
+
+
+    padding:26px;
+
 }
 
-.gc-class-card-meta {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.85rem;
-  color: var(--gc-text-light);
-  margin-top: 0.75rem;
+
+
+.gc-description {
+
+
+    color:var(--gc-text-sub);
+
+    line-height:1.7;
+
+    min-height:55px;
+
+
 }
 
-.gc-card-actions {
-  padding: 0.75rem 1.25rem;
-  border-top: 1px solid var(--gc-border);
-  display: flex;
-  justify-content: flex-end;
-  background: #fafafa;
+
+
+
+
+/* =====================================================
+   OWNER BADGE
+===================================================== */
+
+
+.gc-owner-badge {
+
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+
+    padding:7px 14px;
+
+
+    border-radius:999px;
+
+
+    background:
+
+    rgba(37,99,235,.1);
+
+
+    color:
+
+    var(--gc-primary);
+
+
+    font-size:.82rem;
+
+
+    font-weight:600;
+
+
+    margin:15px 0;
+
+
 }
 
-.gc-empty-classes-card {
-  grid-column: 1 / -1;
-  padding: 4rem 2rem;
-  text-align: center;
-  background: #ffffff;
+
+
+
+
+/* =====================================================
+   INFO ROW
+===================================================== */
+
+
+.gc-info {
+
+
+    display:flex;
+
+    justify-content:space-between;
+
+
+    gap:15px;
+
+
+    margin:22px 0;
+
+
+    color:var(--gc-text-sub);
+
+
+    font-size:.88rem;
+
+
 }
 
-.gc-empty-icon {
-  font-size: 3.5rem;
-  color: var(--gc-primary);
-  margin-bottom: 1rem;
+
+.gc-info span {
+
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+
 }
 
-.gc-empty-classes-card h3 {
-  font-size: 1.25rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
+
+
+
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+
+.gc-progress {
+
+
+    height:7px;
+
+    background:
+
+    var(--gc-border);
+
+
+    border-radius:50px;
+
+    overflow:hidden;
+
+
+    margin-bottom:22px;
+
+
 }
 
-.gc-empty-classes-card p {
-  font-size: 0.9rem;
-  color: var(--gc-text-sub);
-  margin-bottom: 1.5rem;
+
+
+.gc-progress-fill {
+
+
+    height:100%;
+
+
+    border-radius:50px;
+
+
+    background:
+
+    linear-gradient(
+        90deg,
+        #2563eb,
+        #60a5fa
+    );
+
+
+}
+
+
+
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+
+.gc-bottom {
+
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+
+
+.gc-bottom span {
+
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+
+    color:var(--gc-text-sub);
+
+    font-size:.9rem;
+
+}
+
+
+
+.gc-actions {
+
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+
+
+.gc-open-btn {
+
+
+    padding:10px 18px;
+
+    border:none;
+
+    border-radius:12px;
+
+
+    background:
+
+    var(--gc-primary);
+
+
+    color:white;
+
+
+    font-weight:600;
+
+
+    cursor:pointer;
+
+
+}
+
+
+
+.gc-secondary-btn {
+
+
+    padding:10px 15px;
+
+
+    border-radius:12px;
+
+
+    border:
+
+    1px solid var(--gc-border);
+
+
+    background:transparent;
+
+
+    color:var(--gc-text-main);
+
+
+}
+
+
+
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+
+.gc-empty-card {
+
+
+    padding:90px 30px;
+
+
+    text-align:center;
+
+
+    background:var(--gc-card);
+
+
+    border:
+
+    1px solid var(--gc-border);
+
+
+    border-radius:24px;
+
+
+}
+
+
+
+.gc-empty-card i {
+
+
+    font-size:65px;
+
+    color:var(--gc-primary);
+
+    margin-bottom:20px;
+
+
+}
+
+
+
+.gc-empty-card h2 {
+
+
+    color:var(--gc-text-main);
+
+}
+
+
+
+.gc-empty-card p {
+
+
+    color:var(--gc-text-sub);
+
+}
+
+
+
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+
+@media(max-width:768px){
+
+
+.gc-dashboard{
+
+    padding:20px;
+
+}
+
+
+.gc-dashboard-header h1{
+
+    font-size:1.8rem;
+
+}
+
+
+.gc-classes-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+
+.gc-info{
+
+    flex-direction:column;
+
+}
+
+
+.gc-actions{
+
+    flex-direction:column;
+
+}
+
+
 }

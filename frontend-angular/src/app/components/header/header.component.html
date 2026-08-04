@@ -1,59 +1,127 @@
 <header class="gc-header">
+
+  <!-- ================= LEFT ================= -->
+
   <div class="gc-header-left">
-    <button class="gc-icon-btn" (click)="toggleSidebar()" title="Main menu">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-    <div class="gc-brand" (click)="onLogoClick()">
+
+    <div class="gc-brand" (click)="goToDashboard()">
+
       <div class="gc-logo-pod">
+
         <i class="fa-solid fa-graduation-cap"></i>
+
       </div>
-      <span class="gc-brand-title">EduTrack <span class="gc-brand-sub">Classroom</span></span>
+
+
+      <div>
+
+        <div class="gc-brand-title">
+          EduTrack
+        </div>
+
+
+        <div class="gc-brand-sub">
+          Learning Management System
+        </div>
+
+      </div>
+
+
     </div>
+
   </div>
 
-  <!-- Center Tabs (Visible when inside a class detail) -->
-  <nav class="gc-class-tabs" *ngIf="viewStateService.currentView() === 'CLASS_DETAIL'">
-    <!-- Stream Tab (Visible for Instructors) -->
-    <button 
-      *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'"
-      class="gc-tab-link" 
-      [class.active]="viewStateService.activeClassTab() === 'stream'"
-      (click)="onTabClick('stream')">
-      Stream
-    </button>
-    
-    <!-- Classwork Tab -->
-    <button 
-      class="gc-tab-link" 
-      [class.active]="viewStateService.activeClassTab() === 'classwork'"
-      (click)="onTabClick('classwork')">
-      {{ authService.currentUser()?.role === 'STUDENT' ? 'Classwork Pathway' : 'Classwork' }}
-    </button>
 
-    <button 
-      class="gc-tab-link" 
-      [class.active]="viewStateService.activeClassTab() === 'people'"
-      (click)="onTabClick('people')">
-      People
-    </button>
-    
-    <button 
-      class="gc-tab-link" 
-      [class.active]="viewStateService.activeClassTab() === 'leaderboard'"
-      (click)="onTabClick('leaderboard')">
-      Leaderboard
-    </button>
-  </nav>
+
+  <!-- ================= CENTER EMPTY ================= -->
+
+  <div class="gc-header-center">
+
+  </div>
+
+
+
+  <!-- ================= RIGHT ================= -->
 
   <div class="gc-header-right">
-    <div class="gc-user-pod" *ngIf="authService.currentUser() as user">
+
+
+    <!-- Notifications -->
+
+    <button
+      class="gc-header-action"
+      title="Notifications">
+
+      <i class="fa-regular fa-bell"></i>
+
+    </button>
+
+
+
+    <!-- Settings -->
+
+    <button
+      class="gc-header-action"
+      title="Settings">
+
+      <i class="fa-solid fa-gear"></i>
+
+    </button>
+
+
+
+    <!-- User -->
+
+    <div class="gc-user-pod">
+
+
       <div class="gc-avatar-circle">
-        {{ user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' }}
+
+        {{ initials }}
+
       </div>
-      <span class="gc-user-name">{{ user.fullName }}</span>
-      <span class="gc-badge" [class.gc-badge-warning]="user.role === 'INSTRUCTOR'" [class.gc-badge-info]="user.role === 'STUDENT'">
-        {{ user.role }}
-      </span>
+
+
+      <div class="gc-user-info">
+
+
+        <span class="gc-user-name">
+
+          {{ user?.fullName }}
+
+        </span>
+
+
+        <span class="gc-user-role">
+
+          {{ user?.role }}
+
+        </span>
+
+
+      </div>
+
+
     </div>
+
+
+
+    <!-- Logout -->
+
+    <button
+      class="gc-header-action"
+      title="Logout"
+      (click)="logout()">
+
+
+      <i class="fa-solid fa-right-from-bracket"></i>
+
+
+    </button>
+
+
+
   </div>
+
+
 </header>

@@ -1,67 +1,122 @@
 import { Injectable, signal } from '@angular/core';
 import { Subject as SubjectModel } from '../models/subject.model';
 
-export type MainView = 'AUTH' | 'CLASSES_HOME' | 'CLASS_DETAIL';
-export type ClassTab = 'stream' | 'classwork' | 'people' | 'leaderboard';
+export type MainView =
+  | 'AUTH'
+  | 'CLASSES_HOME'
+  | 'CLASS_DETAIL';
+
+export type ClassTab =
+  | 'STREAM'
+  | 'CLASSWORK'
+  | 'PEOPLE'
+  | 'LEADERBOARD';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ViewStateService {
+
+  // ---------------- Signals ----------------
+
   currentView = signal<MainView>('AUTH');
-  activeClassTab = signal<ClassTab>('stream');
+
+  currentTab = signal<ClassTab>('STREAM');
+
   currentSubject = signal<SubjectModel | null>(null);
-  userSubjects = signal<SubjectModel[]>([]);
-  isSidebarOpen = signal<boolean>(false);
+
+  subjects = signal<SubjectModel[]>([]);
+
+  isSidebarOpen = signal(false);
+
+  // ---------------- Getters ----------------
 
   get currentViewVal(): MainView {
     return this.currentView();
   }
 
-  get activeClassTabVal(): ClassTab {
-    return this.activeClassTab();
+  get currentTabVal(): ClassTab {
+    return this.currentTab();
   }
+  // Compatibility with new UI
+get activeClassTabVal(): string {
+  return this.currentTab().toLowerCase();
+}
 
   get currentSubjectVal(): SubjectModel | null {
     return this.currentSubject();
   }
 
-  get userSubjectsVal(): SubjectModel[] {
-    return this.userSubjects();
+  get subjectsVal(): SubjectModel[] {
+    return this.subjects();
   }
 
   get isSidebarOpenVal(): boolean {
     return this.isSidebarOpen();
   }
 
-  setView(view: MainView) {
+  // ---------------- View ----------------
+
+  setView(view: MainView): void {
     this.currentView.set(view);
   }
 
-  setClassTab(tab: ClassTab) {
-    this.activeClassTab.set(tab);
+  goDashboard(): void {
+    this.currentSubject.set(null);
+    this.currentView.set('CLASSES_HOME');
   }
 
-  selectSubject(subject: SubjectModel | null) {
+  // ---------------- Tabs ----------------
+
+  setCurrentTab(tab: ClassTab): void {
+    this.currentTab.set(tab);
+  }
+
+  // Compatibility with old code
+  setClassTab(tab: string): void {
+    this.currentTab.set(tab.toUpperCase() as ClassTab);
+  }
+
+  // ---------------- Subject ----------------
+
+  selectSubject(subject: SubjectModel | null): void {
+
     this.currentSubject.set(subject);
+
     if (subject) {
       this.currentView.set('CLASS_DETAIL');
-      this.activeClassTab.set('stream');
+      this.currentTab.set('STREAM');
+    } else {
+      this.currentView.set('CLASSES_HOME');
     }
   }
 
-  setUserSubjects(subjects: SubjectModel[]) {
-    this.userSubjects.set(subjects);
+  // ---------------- Subjects ----------------
+
+  setUserSubjects(subjects: SubjectModel[]): void {
+
+    this.subjects.set(subjects);
+
     if (!this.currentSubject() && subjects.length > 0) {
       this.currentSubject.set(subjects[0]);
     }
   }
+  // Compatibility with old components
+userSubjects(): SubjectModel[] {
+  return this.subjects();
+}
 
-  toggleSidebar() {
-    this.isSidebarOpen.update(v => !v);
+  // ---------------- Sidebar ----------------
+
+  toggleSidebar(): void {
+    this.isSidebarOpen.update(open => !open);
   }
 
-  closeSidebar() {
+  openSidebar(): void {
+    this.isSidebarOpen.set(true);
+  }
+
+  closeSidebar(): void {
     this.isSidebarOpen.set(false);
   }
 }

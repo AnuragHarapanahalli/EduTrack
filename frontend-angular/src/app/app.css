@@ -1,0 +1,62 @@
+/* ===========================
+   APP LAYOUT
+=========================== */
+
+.gc-app-wrapper{
+    min-height:100vh;
+    background:#F8FAFC;
+}
+
+/* ===========================
+   MAIN BODY
+=========================== */
+
+.gc-main-body{
+
+    margin-top:72px;
+
+    min-height:calc(100vh - 72px);
+
+    transition:.3s;
+
+}
+
+/* Login Page */
+
+.gc-main-body.auth-page{
+
+    margin-top:0;
+
+    min-height:100vh;
+
+}
+
+/* Desktop */
+
+@media(min-width:901px){
+
+.gc-main-body{
+
+    margin-left:0;
+
+}
+
+}
+
+/* Mobile */
+
+@media(max-width:900px){
+
+.gc-main-body{
+
+    margin-top:72px;
+
+}
+
+.gc-main-body.auth-page{
+
+    margin-top:0;
+
+}
+
+}

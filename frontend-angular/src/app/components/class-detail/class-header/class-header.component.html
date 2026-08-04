@@ -1,0 +1,132 @@
+<div class="gc-class-header">
+
+
+  <!-- HERO -->
+
+  <div class="gc-class-banner">
+
+
+    <div class="gc-class-info">
+
+
+      <div class="gc-class-avatar">
+
+        {{getInitials()}}
+
+      </div>
+
+
+
+      <div>
+
+        <h1>
+
+          {{subject?.name}}
+
+        </h1>
+
+
+        <p>
+
+          {{subject?.code}}
+
+          <span>
+            •
+          </span>
+
+          {{subject?.batchName || 'Class'}}
+
+        </p>
+
+
+        <small>
+
+          👨‍🏫
+          {{subject?.instructorName || 'Instructor'}}
+
+        </small>
+
+
+      </div>
+
+
+    </div>
+
+
+
+    <div class="gc-role-badge">
+
+      {{authService.currentUser()?.role}}
+
+    </div>
+
+
+
+  </div>
+
+
+
+  <!-- TABS -->
+
+
+  <div class="gc-class-tabs">
+
+
+    <button
+      [class.active]="viewStateService.currentTab()==='STREAM'"
+      (click)="changeTab('STREAM')">
+
+      <i class="fa-solid fa-house"></i>
+
+      Stream
+
+    </button>
+
+
+
+    <button
+      [class.active]="viewStateService.currentTab()==='CLASSWORK'"
+      (click)="changeTab('CLASSWORK')">
+
+
+      <i class="fa-solid fa-file-lines"></i>
+
+      Classwork
+
+
+    </button>
+
+
+
+    <button
+      [class.active]="viewStateService.currentTab()==='PEOPLE'"
+      (click)="changeTab('PEOPLE')">
+
+
+      <i class="fa-solid fa-users"></i>
+
+      People
+
+
+    </button>
+
+
+
+    <button
+      [class.active]="viewStateService.currentTab()==='LEADERBOARD'"
+      (click)="changeTab('LEADERBOARD')">
+
+
+      <i class="fa-solid fa-ranking-star"></i>
+
+      Leaderboard
+
+
+    </button>
+
+
+
+  </div>
+
+
+</div>

@@ -1,8 +1,10 @@
 import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
 import { ApiService } from '../../../services/api.service';
 import { AuthService } from '../../../services/auth.service';
 import { ViewStateService } from '../../../services/view-state.service';
+
 import { User } from '../../../models/auth.model';
 
 @Component({
@@ -13,9 +15,10 @@ import { User } from '../../../models/auth.model';
   styleUrl: './people.component.css'
 })
 export class PeopleComponent implements OnInit {
+
   @Output() openAddStudentsModal = new EventEmitter<void>();
 
-  teacherName = '';
+  teacherName: string = '';
   students: User[] = [];
 
   constructor(
@@ -25,29 +28,43 @@ export class PeopleComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadPeople();
   }
 
-  loadPeople() {
-    const currentSubject = this.viewStateService.currentSubject();
-    if (!currentSubject) return;
+  loadPeople(): void {
 
-    this.teacherName = currentSubject.instructorName || 'Faculty Instructor';
+    const subject = this.viewStateService.currentSubject();
 
-    this.apiService.getEnrolledStudents(currentSubject.id).subscribe({
-      next: (list) => {
-        this.students = list;
+    if (!subject) {
+      this.teacherName = '';
+      this.students = [];
+      return;
+    }
+
+    this.teacherName = subject.instructorName || 'Faculty Instructor';
+
+    this.apiService.getEnrolledStudents(subject.id).subscribe({
+      next: (students) => {
+
+        this.students = students.sort((a, b) =>
+          a.fullName.localeCompare(b.fullName)
+        );
+
         this.cdr.markForCheck();
       },
+
       error: (err) => {
-        console.error('Error loading enrolled students:', err);
+        console.error('Error loading students:', err);
+        this.students = [];
         this.cdr.markForCheck();
       }
     });
+
   }
 
-  triggerAddStudents() {
+  triggerAddStudents(): void {
     this.openAddStudentsModal.emit();
   }
+
 }
