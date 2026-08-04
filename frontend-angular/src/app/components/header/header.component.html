@@ -4,6 +4,15 @@
 
   <div class="gc-header-left">
 
+    <!-- Hamburger Icon Button for Sidebar -->
+    <button
+      class="gc-header-action gc-hamburger-btn"
+      type="button"
+      title="Toggle Navigation Menu"
+      (click)="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
     <div class="gc-brand" (click)="goToDashboard()">
 
       <div class="gc-logo-pod">
@@ -45,6 +54,14 @@
 
   <div class="gc-header-right">
 
+    <!-- Theme Toggle -->
+    <button
+      class="gc-header-action"
+      type="button"
+      [title]="themeService.isDark() ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+      (click)="themeService.toggleTheme()">
+      <i class="fa-solid" [ngClass]="themeService.isDark() ? 'fa-sun' : 'fa-moon'"></i>
+    </button>
 
     <!-- Notifications -->
 

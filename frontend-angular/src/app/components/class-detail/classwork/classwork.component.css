@@ -509,32 +509,167 @@
 
 
 /* ==========================================================
-   BUTTONS
+   BUTTONS (PREMIUM STYLING)
 ========================================================== */
 
-
-.gc-btn-primary {
-
-
-    background:#6366f1 !important;
-
-
-    border:none;
-
-
-    color:white;
-
-
+/* TURN IN WORK / RESUBMIT WORK BUTTON */
+.gc-btn-turn-in {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  color: #ffffff !important;
+  font-size: 0.92rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.gc-btn-turn-in:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #1d4ed8, #4338ca);
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.45);
+}
 
+.gc-btn-turn-in:active {
+  transform: translateY(0);
+}
+
+.gc-btn-turn-in.gc-btn-block {
+  width: 100%;
+}
+
+/* EDIT BUTTON */
+.gc-btn-action-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.gc-btn-action-edit:hover {
+  background: #2563eb;
+  color: #ffffff !important;
+  border-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+.dark-theme .gc-btn-action-edit {
+  background: rgba(96, 165, 250, 0.12);
+  color: #60a5fa !important;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.dark-theme .gc-btn-action-edit:hover {
+  background: #3b82f6;
+  color: #ffffff !important;
+}
+
+/* DELETE BUTTON */
+.gc-btn-action-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444 !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.gc-btn-action-delete:hover {
+  background: #dc2626;
+  color: #ffffff !important;
+  border-color: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+}
+
+.dark-theme .gc-btn-action-delete {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171 !important;
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.dark-theme .gc-btn-action-delete:hover {
+  background: #ef4444;
+  color: #ffffff !important;
+}
+
+/* VIEW ROSTER BUTTON */
+.gc-btn-view-roster {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  color: #ffffff !important;
+  font-size: 0.9rem;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.3);
+  transition: all 0.25s ease;
+}
+
+.gc-btn-view-roster:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #0d9488, #2dd4bf);
+  box-shadow: 0 12px 24px rgba(15, 118, 110, 0.45);
+}
+
+/* CREATE MILESTONE BUTTON */
+.gc-btn-create-milestone {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 24px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  color: #ffffff !important;
+  font-size: 0.92rem;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
+  transition: all 0.25s ease;
+}
+
+.gc-btn-create-milestone:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.45);
+}
+
+.gc-btn-primary {
+    background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+    border: none;
+    color: white;
+}
 
 .gc-btn-primary:hover {
-
-
-    background:#4f46e5 !important;
-
-
+    background: linear-gradient(135deg, #1d4ed8, #4338ca) !important;
 }
 
 

@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { ViewStateService } from '../../services/view-state.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -15,6 +16,7 @@ export class HeaderComponent {
   constructor(
     public authService: AuthService,
     public viewStateService: ViewStateService,
+    public themeService: ThemeService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -82,5 +84,8 @@ export class HeaderComponent {
 
   logout(): void {
     this.authService.logout();
+    this.viewStateService.selectSubject(null);
+    this.viewStateService.setView('AUTH');
+    this.cdr.detectChanges();
   }
 }

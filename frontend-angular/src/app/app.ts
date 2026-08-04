@@ -283,52 +283,52 @@ export class AppComponent implements OnInit {
 
 
 
+  closeCreateSubjectModal(): void {
+    this.showCreateSubjectModal = false;
+    this.cdr.detectChanges();
+  }
+
+  closeAddStudentsModal(): void {
+    this.showAddStudentsModal = false;
+    this.cdr.detectChanges();
+  }
+
+  closeCreateMilestoneModal(): void {
+    this.showCreateMilestoneModal = false;
+    this.selectedMilestoneForEdit = null;
+    this.cdr.detectChanges();
+  }
+
+  closeUploadModal(): void {
+    this.showUploadModal = false;
+    this.selectedMilestoneForUpload = null;
+    this.cdr.detectChanges();
+  }
+
+  closeRosterModal(): void {
+    this.showRosterModal = false;
+    this.selectedMilestoneForRoster = null;
+    this.cdr.detectChanges();
+  }
+
   refreshClasses(): void {
-
-
-    const user =
-      this.authService.currentUserVal;
-
-
+    const user = this.authService.currentUserVal;
     if(user){
-
       this.loadInitialSubjects(
         user.id,
         user.role
       );
-
     }
-
-
   }
-
-
-
-
-
 
   refreshCurrentSubjectState(): void {
-
-
-    const subject =
-      this.viewStateService.currentSubject();
-
-
-
+    const subject = this.viewStateService.currentSubject();
     if(subject){
-
-      this.viewStateService.currentSubject
-        .set({
-          ...subject
-        });
-
+      this.viewStateService.currentSubject.set({
+        ...subject
+      });
     }
-
-
     this.cdr.detectChanges();
-
-
   }
-
 
 }

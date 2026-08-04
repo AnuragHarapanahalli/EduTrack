@@ -358,3 +358,128 @@
     }
 
 }
+
+/* AUTH TABS */
+.gc-auth-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+  gap: 4px;
+}
+
+.gc-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gc-text-sub, #64748b);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gc-tab-btn.active {
+  background: #ffffff;
+  color: var(--gc-primary, #2563eb);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dark-theme .gc-auth-tabs {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark-theme .gc-tab-btn.active {
+  background: #334155;
+  color: #60a5fa;
+}
+
+/* INPUT ICON GROUP & PASSWORD TOGGLE */
+.gc-input-icon-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gc-input-icon {
+  position: absolute;
+  left: 14px;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+
+.gc-input-icon-group input {
+  padding-left: 40px !important;
+  padding-right: 40px !important;
+  width: 100%;
+}
+
+.gc-pwd-toggle-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.gc-pwd-toggle-btn:hover {
+  color: var(--gc-primary, #2563eb);
+}
+
+/* ROLE SELECTOR */
+.gc-role-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.gc-role-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--gc-border, #e2e8f0);
+  border-radius: 12px;
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gc-text, #334155);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gc-role-btn.active {
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+.dark-theme .gc-role-btn {
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.dark-theme .gc-role-btn.active {
+  border-color: #60a5fa;
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+}
+
+.gc-demo-card.active {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3) !important;
+}

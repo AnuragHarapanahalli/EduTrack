@@ -66,9 +66,29 @@
 
     <div class="gc-auth-card">
 
+      <!-- Auth Tab Selector -->
+      <div class="gc-auth-tabs">
+        <button
+          type="button"
+          class="gc-tab-btn"
+          [class.active]="isLoginTab"
+          (click)="switchTab(true)">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Sign In
+        </button>
+        <button
+          type="button"
+          class="gc-tab-btn"
+          [class.active]="!isLoginTab"
+          (click)="switchTab(false)">
+          <i class="fa-solid fa-user-plus"></i>
+          Create Account
+        </button>
+      </div>
+
       <div class="gc-auth-header">
-        <h2>Welcome Back</h2>
-        <p>Sign in to continue to EduTrack</p>
+        <h2>{{ isLoginTab ? 'Welcome Back' : 'Create an Account' }}</h2>
+        <p>{{ isLoginTab ? 'Sign in to access your EduTrack dashboard' : 'Join EduTrack as a student or instructor' }}</p>
       </div>
 
       <div class="gc-auth-error" *ngIf="errorMessage">
@@ -76,43 +96,148 @@
         {{ errorMessage }}
       </div>
 
-      <form (ngSubmit)="onLogin()">
+      <!-- Sign In Form -->
+      <form *ngIf="isLoginTab" (ngSubmit)="onLogin()">
 
         <div class="gc-form-field">
           <label>Email Address</label>
-          <input
-            type="email"
-            name="loginEmail"
-            [(ngModel)]="loginEmail"
-            placeholder="Enter your email"
-            required>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-envelope gc-input-icon"></i>
+            <input
+              type="email"
+              name="loginEmail"
+              [(ngModel)]="loginEmail"
+              placeholder="Enter your email"
+              required>
+          </div>
         </div>
 
         <div class="gc-form-field">
           <label>Password</label>
-          <input
-            type="password"
-            name="loginPassword"
-            [(ngModel)]="loginPassword"
-            placeholder="Enter your password"
-            required>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-lock gc-input-icon"></i>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              name="loginPassword"
+              [(ngModel)]="loginPassword"
+              placeholder="Enter your password"
+              required>
+            <button
+              type="button"
+              class="gc-pwd-toggle-btn"
+              (click)="togglePasswordVisibility()"
+              title="Toggle password visibility">
+              <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
         </div>
 
-        <button class="gc-btn-primary" type="submit">
-          Sign In
-          <i class="fa-solid fa-arrow-right"></i>
+        <button class="gc-btn-primary" type="submit" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">
+            Sign In
+            <i class="fa-solid fa-arrow-right"></i>
+          </span>
+          <span *ngIf="isSubmitting">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            Signing In...
+          </span>
+        </button>
+
+      </form>
+
+      <!-- Register Form -->
+      <form *ngIf="!isLoginTab" (ngSubmit)="onRegister()">
+
+        <div class="gc-form-field">
+          <label>Full Name</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-user gc-input-icon"></i>
+            <input
+              type="text"
+              name="regFullName"
+              [(ngModel)]="regFullName"
+              placeholder="e.g. Anurag Sharma"
+              required>
+          </div>
+        </div>
+
+        <div class="gc-form-field">
+          <label>Email Address</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-envelope gc-input-icon"></i>
+            <input
+              type="email"
+              name="regEmail"
+              [(ngModel)]="regEmail"
+              placeholder="student@edutrack.edu"
+              required>
+          </div>
+        </div>
+
+        <div class="gc-form-field">
+          <label>Password</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-lock gc-input-icon"></i>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              name="regPassword"
+              [(ngModel)]="regPassword"
+              placeholder="Create a strong password"
+              required>
+            <button
+              type="button"
+              class="gc-pwd-toggle-btn"
+              (click)="togglePasswordVisibility()"
+              title="Toggle password visibility">
+              <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="gc-form-field">
+          <label>Account Type</label>
+          <div class="gc-role-selector">
+            <button
+              type="button"
+              class="gc-role-btn"
+              [class.active]="regRole === 'STUDENT'"
+              (click)="setRegRole('STUDENT')">
+              <i class="fa-solid fa-user-graduate"></i>
+              Student
+            </button>
+            <button
+              type="button"
+              class="gc-role-btn"
+              [class.active]="regRole === 'INSTRUCTOR'"
+              (click)="setRegRole('INSTRUCTOR')">
+              <i class="fa-solid fa-chalkboard-user"></i>
+              Instructor / Teacher
+            </button>
+          </div>
+        </div>
+
+        <button class="gc-btn-primary" type="submit" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">
+            Create Account
+            <i class="fa-solid fa-arrow-right"></i>
+          </span>
+          <span *ngIf="isSubmitting">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            Creating Account...
+          </span>
         </button>
 
       </form>
 
       <div class="gc-divider">
-        <span>Demo Accounts</span>
+        <span>Quick Demo Login</span>
       </div>
 
       <div class="gc-demo-grid">
 
         <button
           class="gc-demo-card"
+          [class.active]="loginEmail === 'anurag@edutrack.edu'"
           type="button"
           (click)="fillDemo('anurag@edutrack.edu','student123')">
 
@@ -127,6 +252,7 @@
 
         <button
           class="gc-demo-card"
+          [class.active]="loginEmail === 'rahul@edutrack.edu'"
           type="button"
           (click)="fillDemo('rahul@edutrack.edu','student123')">
 
@@ -141,6 +267,7 @@
 
         <button
           class="gc-demo-card"
+          [class.active]="loginEmail === 'priya@edutrack.edu'"
           type="button"
           (click)="fillDemo('priya@edutrack.edu','student123')">
 
@@ -155,6 +282,7 @@
 
         <button
           class="gc-demo-card"
+          [class.active]="loginEmail === 'sharma@edutrack.edu'"
           type="button"
           (click)="fillDemo('sharma@edutrack.edu','prof123')">
 
@@ -169,6 +297,7 @@
 
         <button
           class="gc-demo-card"
+          [class.active]="loginEmail === 'prof.verma@edutrack.edu'"
           type="button"
           (click)="fillDemo('prof.verma@edutrack.edu','prof123')">
 
