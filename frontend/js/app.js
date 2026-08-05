@@ -29,23 +29,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Hamburger Sidebar Drawer Toggle
 function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const wrapper = document.getElementById('mainWrapper');
-    const backdrop = document.getElementById('sidebarBackdrop');
+    const sidebar = document.getElementById('sidebar') || document.getElementById('gcSidebar');
+    const wrapper = document.getElementById('mainWrapper') || document.getElementById('gcMainContainer');
+    const backdrop = document.getElementById('sidebarBackdrop') || document.getElementById('gcSidebarBackdrop');
 
     if (window.innerWidth <= 900) {
-        sidebar.classList.toggle('open');
-        backdrop.classList.toggle('hidden');
+        if (sidebar) sidebar.classList.toggle('open');
+        if (backdrop) backdrop.classList.toggle('hidden');
     } else {
         isSidebarOpen = !isSidebarOpen;
-        if (isSidebarOpen) {
-            sidebar.classList.remove('collapsed');
-            wrapper.classList.remove('expanded');
-        } else {
-            sidebar.classList.add('collapsed');
-            wrapper.classList.add('expanded');
+        if (sidebar) {
+            if (isSidebarOpen) {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.add('open');
+            } else {
+                sidebar.classList.add('collapsed');
+                sidebar.classList.remove('open');
+            }
+        }
+        if (wrapper) {
+            if (isSidebarOpen) wrapper.classList.remove('expanded');
+            else wrapper.classList.add('expanded');
         }
     }
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar') || document.getElementById('gcSidebar');
+    const wrapper = document.getElementById('mainWrapper') || document.getElementById('gcMainContainer');
+    const backdrop = document.getElementById('sidebarBackdrop') || document.getElementById('gcSidebarBackdrop');
+
+    isSidebarOpen = false;
+    if (sidebar) {
+        sidebar.classList.remove('open');
+        sidebar.classList.add('collapsed');
+    }
+    if (wrapper) wrapper.classList.add('expanded');
+    if (backdrop) backdrop.classList.add('hidden');
 }
 
 // Sidebar Navigation Link Handler
@@ -263,6 +283,7 @@ async function handleSubjectChange(subjectId) {
     if (sidebarSelect) sidebarSelect.value = id;
 
     await loadSelectedSubjectData();
+    closeSidebar();
 }
 
 async function loadSelectedSubjectData() {

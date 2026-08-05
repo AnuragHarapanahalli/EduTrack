@@ -57,10 +57,7 @@
     transform:translateX(-100%);
 
 
-    transition:
-    transform .3s ease;
-
-
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 
@@ -565,30 +562,29 @@
 
 .gc-logout-btn {
 
-
     width:40px;
-
 
     height:40px;
 
-
     border-radius:12px;
 
+    border:1px solid rgba(239,68,68,.3);
 
-    border:none;
+    background:rgba(239,68,68,.15);
 
+    color:#ef4444;
 
-    background:#fee2e2;
+    display:flex;
 
+    align-items:center;
 
-    color:#dc2626;
-
+    justify-content:center;
 
     cursor:pointer;
 
-
     transition:.25s;
 
+    box-shadow:0 4px 10px rgba(239,68,68,.15);
 
 }
 
@@ -596,14 +592,18 @@
 
 .gc-logout-btn:hover {
 
-
-    background:#dc2626;
-
+    background:#ef4444;
 
     color:white;
 
+    border-color:#ef4444;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 6px 16px rgba(239,68,68,.35);
 
 }
+
 
 
 
@@ -639,3 +639,93 @@
 
 
 }
+
+
+/* =====================================================
+   DARK THEME STYLES
+===================================================== */
+
+:host-context(.dark-theme) .gc-sidebar {
+    background: #0f172a;
+    border-right-color: #1e293b;
+}
+
+:host-context(.dark-theme) .gc-sidebar-item {
+    color: #cbd5e1;
+}
+
+:host-context(.dark-theme) .gc-sidebar-item:hover {
+    background: #1e293b;
+    color: #f8fafc;
+}
+
+:host-context(.dark-theme) .gc-sidebar-item.active {
+    background: rgba(37, 99, 235, 0.25);
+    color: #60a5fa;
+}
+
+:host-context(.dark-theme) .gc-sidebar-divider {
+    background: #1e293b;
+}
+
+:host-context(.dark-theme) .gc-sidebar-label {
+    color: #64748b;
+}
+
+:host-context(.dark-theme) .gc-class-item-text strong {
+    color: #f8fafc;
+}
+
+:host-context(.dark-theme) .gc-class-item-text small {
+    color: #94a3b8;
+}
+
+:host-context(.dark-theme) .gc-sidebar-item.active .gc-class-item-text strong {
+    color: #60a5fa;
+}
+
+:host-context(.dark-theme) .gc-sidebar-item.active .gc-class-item-text small {
+    color: #93c5fd;
+}
+
+:host-context(.dark-theme) .gc-sidebar-action-btn {
+    background: rgba(37, 99, 235, 0.15);
+    border-color: rgba(37, 99, 235, 0.3);
+    color: #60a5fa;
+}
+
+:host-context(.dark-theme) .gc-sidebar-action-btn:hover {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+:host-context(.dark-theme) .gc-empty-sidebar-msg {
+    color: #64748b;
+}
+
+:host-context(.dark-theme) .gc-sidebar-footer {
+    background: #0f172a;
+    border-top-color: #1e293b;
+}
+
+:host-context(.dark-theme) .gc-user-info strong {
+    color: #f8fafc;
+}
+
+:host-context(.dark-theme) .gc-user-info small {
+    color: #94a3b8;
+}
+
+:host-context(.dark-theme) .gc-logout-btn {
+    background: rgba(239, 68, 68, 0.22);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+:host-context(.dark-theme) .gc-logout-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+    box-shadow: 0 6px 18px rgba(239, 68, 68, 0.5);
+}

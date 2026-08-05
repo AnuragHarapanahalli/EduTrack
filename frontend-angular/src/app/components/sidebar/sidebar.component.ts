@@ -8,16 +8,13 @@ import { Subject } from '../../models/subject.model';
   selector: 'app-sidebar',
   standalone: true,
   imports: [CommonModule],
+  
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
 
   @Output() openCreateSubjectModal = new EventEmitter<void>();
-
-  get isSidebarOpen(): boolean {
-    return this.viewStateService.isSidebarOpen();
-  }
 
   get isSidebarOpen(): boolean {
     return this.viewStateService.isSidebarOpen();
@@ -46,11 +43,12 @@ export class SidebarComponent {
 
   selectSubject(subject: Subject): void {
     this.viewStateService.selectSubject(subject);
-    this.viewStateService.setCurrentTab('STREAM');
+    this.viewStateService.closeSidebar();
   }
 
   goDashboard(): void {
     this.viewStateService.goDashboard();
+    this.viewStateService.closeSidebar();
   }
 
   createClass(): void {

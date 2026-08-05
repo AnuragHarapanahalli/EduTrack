@@ -1,3 +1,8 @@
+:host {
+    display: block;
+    background: var(--gc-background, #f8fafc);
+}
+
 /* =====================================================
    DASHBOARD CONTAINER
 ===================================================== */
@@ -774,3 +779,98 @@
 
 
 }
+
+
+/* =====================================================
+   DARK THEME STYLES FOR DASHBOARD / CLASSES HOME
+===================================================== */
+
+:host-context(.dark-theme) {
+    background: #0f172a !important;
+    display: block;
+}
+
+:host-context(.dark-theme) .gc-dashboard-header h1 {
+    color: #f8fafc !important;
+}
+
+:host-context(.dark-theme) .gc-dashboard-header p {
+    color: #cbd5e1 !important;
+}
+
+:host-context(.dark-theme) .gc-stat-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+:host-context(.dark-theme) .gc-stat-card h3 {
+    color: #f8fafc !important;
+}
+
+:host-context(.dark-theme) .gc-stat-card p {
+    color: #94a3b8 !important;
+}
+
+:host-context(.dark-theme) .gc-class-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+:host-context(.dark-theme) .gc-class-card:hover {
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5) !important;
+}
+
+:host-context(.dark-theme) .gc-card-body {
+    background: #1e293b !important;
+}
+
+:host-context(.dark-theme) .gc-description {
+    color: #cbd5e1 !important;
+}
+
+:host-context(.dark-theme) .gc-owner-badge {
+    background: rgba(96, 165, 250, 0.15) !important;
+    color: #60a5fa !important;
+}
+
+:host-context(.dark-theme) .gc-info {
+    color: #94a3b8 !important;
+}
+
+:host-context(.dark-theme) .gc-info span {
+    color: #cbd5e1 !important;
+}
+
+:host-context(.dark-theme) .gc-progress {
+    background: #334155 !important;
+}
+
+:host-context(.dark-theme) .gc-bottom span {
+    color: #cbd5e1 !important;
+}
+
+:host-context(.dark-theme) .gc-secondary-btn {
+    border-color: #334155 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #f8fafc !important;
+}
+
+:host-context(.dark-theme) .gc-secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: #475569 !important;
+}
+
+:host-context(.dark-theme) .gc-empty-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+:host-context(.dark-theme) .gc-empty-card h2 {
+    color: #f8fafc !important;
+}
+
+:host-context(.dark-theme) .gc-empty-card p {
+    color: #cbd5e1 !important;
+}

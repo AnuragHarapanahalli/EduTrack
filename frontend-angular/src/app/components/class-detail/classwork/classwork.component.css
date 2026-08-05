@@ -12,7 +12,7 @@
 
     display:block;
 
-    background:#f8fafc;
+    background: var(--gc-background, #f8fafc);
 
 }
 
@@ -22,7 +22,7 @@
     --class-primary:#6366f1;
     --class-primary-dark:#4f46e5;
 
-    --class-bg:#f8fafc;
+    --class-bg: var(--gc-background, #f8fafc);
 
     --class-card:#ffffff;
 
@@ -926,7 +926,7 @@
     padding:2rem;
 
 
-    background:#f8fafc;
+    background: var(--gc-card-sub, #f8fafc);
 
 
     border-top:1px solid #e2e8f0;
@@ -1061,3 +1061,162 @@
 
 
 }
+
+
+/* ==========================================================
+   DARK THEME OVERRIDES FOR CLASSWORK
+========================================================== */
+
+:host-context(.dark-theme) {
+    background: #0f172a !important;
+}
+
+:host-context(.dark-theme) .gc-classwork-container {
+    --class-primary: #818cf8;
+    --class-primary-dark: #6366f1;
+    --class-bg: #0f172a;
+    --class-card: #1e293b;
+    --class-text: #f8fafc;
+    --class-subtext: #94a3b8;
+    --class-border: #334155;
+}
+
+:host-context(.dark-theme) .netflix-hero-card {
+    background: linear-gradient(135deg, #1e1b4b, #0f172a);
+    border-color: #3730a3;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+:host-context(.dark-theme) .hero-subject {
+    color: #a5b4fc;
+}
+
+:host-context(.dark-theme) .netflix-hero-badge {
+    background: #312e81;
+    color: #c7d2fe;
+}
+
+:host-context(.dark-theme) .netflix-countdown-badge {
+    background: #1e293b;
+    color: #cbd5e1;
+    border-color: #334155;
+}
+
+:host-context(.dark-theme) .netflix-hero-title {
+    color: #f8fafc;
+}
+
+:host-context(.dark-theme) .netflix-hero-desc {
+    color: #cbd5e1;
+}
+
+:host-context(.dark-theme) .hero-bottom {
+    border-top-color: rgba(99, 102, 241, 0.3);
+}
+
+:host-context(.dark-theme) .netflix-row-title {
+    color: #f8fafc;
+}
+
+:host-context(.dark-theme) .netflix-row-code {
+    background: #1e293b;
+    color: #94a3b8;
+}
+
+:host-context(.dark-theme) .netflix-milestone-card {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+:host-context(.dark-theme) .netflix-milestone-card h3 {
+    color: #f8fafc;
+}
+
+:host-context(.dark-theme) .netflix-milestone-card p,
+:host-context(.dark-theme) .netflix-milestone-card .deadline {
+    color: #cbd5e1;
+}
+
+:host-context(.dark-theme) .netflix-milestone-card.active {
+    border-color: #6366f1;
+    background: #1e1b4b;
+}
+
+:host-context(.dark-theme) .netflix-milestone-card.under-review {
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.12);
+}
+
+:host-context(.dark-theme) .netflix-milestone-card.needs-revision {
+    border-color: #f97316;
+    background: rgba(249, 115, 22, 0.12);
+}
+
+:host-context(.dark-theme) .netflix-pathway-arrow {
+    color: #475569;
+}
+
+:host-context(.dark-theme) .gc-assignment-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+:host-context(.dark-theme) .gc-assignment-title {
+    color: #f8fafc;
+}
+
+:host-context(.dark-theme) .gc-assignment-due {
+    color: #94a3b8;
+}
+
+:host-context(.dark-theme) .gc-assignment-icon-pod {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+}
+
+:host-context(.dark-theme) .gc-assignment-body {
+    background: #0f172a;
+    border-top-color: #334155;
+}
+
+:host-context(.dark-theme) .gc-deliverable-chip {
+    background: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+}
+
+:host-context(.dark-theme) .gc-your-work-card {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f8fafc;
+}
+
+:host-context(.dark-theme) .gc-empty-classwork {
+    color: #94a3b8;
+}
+
+:host-context(.dark-theme) .gc-classwork-container .gc-badge-info {
+    background: rgba(99, 102, 241, 0.2) !important;
+    color: #a5b4fc !important;
+}
+
+:host-context(.dark-theme) .gc-classwork-container .gc-badge-success {
+    background: rgba(34, 197, 94, 0.2) !important;
+    color: #86efac !important;
+}
+
+:host-context(.dark-theme) .gc-classwork-container .gc-badge-warning {
+    background: rgba(245, 158, 11, 0.2) !important;
+    color: #fde047 !important;
+}
+
+:host-context(.dark-theme) .gc-classwork-container .gc-badge-orange {
+    background: rgba(249, 115, 22, 0.2) !important;
+    color: #fdba74 !important;
+}
+
+:host-context(.dark-theme) .gc-classwork-container .gc-badge-danger {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #fca5a5 !important;
+}

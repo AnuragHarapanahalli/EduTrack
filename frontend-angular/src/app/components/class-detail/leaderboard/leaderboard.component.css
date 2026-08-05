@@ -1,3 +1,8 @@
+:host {
+    display: block;
+    background: var(--gc-background, #f8fafc);
+}
+
 /* =====================================================
    CONTAINER
 ===================================================== */
@@ -472,3 +477,7 @@
 
 
 }
+
+:host-context(.dark-theme) {
+    background: #0f172a !important;
+}
