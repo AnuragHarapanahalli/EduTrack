@@ -951,6 +951,12 @@ body.light-theme {
     background: var(--success-light);
 }
 
+body.dark-theme .milestone-flow-card.completed,
+.dark-theme .milestone-flow-card.completed {
+    border-color: #22c55e !important;
+    background: rgba(34, 197, 94, 0.15) !important;
+}
+
 .card-left-group {
     display: flex;
     gap: 1.1rem;

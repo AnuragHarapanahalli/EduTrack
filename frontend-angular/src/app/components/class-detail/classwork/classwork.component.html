@@ -10,7 +10,7 @@
 
     <!-- HERO CARD -->
 
-    <div class="netflix-hero-card" *ngIf="heroMilestone">
+    <div class="netflix-hero-card" *ngIf="heroMilestone" [class.completed]="heroMilestone.userSubmission?.status==='APPROVED'">
 
 
         <div class="hero-top">

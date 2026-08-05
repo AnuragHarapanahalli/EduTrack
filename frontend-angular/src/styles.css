@@ -91,6 +91,19 @@ body.dark-theme, html.dark-theme, [data-theme="dark"], .dark-theme {
   color: var(--gc-text-main) !important;
 }
 
+/* APPROVED/COMPLETED CARDS BORDER HIGHLIGHT PRESERVATION IN DARK THEME */
+.dark-theme .gc-card.completed,
+.dark-theme .gc-card.approved,
+.dark-theme .gc-assignment-card.completed,
+.dark-theme .gc-assignment-card.approved,
+.dark-theme .netflix-milestone-card.completed,
+.dark-theme .netflix-milestone-card.approved,
+.dark-theme .netflix-hero-card.completed,
+.dark-theme .completed,
+.dark-theme .approved {
+  border-color: #22c55e !important;
+}
+
 .dark-theme .gc-app-wrapper,
 .dark-theme .gc-main-body,
 .dark-theme body,
