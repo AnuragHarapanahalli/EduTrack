@@ -146,7 +146,7 @@
 
   gap:6px;
 
-  background:#f8fafc;
+  background: var(--gc-card-sub, #f8fafc);
 
   padding:5px;
 
@@ -239,35 +239,59 @@
 
 .gc-header-action{
 
-
   width:40px;
 
   height:40px;
 
+  padding:0;
+
+  margin:0;
 
   border:none;
 
   border-radius:12px;
 
+  display:inline-flex !important;
 
-  display:flex;
+  justify-content:center !important;
 
-  justify-content:center;
+  align-items:center !important;
 
-  align-items:center;
+  text-align:center;
 
+  line-height:1;
 
   background: var(--gc-card-sub, #f8fafc);
 
-
   color: var(--gc-text-main, #475569);
-
 
   cursor:pointer;
 
-
   transition:.25s;
 
+}
+
+.gc-header-action i {
+
+  display:inline-flex !important;
+
+  align-items:center !important;
+
+  justify-content:center !important;
+
+  font-size:1.05rem;
+
+  line-height:1 !important;
+
+  margin:0 !important;
+
+  padding:0 !important;
+
+  width:auto !important;
+
+  height:auto !important;
+
+  text-align:center;
 
 }
 
@@ -275,17 +299,14 @@
 
 .gc-header-action:hover{
 
-
   background: var(--gc-primary-light, #e6fffb);
-
 
   color: var(--gc-primary, #0f766e);
 
-
   transform:translateY(-2px);
 
-
 }
+
 
 
 
@@ -463,3 +484,38 @@
 
 
 }
+
+
+/* ===================================================
+   MEDIUM RED LOGOUT BUTTON STYLES
+=================================================== */
+
+.gc-logout-action {
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
+  transition: all 0.25s ease;
+}
+
+.gc-logout-action:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border-color: #ef4444 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+}
+
+:host-context(.dark-theme) .gc-logout-action {
+  background: rgba(239, 68, 68, 0.22) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+:host-context(.dark-theme) .gc-logout-action:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.5);
+}

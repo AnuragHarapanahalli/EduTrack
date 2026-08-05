@@ -64,6 +64,7 @@ get activeClassTabVal(): string {
   goDashboard(): void {
     this.currentSubject.set(null);
     this.currentView.set('CLASSES_HOME');
+    this.closeSidebar();
   }
 
   // ---------------- Tabs ----------------
@@ -95,6 +96,8 @@ get activeClassTabVal(): string {
     } else {
       this.currentView.set('CLASSES_HOME');
     }
+
+    this.closeSidebar();
   }
 
   // ---------------- Subjects ----------------

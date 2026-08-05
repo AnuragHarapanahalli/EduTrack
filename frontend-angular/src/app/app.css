@@ -4,7 +4,9 @@
 
 .gc-app-wrapper{
     min-height:100vh;
-    background:#F8FAFC;
+    background: var(--gc-background, #F8FAFC);
+    color: var(--gc-text-main, #0F172A);
+    transition: background .25s ease, color .25s ease;
 }
 
 /* ===========================
@@ -17,9 +19,12 @@
 
     min-height:calc(100vh - 72px);
 
-    transition:.3s;
+    transition: background .25s ease, color .25s ease;
 
     padding: 2.5rem;
+
+    background: var(--gc-background, #F8FAFC);
+    color: var(--gc-text-main, #0F172A);
 
 }
 
