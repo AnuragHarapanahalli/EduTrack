@@ -336,7 +336,11 @@ color:var(--gc-primary);
 
 }
 
+.gc-input-box input{
 
+padding-left:6px;
+
+}
 
 input,
 textarea{

@@ -115,6 +115,16 @@
                     <i class="fa-solid fa-circle-check"></i>
                     Completed
                 </span>
+
+                <div *ngIf="heroMilestone.userSubmission?.status==='SUBMITTED'" style="margin-top: 0.75rem; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                    <span class="gc-badge gc-badge-warning" style="background: #fef3c7; color: #b45309; font-weight: 700; padding: 6px 14px; border-radius: 20px;">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        Under Review
+                    </span>
+                    <span style="font-size: 0.8rem; color: #4b5563;">
+                        Uploaded: {{ heroMilestone.userSubmission?.submittedAt | date:'medium' }}
+                    </span>
+                </div>
             </div>
 
 
@@ -139,7 +149,7 @@
         <div class="netflix-row-header">
 
 
-            <h2 class="netflix-row-title">
+            <h2 class="netflix-row-title" style="cursor: pointer;" (click)="viewStateService.selectSubject(row.subject)" title="View Class details">
 
 
                 <i class="fa-solid fa-layer-group"></i>
@@ -176,8 +186,10 @@
                 class="netflix-milestone-card"
                 [class.locked]="m.isLocked"
                 [class.completed]="m.userSubmission?.status==='APPROVED'"
+                [class.under-review]="m.userSubmission?.status==='SUBMITTED'"
+                [class.needs-revision]="m.userSubmission?.status==='NEEDS_REVISION'"
                 [class.active]="!m.isLocked"
-                (click)="!m.isLocked ? triggerUpload(m):null">
+                (click)="(!m.isLocked && m.userSubmission?.status!=='APPROVED') ? triggerUpload(m):null">
 
 
 
@@ -191,7 +203,8 @@
                             class="gc-badge"
                             [class.gc-badge-danger]="m.isLocked"
                             [class.gc-badge-success]="m.userSubmission?.status==='APPROVED'"
-                            [class.gc-badge-warning]="m.userSubmission?.status==='SUBMITTED'">
+                            [class.gc-badge-warning]="m.userSubmission?.status==='SUBMITTED'"
+                            [class.gc-badge-orange]="m.userSubmission?.status==='NEEDS_REVISION'">
 
 
                                 <i *ngIf="m.isLocked"
@@ -199,8 +212,9 @@
 
 
                                 {{
-                                m.userSubmission?.status ||
-                                (m.isLocked?'Locked':'Active')
+                                m.userSubmission?.status === 'SUBMITTED' ? 'Under Review' :
+                                (m.userSubmission?.status === 'NEEDS_REVISION' ? 'Needs Revision' :
+                                (m.userSubmission?.status || (m.isLocked?'Locked':'Active')))
                                 }}
 
 
@@ -231,6 +245,11 @@
                             {{m.description}}
 
                         </p>
+
+                        <div *ngIf="m.userSubmission?.status==='SUBMITTED'" class="submission-date" style="font-size: 0.8rem; margin-bottom: 0.75rem; color: #b45309; display: flex; align-items: center; gap: 6px; font-weight: 500;">
+                            <i class="fa-regular fa-calendar-check"></i>
+                            Uploaded: {{ m.userSubmission?.submittedAt | date:'medium' }}
+                        </div>
 
 
                     </div>

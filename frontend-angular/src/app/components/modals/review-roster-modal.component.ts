@@ -23,14 +23,15 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
             <form (ngSubmit)="submitGrade()">
               <div class="gc-form-field">
                 <label>Evaluation Status</label>
-                <select [(ngModel)]="gradeStatus" name="gradeStatus" required>
+                <select [(ngModel)]="gradeStatus" name="gradeStatus" (change)="onStatusChange()" required>
                   <option value="APPROVED">APPROVED (Earns Points & Unlocks Next Step)</option>
                   <option value="NEEDS_REVISION">NEEDS REVISION (0 Points until revised)</option>
                 </select>
               </div>
               <div class="gc-form-field">
                 <label>Quality Rating (1 to 5 Stars)</label>
-                <select [(ngModel)]="gradeQuality" name="gradeQuality" required>
+                <select [(ngModel)]="gradeQuality" name="gradeQuality" [disabled]="gradeStatus === 'NEEDS_REVISION'" required>
+                  <option *ngIf="gradeStatus === 'NEEDS_REVISION'" [ngValue]="null">Not Applicable</option>
                   <option [ngValue]="5">⭐⭐⭐⭐⭐ 5/5 - Exceptional</option>
                   <option [ngValue]="4">⭐⭐⭐⭐ 4/5 - Good Quality</option>
                   <option [ngValue]="3">⭐⭐⭐ 3/5 - Average</option>
@@ -71,8 +72,9 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                     <span class="gc-badge" 
                           [class.gc-badge-success]="item.status === 'APPROVED'" 
                           [class.gc-badge-warning]="item.status === 'SUBMITTED'"
-                          [class.gc-badge-danger]="item.status === 'NEEDS_REVISION' || item.status === 'OVERDUE'">
-                      {{ item.status }}
+                          [class.gc-badge-orange]="item.status === 'NEEDS_REVISION'"
+                          [class.gc-badge-danger]="item.status === 'OVERDUE'">
+                      {{ item.status === 'NEEDS_REVISION' ? 'Needs Revision' : item.status }}
                     </span>
                   </td>
                   <td>{{ item.submittedAt ? (item.submittedAt | date:'short') : '&mdash;' }}</td>
@@ -115,7 +117,7 @@ export class ReviewRosterModalComponent implements OnInit {
   rosterList: MilestoneRosterEntry[] = [];
   activeGradingEntry: MilestoneRosterEntry | null = null;
   gradeStatus: SubmissionStatus = 'APPROVED';
-  gradeQuality = 5;
+  gradeQuality: number | null = 5;
   gradeFeedback = '';
 
   constructor(
@@ -149,7 +151,7 @@ export class ReviewRosterModalComponent implements OnInit {
   startGrading(item: MilestoneRosterEntry) {
     this.activeGradingEntry = item;
     this.gradeStatus = item.status === 'NEEDS_REVISION' ? 'NEEDS_REVISION' : 'APPROVED';
-    this.gradeQuality = item.qualityRating || 5;
+    this.gradeQuality = this.gradeStatus === 'NEEDS_REVISION' ? null : (item.qualityRating || 5);
     this.gradeFeedback = item.instructorFeedback || '';
     this.cdr.detectChanges();
   }
@@ -159,12 +161,20 @@ export class ReviewRosterModalComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  onStatusChange() {
+    if (this.gradeStatus === 'NEEDS_REVISION') {
+      this.gradeQuality = null;
+    } else {
+      this.gradeQuality = 5;
+    }
+  }
+
   submitGrade() {
     if (!this.activeGradingEntry || !this.activeGradingEntry.submissionId) return;
 
     this.apiService.reviewSubmission(this.activeGradingEntry.submissionId, {
       status: this.gradeStatus,
-      qualityRating: this.gradeQuality,
+      qualityRating: this.gradeQuality as any,
       feedback: this.gradeFeedback
     }).subscribe({
       next: () => {

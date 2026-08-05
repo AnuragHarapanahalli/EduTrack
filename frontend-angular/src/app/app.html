@@ -4,8 +4,7 @@
 
   <app-sidebar
     *ngIf="viewStateService.currentViewVal !== 'AUTH'"
-    (openCreateSubjectModal)="showCreateSubjectModal=true"
-    (openAddStudentsModal)="showAddStudentsModal=true">
+    (openCreateSubjectModal)="showCreateSubjectModal=true">
   </app-sidebar>
 
   <main class="gc-main-body"
@@ -14,9 +13,14 @@
     <app-auth *ngIf="viewStateService.currentViewVal==='AUTH'"></app-auth>
 
     <app-classes-home
-      *ngIf="viewStateService.currentViewVal==='CLASSES_HOME'"
+      *ngIf="viewStateService.currentViewVal==='CLASSES_HOME' && authService.currentUser()?.role === 'INSTRUCTOR'"
       (openCreateSubjectModal)="showCreateSubjectModal=true">
     </app-classes-home>
+
+    <app-classwork
+      *ngIf="viewStateService.currentViewVal==='CLASSES_HOME' && authService.currentUser()?.role === 'STUDENT'"
+      (openUploadModal)="openUploadDialog($event)">
+    </app-classwork>
 
     <ng-container *ngIf="viewStateService.currentViewVal==='CLASS_DETAIL'">
 

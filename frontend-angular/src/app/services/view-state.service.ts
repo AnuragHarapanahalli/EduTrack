@@ -85,7 +85,13 @@ get activeClassTabVal(): string {
 
     if (subject) {
       this.currentView.set('CLASS_DETAIL');
-      this.currentTab.set('STREAM');
+      const userJson = localStorage.getItem('edutrack_user');
+      const user = userJson ? JSON.parse(userJson) : null;
+      if (user?.role === 'STUDENT') {
+        this.currentTab.set('CLASSWORK');
+      } else {
+        this.currentTab.set('STREAM');
+      }
     } else {
       this.currentView.set('CLASSES_HOME');
     }
@@ -98,7 +104,11 @@ get activeClassTabVal(): string {
     this.subjects.set(subjects);
 
     if (!this.currentSubject() && subjects.length > 0) {
-      this.currentSubject.set(subjects[0]);
+      const userJson = localStorage.getItem('edutrack_user');
+      const user = userJson ? JSON.parse(userJson) : null;
+      if (user?.role !== 'STUDENT') {
+        this.currentSubject.set(subjects[0]);
+      }
     }
   }
   // Compatibility with old components
@@ -118,5 +128,11 @@ userSubjects(): SubjectModel[] {
 
   closeSidebar(): void {
     this.isSidebarOpen.set(false);
+  }
+
+  refreshTrigger = signal<number>(0);
+
+  triggerRefresh(): void {
+    this.refreshTrigger.update(v => v + 1);
   }
 }

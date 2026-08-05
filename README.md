@@ -1,5 +1,13 @@
-> [!IMPORTANT]
-> **DEVELOPMENT NOTE**: UI is currently incomplete. Changes need to be made and we need to start using Angular or React for the next iteration.
+# 🛠️ Recent Changes & Updates
+
+Here is a summary of the latest improvements implemented in the project:
+* **Student Landing Page**: Students now land directly on the Netflix-style path overview showing the countdown hero card and subjects rows.
+* **Roster & Leaderboard Isolation**: Leaderboards and classmate rosters are now fully isolated class-by-class (showing only enrolled students).
+* **"Needs Revision" Status**: Added a new orange status color (`gc-badge-orange`) for milestones needing revision, and automatically disable/set the Quality Rating stars dropdown to "Not Applicable".
+* **Submissions Auto-Update**: Modal closes immediately trigger reactive updates in student views to show the yellow "Under Review" state and upload time.
+* **Card & Row Spacing**: Refined padding buffers on pages and form elements to make them premium, spacious, and responsive.
+* **Upload Lockouts**: Click prompts are blocked on already approved milestone cards.
+* **Teacher Page Accordion**: Toggled detection triggers and turned off default first-card pre-expansion.
 
 # EduTrack - Milestone & Progress Monitoring System for PBL Labs
 

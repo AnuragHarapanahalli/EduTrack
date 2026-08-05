@@ -19,6 +19,8 @@
 
     transition:.3s;
 
+    padding: 2.5rem;
+
 }
 
 /* Login Page */
@@ -28,6 +30,8 @@
     margin-top:0;
 
     min-height:100vh;
+
+    padding: 0;
 
 }
 
