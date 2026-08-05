@@ -35,10 +35,7 @@ public class LeaderboardService {
         Subject subject = subjectRepository.findById(subjectId)
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
-        Batch batch = subject.getBatch();
-        if (batch == null) return List.of();
-
-        List<User> students = userRepository.findByBatchIdAndRole(batch.getId(), Role.STUDENT);
+        Set<User> students = subject.getEnrolledStudents();
         Long totalMilestonesCount = milestoneRepository.countBySubject(subject);
         int totalMilestones = totalMilestonesCount != null ? totalMilestonesCount.intValue() : 0;
 

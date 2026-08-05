@@ -15,7 +15,9 @@ export interface UserSubmission {
     | 'SUBMITTED'
     | 'APPROVED'
     | 'REJECTED'
-    | 'PENDING';
+    | 'PENDING'
+    | 'NEEDS_REVISION'
+    | 'OVERDUE';
 
   submittedAt?: string;
 

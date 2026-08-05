@@ -286,6 +286,11 @@ button {
   color: #F59E0B;
 }
 
+.gc-badge-orange {
+  background: rgba(249, 115, 22, 0.15);
+  color: #F97316;
+}
+
 .gc-badge-danger {
   background: rgba(239, 68, 68, 0.15);
   color: #EF4444;

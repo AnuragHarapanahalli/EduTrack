@@ -68,17 +68,7 @@ public class SubjectService {
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         List<Subject> enrolled = subjectRepository.findByEnrolledStudentsContaining(student);
-        if (!enrolled.isEmpty()) {
-            return enrolled.stream().map(this::toSubjectResponse).collect(Collectors.toList());
-        }
-
-        if (student.getBatch() == null) {
-            return List.of();
-        }
-
-        return subjectRepository.findByBatch(student.getBatch()).stream()
-                .map(this::toSubjectResponse)
-                .collect(Collectors.toList());
+        return enrolled.stream().map(this::toSubjectResponse).collect(Collectors.toList());
     }
 
     public SubjectDto.SubjectResponse getSubjectById(Long id) {

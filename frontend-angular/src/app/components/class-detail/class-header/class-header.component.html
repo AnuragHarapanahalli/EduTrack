@@ -73,6 +73,7 @@
 
 
     <button
+      *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'"
       [class.active]="viewStateService.currentTab()==='STREAM'"
       (click)="changeTab('STREAM')">
 

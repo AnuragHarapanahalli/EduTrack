@@ -85,6 +85,11 @@
 
 }
 
+.gc-classwork-container .gc-badge-orange {
+    background:#ffedd5 !important;
+    color:#c2410c !important;
+}
+
 
 
 /* ==========================================================
@@ -155,7 +160,22 @@
 
 }
 
+.hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
 
+.hero-subject {
+    display: block;
+    margin-top: 0.5rem;
+    color: #4338ca;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
 
 .netflix-hero-badge {
 
@@ -243,7 +263,19 @@
 
     line-height:1.8;
 
+    margin-bottom: 1.75rem;
 
+}
+
+.hero-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    border-top: 1px solid rgba(99, 102, 241, 0.15);
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
 }
 
 
@@ -302,7 +334,15 @@
 
     font-weight:800;
 
+    cursor:pointer;
 
+    transition: all 0.2s ease;
+
+}
+
+.netflix-row-title:hover {
+    color: var(--class-primary, #6366f1);
+    transform: translateX(4px);
 }
 
 
@@ -409,26 +449,58 @@
 
     display:flex;
 
-
     flex-direction:column;
-
 
     justify-content:space-between;
 
-
     cursor:pointer;
-
 
     transition:.25s ease;
 
-
-    box-shadow:
-
-
-    0 10px 30px rgba(15,23,42,.08);
-
+    box-shadow: 0 10px 30px rgba(15,23,42,.08);
 
 }
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.netflix-milestone-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0.65rem;
+  color: var(--class-text);
+  line-height: 1.35;
+}
+
+.netflix-milestone-card p {
+  font-size: 0.85rem;
+  color: var(--class-subtext);
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.netflix-milestone-card .deadline {
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--class-subtext);
+}
+
+.netflix-milestone-card .deliverable-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
 
 
 
@@ -467,6 +539,16 @@
     border:2px solid #22c55e;
 
 
+}
+
+.netflix-milestone-card.under-review {
+    border: 2px solid #f59e0b;
+    background: #fffbeb;
+}
+
+.netflix-milestone-card.needs-revision {
+    border: 2px solid #f97316;
+    background: #fff7ed;
 }
 
 
@@ -759,6 +841,18 @@
     align-items:center;
 
 
+}
+
+.gc-assignment-left {
+    display:flex;
+    align-items:center;
+    gap:1.25rem;
+}
+
+.gc-assignment-right {
+    display:flex;
+    align-items:center;
+    gap:1rem;
 }
 
 

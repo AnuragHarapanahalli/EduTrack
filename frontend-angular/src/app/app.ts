@@ -322,6 +322,7 @@ export class AppComponent implements OnInit {
   }
 
   refreshCurrentSubjectState(): void {
+    this.viewStateService.triggerRefresh();
     const subject = this.viewStateService.currentSubject();
     if(subject){
       this.viewStateService.currentSubject.set({

@@ -51,7 +51,8 @@ public class DataInitializer implements CommandLineRunner {
         User studentPriya = userRepository.save(new User("priya@edutrack.edu", passwordEncoder.encode("student123"), "Priya Patel", Role.STUDENT, batchA));
         User studentRahul = userRepository.save(new User("rahul@edutrack.edu", passwordEncoder.encode("student123"), "Rahul Sharma", Role.STUDENT, batchB));
 
-        // 3. Create Subject 1: PBL3 (Prof. Sharma)
+        // 3. Create Subjects for Prof. Sharma (Batch A)
+        // Subject 1: PBL3
         Subject pblSubject = new Subject(
                 "CSE20140 - Project Based Learning III",
                 "CSE20140-PBL3",
@@ -62,7 +63,20 @@ public class DataInitializer implements CommandLineRunner {
         pblSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentPriya));
         pblSubject = subjectRepository.save(pblSubject);
 
-        // 4. Create Subject 2: Fullstack Web Dev (Dr. Verma)
+        // Subject 2: DBMS
+        Subject dbmsSubject = new Subject(
+                "CSE20120 - Database Management Systems",
+                "CSE20120-DBMS",
+                profSharma,
+                batchA,
+                "Fundamentals of relational databases, SQL programming, normalization, transaction management, and indexing techniques."
+        );
+        dbmsSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentPriya));
+        dbmsSubject = subjectRepository.save(dbmsSubject);
+
+
+        // 4. Create Subjects for Dr. Verma (Batch B)
+        // Subject 1: Fullstack Web Dev
         Subject webDevSubject = new Subject(
                 "CSE30110 - Fullstack Web Development",
                 "CSE30110-WEB",
@@ -73,26 +87,38 @@ public class DataInitializer implements CommandLineRunner {
         webDevSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentRahul));
         webDevSubject = subjectRepository.save(webDevSubject);
 
+        // Subject 2: Cloud Computing
+        Subject cloudSubject = new Subject(
+                "CSE30130 - Cloud Computing & Microservices",
+                "CSE30130-CLOUD",
+                profVerma,
+                batchB,
+                "Architecting cloud-native applications, containerization using Docker, orchestration via Kubernetes, and serverless compute paradigms."
+        );
+        cloudSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentRahul));
+        cloudSubject = subjectRepository.save(cloudSubject);
+
+
         // 5. Create Milestones for PBL3
-        // Milestone 1: OVERDUE / LATE DEADLINE (2 Days Ago) -> Demonstrates Late Submission Penalty (0.5x Multiplier)
+        // Milestone 1: OVERDUE / LATE DEADLINE (2 Days Ago)
         milestoneRepository.save(new Milestone(
                 pblSubject,
                 "Milestone 1: Project Topic Selection & Problem Statement",
                 "Submit project proposal including domain, problem statement, team roles, and initial feature list.",
                 LocalDateTime.now().minusDays(2),
                 100.0,
-                "Proposal PDF, Problem Statement Doc",
+                "[{\"title\":\"Proposal PDF\",\"isMandatory\":true},{\"title\":\"Problem Statement Doc\",\"isMandatory\":true}]",
                 true
         ));
 
-        // Milestone 2: ON-TIME UPCOMING DEADLINE (7 Days in Future) -> Demonstrates On-Time Successful Submission (1.0x / 1.2x Multiplier)
+        // Milestone 2: ON-TIME UPCOMING DEADLINE (7 Days in Future)
         milestoneRepository.save(new Milestone(
                 pblSubject,
                 "Milestone 2: Software Requirements Specification (SRS)",
                 "Complete IEEE 830 formatted SRS document detailing functional and non-functional requirements.",
                 LocalDateTime.now().plusDays(7),
                 150.0,
-                "SRS Document (.docx or .pdf)",
+                "[{\"title\":\"SRS Document (.docx or .pdf)\",\"isMandatory\":true}]",
                 true
         ));
 
@@ -102,18 +128,63 @@ public class DataInitializer implements CommandLineRunner {
                 "Provide ER diagram, relational schema, and Swagger/REST endpoint specifications.",
                 LocalDateTime.now().plusDays(14),
                 200.0,
-                "ER Diagram PNG, OpenAPI Spec YAML, GitHub Link",
+                "[{\"title\":\"ER Diagram PNG\",\"isMandatory\":true},{\"title\":\"OpenAPI Spec YAML\",\"isMandatory\":true},{\"title\":\"GitHub Link\",\"isMandatory\":false}]",
                 true
         ));
 
-        // 6. Create Milestones for Fullstack Web Dev
+
+        // 6. Create Milestones for DBMS
+        milestoneRepository.save(new Milestone(
+                dbmsSubject,
+                "Milestone 1: ER Modelling & Relational Diagram",
+                "Design the Entity-Relationship model for the assigned project domain and construct relational schemas.",
+                LocalDateTime.now().plusDays(5),
+                100.0,
+                "[{\"title\":\"ER Diagram PDF\",\"isMandatory\":true}]",
+                true
+        ));
+
+        milestoneRepository.save(new Milestone(
+                dbmsSubject,
+                "Milestone 2: Schema Normalization & SQL DDL Scripts",
+                "Normalize schemas up to 3NF/BCNF and write SQL DDL scripts to build the relational structure.",
+                LocalDateTime.now().plusDays(12),
+                150.0,
+                "[{\"title\":\"SQL DDL Script (.sql)\",\"isMandatory\":true},{\"title\":\"Normalization Report\",\"isMandatory\":false}]",
+                true
+        ));
+
+
+        // 7. Create Milestones for Fullstack Web Dev
         milestoneRepository.save(new Milestone(
                 webDevSubject,
                 "Milestone 1: HTML5/CSS3 Responsive Layout Design",
                 "Create responsive landing page and dashboard components adhering to UI design guidelines.",
                 LocalDateTime.now().plusDays(4),
                 100.0,
-                "GitHub Repo URL, Live Demo Link",
+                "[{\"title\":\"GitHub Repo URL\",\"isMandatory\":true},{\"title\":\"Live Demo Link\",\"isMandatory\":false}]",
+                true
+        ));
+
+
+        // 8. Create Milestones for Cloud Computing & Microservices
+        milestoneRepository.save(new Milestone(
+                cloudSubject,
+                "Milestone 1: Docker Containerization",
+                "Write multi-stage Dockerfiles for application services and package them using Docker Compose.",
+                LocalDateTime.now().plusDays(6),
+                100.0,
+                "[{\"title\":\"Dockerfile & Compose Spec\",\"isMandatory\":true}]",
+                true
+        ));
+
+        milestoneRepository.save(new Milestone(
+                cloudSubject,
+                "Milestone 2: Kubernetes Orchestration & Deployments",
+                "Write K8s deployment manifests, service configurations, and setup ingress controllers for routing.",
+                LocalDateTime.now().plusDays(15),
+                200.0,
+                "[{\"title\":\"K8s YAML Manifests\",\"isMandatory\":true},{\"title\":\"Helm Chart Directory\",\"isMandatory\":false}]",
                 true
         ));
 

@@ -14,7 +14,10 @@ import { Subject } from '../../models/subject.model';
 export class SidebarComponent {
 
   @Output() openCreateSubjectModal = new EventEmitter<void>();
-  @Output() openAddStudentsModal = new EventEmitter<void>();
+
+  get isSidebarOpen(): boolean {
+    return this.viewStateService.isSidebarOpen();
+  }
 
   get isSidebarOpen(): boolean {
     return this.viewStateService.isSidebarOpen();
@@ -52,10 +55,6 @@ export class SidebarComponent {
 
   createClass(): void {
     this.openCreateSubjectModal.emit();
-  }
-
-  inviteStudents(): void {
-    this.openAddStudentsModal.emit();
   }
 
   logout(): void {

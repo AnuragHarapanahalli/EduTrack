@@ -72,8 +72,13 @@ export class ClassworkComponent implements OnInit, OnDestroy {
     effect(() => {
       const subject = this.viewStateService.currentSubject();
       const user = this.authService.currentUser();
-      if (user && user.role === 'INSTRUCTOR' && subject) {
-        this.loadTeacherClasswork();
+      const trigger = this.viewStateService.refreshTrigger();
+      if (user) {
+        if (user.role === 'INSTRUCTOR' && subject) {
+          this.loadTeacherClasswork();
+        } else if (user.role === 'STUDENT') {
+          this.loadStudentNetflixView(user.id);
+        }
       }
     });
   }
@@ -111,214 +116,154 @@ export class ClassworkComponent implements OnInit, OnDestroy {
 
 
 
-  loadStudentNetflixView(studentId:number){
-
-
-    forkJoin({
-
-      subjects:
-        this.apiService.getSubjectsForStudent(studentId),
-
-
-      submissions:
-        this.apiService.getSubmissionsByStudent(studentId)
-
-
-    })
-
-    .pipe(takeUntil(this.destroy$))
-
-
-    .subscribe({
-
-      next:({subjects,submissions})=>{
-
-
-        const submissionMap:any={};
-
-
-
-        submissions.forEach(sub=>{
-
-          submissionMap[sub.milestoneId]=sub;
-
-        });
-
-
-
-        const requests =
-          subjects.map(subject=>
-
-            this.apiService
-            .getMilestonesBySubject(subject.id)
-
-          );
-
-
-
-        forkJoin(requests)
-
-        .subscribe(allMilestones=>{
-
-
-          let nearest:any=null;
-
-
-
-          this.studentSubjectRows =
-          subjects.map((subject,index)=>{
-
-
-            const raw =
-            allMilestones[index] || [];
-
-
-
-            const milestones =
-            raw.map((m:any,i:number)=>{
-
-
-              const deliverables =
-                this.parseDeliverables(
-                  m.requiredDeliverables
-                );
-
-
-
-              const submission =
-                submissionMap[m.id];
-
-
-
-              const locked =
-                i>0 &&
-                (
-                  !submissionMap[raw[i-1].id] ||
-                  submissionMap[raw[i-1].id]
-                  .status!=='APPROVED'
-                );
-
-
-
-              const countdown =
-                this.calculateCountdown(
-                  m.deadline
-                );
-
-
-
-              const item:MilestoneUI={
-
-
-                ...m,
-
-
-                deliverablesList:
-                  deliverables,
-
-
-                isLocked:
-                  locked,
-
-
-                userSubmission:
-                  submission,
-
-
-                daysRemainingText:
-                  countdown.text,
-
-
-                isDueSoon:
-                  countdown.isDueSoon
-
-              };
-
-
-
-              if(
-                !locked &&
-                submission?.status!=='APPROVED'
-              ){
-
-                const due =
-                  new Date(m.deadline)
-                  .getTime();
-
-
-
-                if(!nearest || due < nearest.due){
-
-                  nearest={
-                    milestone:item,
-                    subject,
-                    due
-                  };
-
+  loadStudentNetflixView(studentId: number) {
+    const activeSubject = this.viewStateService.currentSubject();
+
+    if (activeSubject) {
+      this.loading = true;
+      this.apiService.getMilestonesBySubject(activeSubject.id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (rawMilestones) => {
+            this.apiService.getSubmissionsByStudent(studentId)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (submissions) => {
+                  const submissionMap: any = {};
+                  submissions.forEach(sub => {
+                    submissionMap[sub.milestoneId] = sub;
+                  });
+
+                  const uiMilestones: MilestoneUI[] = rawMilestones.map((m, idx) => {
+                    const deliverables = this.parseDeliverables(m.requiredDeliverables);
+                    const submission = submissionMap[m.id];
+                    const locked = idx > 0 && (
+                      !submissionMap[rawMilestones[idx - 1].id] ||
+                      submissionMap[rawMilestones[idx - 1].id].status !== 'APPROVED'
+                    );
+                    const countdown = this.calculateCountdown(m.deadline);
+                    return {
+                      ...m,
+                      deliverablesList: deliverables,
+                      isLocked: locked,
+                      userSubmission: submission,
+                      daysRemainingText: countdown.text,
+                      isDueSoon: countdown.isDueSoon
+                    };
+                  });
+
+                  this.studentSubjectRows = [{ subject: activeSubject, milestones: uiMilestones }];
+                  this.heroMilestone = null;
+                  this.heroSubject = null;
+                  this.loading = false;
+                  this.cdr.detectChanges();
+                },
+                error: (err) => {
+                  console.error(err);
+                  this.loading = false;
+                  this.cdr.detectChanges();
                 }
-
-              }
-
-
-
-              return item;
-
-
-            });
-
-
-
-            return {
-
-              subject,
-
-              milestones
-
-            };
-
-
+              });
+          },
+          error: (err) => {
+            console.error(err);
+            this.loading = false;
+            this.cdr.detectChanges();
+          }
+        });
+    } else {
+      this.loading = true;
+      forkJoin({
+        subjects: this.apiService.getSubjectsForStudent(studentId),
+        submissions: this.apiService.getSubmissionsByStudent(studentId)
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ subjects, submissions }) => {
+          const submissionMap: any = {};
+          submissions.forEach(sub => {
+            submissionMap[sub.milestoneId] = sub;
           });
 
-
-
-
-          if(nearest){
-
-            this.heroMilestone =
-              nearest.milestone;
-
-
-            this.heroSubject =
-              nearest.subject;
-
+          if (subjects.length === 0) {
+            this.studentSubjectRows = [];
+            this.heroMilestone = null;
+            this.heroSubject = null;
+            this.loading = false;
+            this.cdr.detectChanges();
+            return;
           }
 
+          const requests = subjects.map(subject =>
+            this.apiService.getMilestonesBySubject(subject.id)
+          );
 
+          forkJoin(requests)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (allMilestones) => {
+              let nearest: any = null;
 
-          this.loading=false;
+              this.studentSubjectRows = subjects.map((subject, index) => {
+                const raw = allMilestones[index] || [];
+                const milestones = raw.map((m: any, i: number) => {
+                  const deliverables = this.parseDeliverables(m.requiredDeliverables);
+                  const submission = submissionMap[m.id];
+                  const locked = i > 0 && (
+                    !submissionMap[raw[i - 1].id] ||
+                    submissionMap[raw[i - 1].id].status !== 'APPROVED'
+                  );
+                  const countdown = this.calculateCountdown(m.deadline);
+                  const item: MilestoneUI = {
+                    ...m,
+                    deliverablesList: deliverables,
+                    isLocked: locked,
+                    userSubmission: submission,
+                    daysRemainingText: countdown.text,
+                    isDueSoon: countdown.isDueSoon
+                  };
 
+                  if (!locked && submission?.status !== 'APPROVED') {
+                    const due = new Date(m.deadline).getTime();
+                    if (!nearest || due < nearest.due) {
+                      nearest = { item, subject, due };
+                    }
+                  }
+
+                  return item;
+                });
+
+                return { subject, milestones };
+              });
+
+              if (nearest) {
+                this.heroMilestone = nearest.item;
+                this.heroSubject = nearest.subject;
+              } else if (this.studentSubjectRows.length > 0 && this.studentSubjectRows[0].milestones.length > 0) {
+                this.heroMilestone = this.studentSubjectRows[0].milestones[0];
+                this.heroSubject = this.studentSubjectRows[0].subject;
+              } else {
+                this.heroMilestone = null;
+                this.heroSubject = null;
+              }
+
+              this.loading = false;
+              this.cdr.detectChanges();
+            },
+            error: (err) => {
+              console.error(err);
+              this.loading = false;
+              this.cdr.detectChanges();
+            }
+          });
+        },
+        error: (err) => {
+          console.error(err);
+          this.loading = false;
           this.cdr.detectChanges();
-
-
-        });
-
-
-
-      },
-
-
-      error:err=>{
-
-        console.error(err);
-
-        this.loading=false;
-
-      }
-
-
-    });
-
-
+        }
+      });
+    }
   }
 
 
@@ -393,12 +338,6 @@ export class ClassworkComponent implements OnInit, OnDestroy {
 
 
 
-        if(this.teacherMilestones.length){
-
-          this.expandedMilestoneId =
-          this.teacherMilestones[0].id;
-
-        }
 
 
 
@@ -544,15 +483,12 @@ export class ClassworkComponent implements OnInit, OnDestroy {
 
 
 
-  toggleExpand(id:number){
-
+  toggleExpand(id: number) {
     this.expandedMilestoneId =
-      this.expandedMilestoneId===id
-      ?
-      null
-      :
-      id;
-
+      this.expandedMilestoneId === id
+        ? null
+        : id;
+    this.cdr.detectChanges();
   }
 
 

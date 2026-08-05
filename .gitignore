@@ -22,3 +22,16 @@ Thumbs.db
 # File uploads (ignore temporary uploaded files, keep folder)
 uploads/*
 !uploads/.gitkeep
+
+# Project Backups & Large Capture Files
+*.zip
+*.har
+
+# Node / Angular (Root-level overrides)
+**/node_modules/
+**/dist/
+**/.angular/cache/
+**/.sass-cache/
+**/tmp/
+**/out-tsc/
+**/coverage/

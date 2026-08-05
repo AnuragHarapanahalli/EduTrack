@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ApiService } from '../../../services/api.service';
@@ -26,7 +26,16 @@ export class PeopleComponent implements OnInit {
     public authService: AuthService,
     public viewStateService: ViewStateService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    effect(() => {
+      // Trigger reload when currentSubject signal reference changes (e.g. on manual/excel add refresh)
+      const subject = this.viewStateService.currentSubject();
+      if (subject) {
+        this.loadPeople();
+      }
+    });
+
+  }
 
   ngOnInit(): void {
     this.loadPeople();
