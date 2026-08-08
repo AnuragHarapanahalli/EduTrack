@@ -1,5 +1,6 @@
 package com.edutrack.service;
 
+import com.edutrack.config.ValidationConfig;
 import com.edutrack.dto.AuthDto;
 import com.edutrack.dto.SubjectDto;
 import com.edutrack.model.Batch;
@@ -22,12 +23,14 @@ public class SubjectService {
     private final UserRepository userRepository;
     private final BatchRepository batchRepository;
     private final MilestoneRepository milestoneRepository;
+    private final ValidationConfig validationConfig;
 
-    public SubjectService(SubjectRepository subjectRepository, UserRepository userRepository, BatchRepository batchRepository, MilestoneRepository milestoneRepository) {
+    public SubjectService(SubjectRepository subjectRepository, UserRepository userRepository, BatchRepository batchRepository, MilestoneRepository milestoneRepository, ValidationConfig validationConfig) {
         this.subjectRepository = subjectRepository;
         this.userRepository = userRepository;
         this.batchRepository = batchRepository;
         this.milestoneRepository = milestoneRepository;
+        this.validationConfig = validationConfig;
     }
 
     public SubjectDto.SubjectResponse createSubject(SubjectDto.CreateSubjectRequest request, Long instructorId) {
@@ -36,6 +39,16 @@ public class SubjectService {
 
         Batch batch = batchRepository.findById(request.getBatchId())
                 .orElseThrow(() -> new RuntimeException("Batch not found"));
+
+        if (request.getName() == null || request.getName().trim().length() < validationConfig.getSubjectNameMin() || request.getName().trim().length() > validationConfig.getSubjectNameMax()) {
+            throw new IllegalArgumentException("Subject name must be between " + validationConfig.getSubjectNameMin() + " and " + validationConfig.getSubjectNameMax() + " characters.");
+        }
+        if (request.getCode() == null || request.getCode().trim().length() < validationConfig.getSubjectCodeMin() || request.getCode().trim().length() > validationConfig.getSubjectCodeMax()) {
+            throw new IllegalArgumentException("Subject code must be between " + validationConfig.getSubjectCodeMin() + " and " + validationConfig.getSubjectCodeMax() + " characters.");
+        }
+        if (request.getDescription() != null && request.getDescription().trim().length() > validationConfig.getSubjectDescriptionMax()) {
+            throw new IllegalArgumentException("Subject description must not exceed " + validationConfig.getSubjectDescriptionMax() + " characters.");
+        }
 
         Subject subject = new Subject(
                 request.getName(),

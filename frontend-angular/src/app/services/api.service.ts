@@ -245,4 +245,8 @@ export class ApiService {
     );
   }
 
+  getValidationLimits(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/validation-limits`);
+  }
+
 }

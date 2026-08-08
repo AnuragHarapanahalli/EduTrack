@@ -1,7 +1,13 @@
 package com.edutrack.service;
 
+import com.edutrack.config.ValidationConfig;
 import com.edutrack.dto.SubmissionDto;
-import com.edutrack.model.*;
+import com.edutrack.model.Milestone;
+import com.edutrack.model.Role;
+import com.edutrack.model.Subject;
+import com.edutrack.model.Submission;
+import com.edutrack.model.SubmissionStatus;
+import com.edutrack.model.User;
 import com.edutrack.repository.MilestoneRepository;
 import com.edutrack.repository.SubmissionRepository;
 import com.edutrack.repository.UserRepository;
@@ -20,12 +26,14 @@ public class SubmissionService {
     private final MilestoneRepository milestoneRepository;
     private final UserRepository userRepository;
     private final FileStorageService fileStorageService;
+    private final ValidationConfig validationConfig;
 
-    public SubmissionService(SubmissionRepository submissionRepository, MilestoneRepository milestoneRepository, UserRepository userRepository, FileStorageService fileStorageService) {
+    public SubmissionService(SubmissionRepository submissionRepository, MilestoneRepository milestoneRepository, UserRepository userRepository, FileStorageService fileStorageService, ValidationConfig validationConfig) {
         this.submissionRepository = submissionRepository;
         this.milestoneRepository = milestoneRepository;
         this.userRepository = userRepository;
         this.fileStorageService = fileStorageService;
+        this.validationConfig = validationConfig;
     }
 
     public SubmissionDto.SubmissionResponse submitDeliverable(
@@ -40,6 +48,13 @@ public class SubmissionService {
 
         User student = userRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        if (submissionLink != null && submissionLink.trim().length() > validationConfig.getSubmissionLinkMax()) {
+            throw new IllegalArgumentException("Submission link must not exceed " + validationConfig.getSubmissionLinkMax() + " characters.");
+        }
+        if (comments != null && comments.trim().length() > validationConfig.getSubmissionCommentsMax()) {
+            throw new IllegalArgumentException("Comments must not exceed " + validationConfig.getSubmissionCommentsMax() + " characters.");
+        }
 
         // Check if student already has a submission for this milestone
         Optional<Submission> existingOpt = submissionRepository.findByMilestoneAndStudent(milestone, student);
@@ -168,7 +183,6 @@ public class SubmissionService {
                 r.setSubmissionId(sub.getId());
                 r.setStatus(sub.getStatus());
                 r.setSubmittedAt(sub.getSubmittedAt());
-                r.setTimelinessMultiplier(sub.getTimelinessMultiplier());
                 r.setFileUrl(sub.getFileUrl());
                 r.setSubmissionLink(sub.getSubmissionLink());
                 r.setComments(sub.getComments());
@@ -176,22 +190,27 @@ public class SubmissionService {
                 r.setFinalPoints(sub.getFinalPoints());
                 r.setInstructorFeedback(sub.getInstructorFeedback());
 
+                // Timeliness Label
                 if (sub.getTimelinessMultiplier() != null) {
-                    if (sub.getTimelinessMultiplier() >= 1.2) r.setTimelinessLabel("Early (+1.2x)");
-                    else if (sub.getTimelinessMultiplier() >= 1.0) r.setTimelinessLabel("On-Time (1.0x)");
-                    else r.setTimelinessLabel("Delayed / Late (0.5x)");
+                    if (sub.getTimelinessMultiplier() >= 1.2) {
+                        r.setTimelinessLabel("EARLY (1.2x Points)");
+                    } else if (sub.getTimelinessMultiplier() >= 1.0) {
+                        r.setTimelinessLabel("ON TIME (1.0x Points)");
+                    } else {
+                        r.setTimelinessLabel("LATE (0.5x Points)");
+                    }
                 } else {
-                    r.setTimelinessLabel("On-Time");
+                    r.setTimelinessLabel("ON TIME");
                 }
             } else {
-                r.setStatus(SubmissionStatus.OVERDUE);
-                r.setTimelinessLabel(LocalDateTime.now().isAfter(milestone.getDeadline()) ? "Overdue (Not Submitted)" : "Pending Submission");
+                r.setStatus(LocalDateTime.now().isAfter(milestone.getDeadline()) ? SubmissionStatus.OVERDUE : null);
+                r.setTimelinessLabel(LocalDateTime.now().isAfter(milestone.getDeadline()) ? "OVERDUE" : "NOT SUBMITTED");
             }
             return r;
         }).collect(Collectors.toList());
     }
 
-    public SubmissionDto.SubmissionResponse toSubmissionResponse(Submission submission) {
+    private SubmissionDto.SubmissionResponse toSubmissionResponse(Submission submission) {
         SubmissionDto.SubmissionResponse response = new SubmissionDto.SubmissionResponse();
         response.setId(submission.getId());
         response.setMilestoneId(submission.getMilestone().getId());

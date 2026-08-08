@@ -138,4 +138,28 @@ userSubjects(): SubjectModel[] {
   triggerRefresh(): void {
     this.refreshTrigger.update(v => v + 1);
   }
+
+  validationLimits = signal<any>({
+    subjectNameMin: 3,
+    subjectNameMax: 100,
+    subjectCodeMin: 3,
+    subjectCodeMax: 20,
+    subjectDescriptionMax: 500,
+
+    milestoneTitleMin: 3,
+    milestoneTitleMax: 150,
+    milestoneDescriptionMin: 5,
+    milestoneDescriptionMax: 1000,
+    milestonePointsMin: 10,
+    milestonePointsMax: 1000,
+
+    userFullnameMin: 2,
+    userFullnameMax: 100,
+    userEmailMax: 100,
+    userPasswordMin: 6,
+    userPasswordMax: 30,
+
+    submissionCommentsMax: 500,
+    submissionLinkMax: 255
+  });
 }

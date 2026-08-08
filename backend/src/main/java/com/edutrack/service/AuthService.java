@@ -1,6 +1,7 @@
 package com.edutrack.service;
 
 import com.edutrack.config.JwtTokenProvider;
+import com.edutrack.config.ValidationConfig;
 import com.edutrack.dto.AuthDto;
 import com.edutrack.model.Batch;
 import com.edutrack.model.Role;
@@ -10,8 +11,6 @@ import com.edutrack.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class AuthService {
 
@@ -19,15 +18,27 @@ public class AuthService {
     private final BatchRepository batchRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ValidationConfig validationConfig;
 
-    public AuthService(UserRepository userRepository, BatchRepository batchRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public AuthService(UserRepository userRepository, BatchRepository batchRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, ValidationConfig validationConfig) {
         this.userRepository = userRepository;
         this.batchRepository = batchRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.validationConfig = validationConfig;
     }
 
     public AuthDto.AuthResponse register(AuthDto.RegisterRequest request) {
+        if (request.getFullName() == null || request.getFullName().trim().length() < validationConfig.getUserFullnameMin() || request.getFullName().trim().length() > validationConfig.getUserFullnameMax()) {
+            throw new IllegalArgumentException("Full name must be between " + validationConfig.getUserFullnameMin() + " and " + validationConfig.getUserFullnameMax() + " characters.");
+        }
+        if (request.getEmail() == null || request.getEmail().trim().length() > validationConfig.getUserEmailMax() || !request.getEmail().contains("@")) {
+            throw new IllegalArgumentException("Invalid email format, or email exceeds " + validationConfig.getUserEmailMax() + " characters.");
+        }
+        if (request.getPassword() == null || request.getPassword().length() < validationConfig.getUserPasswordMin() || request.getPassword().length() > validationConfig.getUserPasswordMax()) {
+            throw new IllegalArgumentException("Password must be between " + validationConfig.getUserPasswordMin() + " and " + validationConfig.getUserPasswordMax() + " characters.");
+        }
+
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email address is already in use!");
         }

@@ -15,7 +15,7 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
         <div class="gc-modal-top">
           <div class="gc-modal-title">
             <div class="gc-modal-icon">
-              <i class="fa-solid fa-file-lines"></i>
+               <i class="fa-solid fa-file-lines"></i>
             </div>
             <div>
               <h2>{{ milestoneToEdit ? 'Edit Milestone' : 'Create Milestone' }}</h2>
@@ -26,13 +26,24 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
         </div>
         <form (ngSubmit)="onSubmit()">
           <div class="gc-modal-content">
-            <label>Title *</label>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label style="margin: 0;">Title *</label>
+              <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
+                {{ title?.trim()?.length || 0 }} / {{ viewStateService.validationLimits().milestoneTitleMax }}
+              </span>
+            </div>
             <div class="gc-input-box">
               <i class="fa-solid fa-heading"></i>
               <input type="text" [(ngModel)]="title" name="title" placeholder="e.g. Milestone 1: SRS Document" required>
             </div>
 
-            <label>Instructions *</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+              <label style="margin: 0;">Instructions *</label>
+              <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
+                {{ description?.trim()?.length || 0 }} / {{ viewStateService.validationLimits().milestoneDescriptionMax }}
+              </span>
+            </div>
             <textarea [(ngModel)]="description" name="description" rows="3" placeholder="Assignment details..." required></textarea>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
@@ -44,10 +55,15 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
                 </div>
               </div>
               <div>
-                <label>Base Points *</label>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <label style="margin: 0;">Base Points *</label>
+                  <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
+                    Min {{ viewStateService.validationLimits().milestonePointsMin }} - Max {{ viewStateService.validationLimits().milestonePointsMax }}
+                  </span>
+                </div>
                 <div class="gc-input-box">
                   <i class="fa-solid fa-star"></i>
-                  <input type="number" [(ngModel)]="basePoints" name="basePoints" min="10" step="5" required>
+                  <input type="number" [(ngModel)]="basePoints" name="basePoints" [min]="viewStateService.validationLimits().milestonePointsMin" [max]="viewStateService.validationLimits().milestonePointsMax" step="5" required>
                 </div>
               </div>
             </div>
@@ -61,7 +77,7 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
                 </button>
               </div>
 
-              <div style="max-height: 180px; overflow-y: auto; padding-right: 5px;">
+              <div style="max-height: 140px; overflow-y: auto; padding-right: 5px;">
                 <div *ngFor="let item of deliverables; let i = index" class="gc-deliverable-row">
                   <input type="text" [(ngModel)]="item.title" [name]="'del_title_' + i" placeholder="e.g. SRS PDF Document" required>
                   <label class="gc-check-label">
@@ -73,6 +89,11 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
                 </div>
               </div>
             </div>
+
+            <div class="gc-error" *ngIf="errorMessage" style="background:#fee2e2; color:#dc2626; padding:10px; border-radius:10px; margin-top:15px; font-size:0.88rem;">
+              {{errorMessage}}
+            </div>
+
           </div>
           <div class="gc-modal-actions">
             <button type="button" class="gc-secondary-btn" (click)="close()">Cancel</button>
@@ -84,7 +105,8 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
       </div>
     </div>
   `,
-  styles: [`
+  styles: [
+    `
     .gc-modal-backdrop {
       position: fixed;
       inset: 0;
@@ -287,7 +309,8 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
     .gc-secondary-btn:hover {
       background: var(--gc-border);
     }
-  `]
+  `
+  ]
 })
 export class CreateMilestoneModalComponent implements OnInit {
   @Input() milestoneToEdit: Milestone | null = null;
@@ -303,9 +326,11 @@ export class CreateMilestoneModalComponent implements OnInit {
     { title: 'GitHub Repository URL', isMandatory: true }
   ];
 
+  errorMessage = '';
+
   constructor(
     private apiService: ApiService,
-    private viewStateService: ViewStateService,
+    public viewStateService: ViewStateService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -344,13 +369,31 @@ export class CreateMilestoneModalComponent implements OnInit {
   }
 
   onSubmit() {
+    this.errorMessage = '';
     const currentSubject = this.viewStateService.currentSubject();
     if (!currentSubject) return;
 
+    const limits = this.viewStateService.validationLimits();
+
+    if (!this.title || this.title.trim().length < limits.milestoneTitleMin || this.title.trim().length > limits.milestoneTitleMax) {
+      this.errorMessage = `Title must be between ${limits.milestoneTitleMin} and ${limits.milestoneTitleMax} characters.`;
+      return;
+    }
+
+    if (!this.description || this.description.trim().length < limits.milestoneDescriptionMin || this.description.trim().length > limits.milestoneDescriptionMax) {
+      this.errorMessage = `Instructions must be between ${limits.milestoneDescriptionMin} and ${limits.milestoneDescriptionMax} characters.`;
+      return;
+    }
+
+    if (this.basePoints < limits.milestonePointsMin || this.basePoints > limits.milestonePointsMax) {
+      this.errorMessage = `Base Points must be between ${limits.milestonePointsMin} and ${limits.milestonePointsMax}.`;
+      return;
+    }
+
     const req: CreateMilestoneRequest = {
       subjectId: currentSubject.id,
-      title: this.title,
-      description: this.description,
+      title: this.title.trim(),
+      description: this.description.trim(),
       deadline: this.deadline,
       basePoints: this.basePoints,
       requiredDeliverables: JSON.stringify(this.deliverables),
@@ -366,6 +409,7 @@ export class CreateMilestoneModalComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error updating milestone:', err);
+          this.errorMessage = err?.error?.message || 'Error updating milestone';
           this.cdr.detectChanges();
         }
       });
@@ -378,6 +422,7 @@ export class CreateMilestoneModalComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error creating milestone:', err);
+          this.errorMessage = err?.error?.message || 'Error creating milestone';
           this.cdr.detectChanges();
         }
       });

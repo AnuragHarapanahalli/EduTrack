@@ -81,9 +81,12 @@ import { CreateSubjectRequest } from '../../models/subject.model';
       <div class="gc-modal-content">
 
 
-        <label>
-          Class Name *
-        </label>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label>Class Name *</label>
+          <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
+            {{ name?.trim()?.length || 0 }} / {{ viewStateService.validationLimits().subjectNameMax }}
+          </span>
+        </div>
 
 
         <div class="gc-input-box">
@@ -102,9 +105,12 @@ import { CreateSubjectRequest } from '../../models/subject.model';
 
 
 
-        <label>
-          Class Code *
-        </label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+          <label style="margin: 0;">Class Code *</label>
+          <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
+            {{ code?.trim()?.length || 0 }} / {{ viewStateService.validationLimits().subjectCodeMax }}
+          </span>
+        </div>
 
 
         <div class="gc-input-box">
@@ -123,9 +129,12 @@ import { CreateSubjectRequest } from '../../models/subject.model';
 
 
 
-        <label>
-          Description
-        </label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+          <label style="margin: 0;">Description</label>
+          <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
+            {{ description?.trim()?.length || 0 }} / {{ viewStateService.validationLimits().subjectDescriptionMax }}
+          </span>
+        </div>
 
 
         <textarea
@@ -146,7 +155,6 @@ import { CreateSubjectRequest } from '../../models/subject.model';
           {{errorMessage}}
 
         </div>
-
 
 
       </div>
@@ -201,7 +209,7 @@ import { CreateSubjectRequest } from '../../models/subject.model';
 
 
 `,
-styles:[`
+  styles:[`
 
 .gc-modal-backdrop{
 
@@ -311,7 +319,6 @@ font-weight:600;
 font-size:.85rem;
 display:block;
 margin-bottom:8px;
-margin-top:15px;
 
 }
 
@@ -362,6 +369,7 @@ border:1px solid var(--gc-border);
 border-radius:14px;
 height:90px;
 resize:none;
+margin-top:8px;
 
 }
 
@@ -452,7 +460,7 @@ private apiService:ApiService,
 
 private authService:AuthService,
 
-private viewStateService:ViewStateService,
+public viewStateService:ViewStateService,
 
 private cdr:ChangeDetectorRef
 
@@ -466,7 +474,6 @@ if(!this.isSaving)
 this.closeModal.emit();
 
 }
-
 
 
 
@@ -486,6 +493,22 @@ return;
 
 }
 
+const limits = this.viewStateService.validationLimits();
+
+if (this.name.trim().length < limits.subjectNameMin || this.name.trim().length > limits.subjectNameMax) {
+  this.errorMessage = `Class Name must be between ${limits.subjectNameMin} and ${limits.subjectNameMax} characters.`;
+  return;
+}
+
+if (this.code.trim().length < limits.subjectCodeMin || this.code.trim().length > limits.subjectCodeMax) {
+  this.errorMessage = `Class Code must be between ${limits.subjectCodeMin} and ${limits.subjectCodeMax} characters.`;
+  return;
+}
+
+if (this.description && this.description.trim().length > limits.subjectDescriptionMax) {
+  this.errorMessage = `Description must not exceed ${limits.subjectDescriptionMax} characters.`;
+  return;
+}
 
 
 const request:CreateSubjectRequest={

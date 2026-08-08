@@ -131,6 +131,15 @@ export class AppComponent implements OnInit {
 
     this.viewStateService.setView('AUTH');
 
+    this.apiService.getValidationLimits().subscribe({
+      next: (limits) => {
+        this.viewStateService.validationLimits.set(limits);
+      },
+      error: (err) => {
+        console.error('Failed to load validation limits from backend, using defaults', err);
+      }
+    });
+
   }
 
 

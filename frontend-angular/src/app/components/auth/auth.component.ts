@@ -106,6 +106,23 @@ export class AuthComponent {
       return;
     }
 
+    const limits = this.viewStateService.validationLimits();
+
+    if (this.regFullName.trim().length < limits.userFullnameMin || this.regFullName.trim().length > limits.userFullnameMax) {
+      this.errorMessage = `Full name must be between ${limits.userFullnameMin} and ${limits.userFullnameMax} characters.`;
+      return;
+    }
+
+    if (this.regEmail.trim().length > limits.userEmailMax || !this.regEmail.includes('@')) {
+      this.errorMessage = `Please enter a valid email up to ${limits.userEmailMax} characters.`;
+      return;
+    }
+
+    if (this.regPassword.length < limits.userPasswordMin || this.regPassword.length > limits.userPasswordMax) {
+      this.errorMessage = `Password must be between ${limits.userPasswordMin} and ${limits.userPasswordMax} characters.`;
+      return;
+    }
+
     this.errorMessage = '';
     this.isSubmitting = true;
 

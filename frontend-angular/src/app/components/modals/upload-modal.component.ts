@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { ViewStateService } from '../../services/view-state.service';
 import { Milestone, DeliverableItem } from '../../models/milestone.model';
 
 @Component({
@@ -30,13 +31,23 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
                 <input type="file" (change)="onFileSelected($event, i)">
               </div>
               <div class="gc-form-field" style="margin-bottom:0;">
-                <label>OR Repository / Video Link</label>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <label style="margin: 0;">OR Repository / Video Link</label>
+                  <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
+                    {{ linksMap[i]?.trim()?.length || 0 }} / {{ viewStateService.validationLimits().submissionLinkMax }}
+                  </span>
+                </div>
                 <input type="url" [(ngModel)]="linksMap[i]" [name]="'link_' + i" placeholder="https://github.com/user/project">
               </div>
             </div>
 
             <div class="gc-form-field" style="margin-top: 1rem;">
-              <label>Private comments for teacher</label>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="margin: 0;">Private comments for teacher</label>
+                <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
+                  {{ comments?.trim()?.length || 0 }} / {{ viewStateService.validationLimits().submissionCommentsMax }}
+                </span>
+              </div>
               <textarea [(ngModel)]="comments" name="comments" rows="2" placeholder="Add comments..."></textarea>
             </div>
           </div>
@@ -66,6 +77,7 @@ export class UploadModalComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
+    public viewStateService: ViewStateService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -93,53 +105,66 @@ export class UploadModalComponent implements OnInit {
       this.cdr.detectChanges();
     }
   }
-onSubmit() {
-  const user = this.authService.currentUser();
-  if (!user || !this.milestone) return;
 
-  const hasFile = Object.keys(this.filesMap).length > 0;
-  const hasLink = Object.values(this.linksMap).some(
-    link => link && link.trim().length > 0
-  );
+  onSubmit() {
+    const user = this.authService.currentUser();
+    if (!user || !this.milestone) return;
 
-  if (!hasFile && !hasLink) {
-    alert('Please upload at least one file or provide one submission link.');
-    return;
-  }
+    const limits = this.viewStateService.validationLimits();
 
-  const formData = new FormData();
-  formData.append('milestoneId', this.milestone.id.toString());
-  formData.append('studentId', user.id.toString());
+    const hasFile = Object.keys(this.filesMap).length > 0;
+    const hasLink = Object.values(this.linksMap).some(
+      link => link && link.trim().length > 0
+    );
 
-  // Upload first file (backend currently accepts one file)
-  const firstFile = Object.values(this.filesMap)[0];
-  if (firstFile) {
-    formData.append('file', firstFile);
-  }
-
-  // Upload first link
-  const firstLink = Object.values(this.linksMap).find(
-    link => link && link.trim().length > 0
-  );
-  if (firstLink) {
-    formData.append('submissionLink', firstLink.trim());
-  }
-
-  if (this.comments.trim()) {
-    formData.append('comments', this.comments.trim());
-  }
-
-  this.apiService.uploadSubmission(formData).subscribe({
-    next: () => {
-      alert('Assignment submitted successfully.');
-      this.workSubmitted.emit();
-      this.close();
-    },
-    error: (err) => {
-      console.error(err);
-      alert('Failed to submit assignment.');
+    if (!hasFile && !hasLink) {
+      alert('Please upload at least one file or provide one submission link.');
+      return;
     }
-  });
-}
-  
+
+    // Check link length
+    const firstLink = Object.values(this.linksMap).find(
+      link => link && link.trim().length > 0
+    );
+    if (firstLink && firstLink.trim().length > limits.submissionLinkMax) {
+      alert(`Submission Link must not exceed ${limits.submissionLinkMax} characters.`);
+      return;
+    }
+
+    if (this.comments && this.comments.trim().length > limits.submissionCommentsMax) {
+      alert(`Private comments must not exceed ${limits.submissionCommentsMax} characters.`);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('milestoneId', this.milestone.id.toString());
+    formData.append('studentId', user.id.toString());
+
+    // Upload first file (backend currently accepts one file)
+    const firstFile = Object.values(this.filesMap)[0];
+    if (firstFile) {
+      formData.append('file', firstFile);
+    }
+
+    // Upload first link
+    if (firstLink) {
+      formData.append('submissionLink', firstLink.trim());
+    }
+
+    if (this.comments.trim()) {
+      formData.append('comments', this.comments.trim());
+    }
+
+    this.apiService.uploadSubmission(formData).subscribe({
+      next: () => {
+        alert('Assignment submitted successfully.');
+        this.workSubmitted.emit();
+        this.close();
+      },
+      error: (err) => {
+        console.error(err);
+        alert(err?.error?.message || 'Failed to submit assignment.');
+      }
+    });
+  }
 }

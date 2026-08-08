@@ -1,5 +1,6 @@
 package com.edutrack.service;
 
+import com.edutrack.config.ValidationConfig;
 import com.edutrack.dto.MilestoneDto;
 import com.edutrack.model.Milestone;
 import com.edutrack.model.Subject;
@@ -19,16 +20,32 @@ public class MilestoneService {
     private final MilestoneRepository milestoneRepository;
     private final SubjectRepository subjectRepository;
     private final SubmissionRepository submissionRepository;
+    private final ValidationConfig validationConfig;
 
-    public MilestoneService(MilestoneRepository milestoneRepository, SubjectRepository subjectRepository, SubmissionRepository submissionRepository) {
+    public MilestoneService(MilestoneRepository milestoneRepository, SubjectRepository subjectRepository, SubmissionRepository submissionRepository, ValidationConfig validationConfig) {
         this.milestoneRepository = milestoneRepository;
         this.subjectRepository = subjectRepository;
         this.submissionRepository = submissionRepository;
+        this.validationConfig = validationConfig;
+    }
+
+    private void validateMilestoneRequest(MilestoneDto.CreateMilestoneRequest request) {
+        if (request.getTitle() == null || request.getTitle().trim().length() < validationConfig.getMilestoneTitleMin() || request.getTitle().trim().length() > validationConfig.getMilestoneTitleMax()) {
+            throw new IllegalArgumentException("Milestone title must be between " + validationConfig.getMilestoneTitleMin() + " and " + validationConfig.getMilestoneTitleMax() + " characters.");
+        }
+        if (request.getDescription() == null || request.getDescription().trim().length() < validationConfig.getMilestoneDescriptionMin() || request.getDescription().trim().length() > validationConfig.getMilestoneDescriptionMax()) {
+            throw new IllegalArgumentException("Milestone description must be between " + validationConfig.getMilestoneDescriptionMin() + " and " + validationConfig.getMilestoneDescriptionMax() + " characters.");
+        }
+        if (request.getBasePoints() != null && (request.getBasePoints() < validationConfig.getMilestonePointsMin() || request.getBasePoints() > validationConfig.getMilestonePointsMax())) {
+            throw new IllegalArgumentException("Milestone points must be between " + validationConfig.getMilestonePointsMin() + " and " + validationConfig.getMilestonePointsMax() + ".");
+        }
     }
 
     public MilestoneDto.MilestoneResponse createMilestone(MilestoneDto.CreateMilestoneRequest request) {
         Subject subject = subjectRepository.findById(request.getSubjectId())
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
+
+        validateMilestoneRequest(request);
 
         LocalDateTime deadline = LocalDateTime.parse(request.getDeadline());
 
@@ -49,6 +66,8 @@ public class MilestoneService {
     public MilestoneDto.MilestoneResponse updateMilestone(Long id, MilestoneDto.CreateMilestoneRequest request) {
         Milestone milestone = milestoneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
+
+        validateMilestoneRequest(request);
 
         if (request.getTitle() != null) milestone.setTitle(request.getTitle());
         if (request.getDescription() != null) milestone.setDescription(request.getDescription());
