@@ -85,9 +85,123 @@ body.dark-theme, html.dark-theme, [data-theme="dark"], .dark-theme {
 .dark-theme .gc-empty-card,
 .dark-theme .gc-sidebar,
 .dark-theme .gc-header,
-.dark-theme .gc-modal-card {
+.dark-theme .gc-modal-card,
+.dark-theme .gc-modern-modal {
   background: var(--gc-card) !important;
   border-color: var(--gc-border) !important;
+  color: var(--gc-text-main) !important;
+}
+
+.dark-theme input,
+.dark-theme textarea,
+.dark-theme select,
+body.dark-theme input,
+body.dark-theme textarea,
+body.dark-theme select {
+  color: var(--gc-text-main) !important;
+  background-color: var(--gc-input-bg) !important;
+  border-color: var(--gc-input-border) !important;
+}
+
+.dark-theme input::placeholder,
+.dark-theme textarea::placeholder,
+body.dark-theme input::placeholder,
+body.dark-theme textarea::placeholder {
+  color: var(--gc-text-light) !important;
+}
+
+.dark-theme label,
+body.dark-theme label {
+  color: var(--gc-text-main) !important;
+}
+
+.dark-theme .gc-modal-top,
+.dark-theme .gc-modal-header,
+.dark-theme .gc-modal-content,
+.dark-theme .gc-modal-body,
+body.dark-theme .gc-modal-top,
+body.dark-theme .gc-modal-header,
+body.dark-theme .gc-modal-content,
+body.dark-theme .gc-modal-body {
+  background: var(--gc-card) !important;
+  color: var(--gc-text-main) !important;
+}
+
+.dark-theme .gc-modal-actions,
+.dark-theme .gc-modal-footer,
+body.dark-theme .gc-modal-actions,
+body.dark-theme .gc-modal-footer {
+  background: var(--gc-card-sub) !important;
+  border-top-color: var(--gc-border) !important;
+}
+
+.dark-theme .gc-modal-close,
+.dark-theme .gc-close-btn,
+body.dark-theme .gc-modal-close,
+body.dark-theme .gc-close-btn {
+  color: var(--gc-text-sub) !important;
+}
+
+.dark-theme .gc-modal-close:hover,
+.dark-theme .gc-close-btn:hover,
+body.dark-theme .gc-modal-close:hover,
+body.dark-theme .gc-close-btn:hover {
+  color: var(--gc-text-main) !important;
+}
+
+.dark-theme .gc-modal-title h2,
+.dark-theme .gc-modal-title h3,
+.dark-theme .gc-modal-header h2,
+.dark-theme .gc-modal-header h3,
+body.dark-theme .gc-modal-title h2,
+body.dark-theme .gc-modal-title h3,
+body.dark-theme .gc-modal-header h2,
+body.dark-theme .gc-modal-header h3 {
+  color: var(--gc-text-main) !important;
+}
+
+.dark-theme .gc-input-box,
+body.dark-theme .gc-input-box {
+  background: var(--gc-input-bg) !important;
+  border-color: var(--gc-input-border) !important;
+}
+
+.dark-theme .gc-tabs,
+body.dark-theme .gc-tabs {
+  background: var(--gc-card) !important;
+  border-bottom-color: var(--gc-border) !important;
+}
+
+.dark-theme .gc-tabs button,
+body.dark-theme .gc-tabs button {
+  color: var(--gc-text-sub) !important;
+}
+
+.dark-theme .gc-tabs button.active,
+body.dark-theme .gc-tabs button.active {
+  color: #60a5fa !important;
+  border-bottom-color: #60a5fa !important;
+}
+
+.dark-theme .gc-secondary-btn,
+.dark-theme .gc-btn-flat,
+body.dark-theme .gc-secondary-btn,
+body.dark-theme .gc-btn-flat {
+  background: var(--gc-card-sub) !important;
+  color: var(--gc-text-main) !important;
+  border-color: var(--gc-border) !important;
+}
+
+.dark-theme .gc-upload-card,
+body.dark-theme .gc-upload-card {
+  background: var(--gc-card-sub) !important;
+  border-color: var(--gc-border) !important;
+}
+
+.dark-theme .gc-upload-card h4,
+.dark-theme .gc-upload-card strong,
+body.dark-theme .gc-upload-card h4,
+body.dark-theme .gc-upload-card strong {
   color: var(--gc-text-main) !important;
 }
 

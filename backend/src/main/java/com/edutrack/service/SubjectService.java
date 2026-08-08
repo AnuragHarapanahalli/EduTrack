@@ -94,13 +94,23 @@ public class SubjectService {
         Subject subject = subjectRepository.findById(subjectId)
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
-        User student = userRepository.findByEmail(email).orElse(null);
+        if (email == null || !email.trim().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            throw new IllegalArgumentException("Invalid email format for student: " + email);
+        }
+
+        String trimmedName = fullName != null ? fullName.trim() : "";
+        long alphaCount = trimmedName.chars().filter(Character::isLetter).count();
+        if (trimmedName.isEmpty() || !trimmedName.matches("^[a-zA-Z\\s.'-]+$") || alphaCount < 2) {
+            throw new IllegalArgumentException("Invalid full name format: " + fullName);
+        }
+
+        User student = userRepository.findByEmail(email.trim()).orElse(null);
         if (student == null) {
             // Register new student account automatically
             student = new User(
-                    email,
+                    email.trim(),
                     "$2a$10$E2UPv7arXnm8j.JtY8Z9k.kZ8yGvR7O3q6v5F6E3q6v5F6E3q6v5F", // BCrypt encoded "student123"
-                    fullName,
+                    trimmedName,
                     Role.STUDENT,
                     subject.getBatch()
             );
