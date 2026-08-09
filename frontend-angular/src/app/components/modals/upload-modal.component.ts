@@ -13,12 +13,20 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
   template: `
     <div class="gc-modal-backdrop" (click)="close()">
       <div class="gc-modal-card" style="max-width: 560px;" (click)="$event.stopPropagation()">
-        <div class="gc-modal-header">
-          <h3>Submit Assignment Work</h3>
-          <button type="button" class="gc-close-btn" (click)="close()">&times;</button>
+        <div class="gc-modal-header" style="flex-direction: column; align-items: flex-start; gap: 6px; border-bottom: 1px solid var(--gc-border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <h3 style="margin: 0; font-size: 1.25rem;">Submit Assignment Work</h3>
+            <button type="button" class="gc-close-btn" (click)="close()" style="font-size: 1.5rem; line-height: 1; background: none; border: none; cursor: pointer;">&times;</button>
+          </div>
+          <div style="margin-top: 4px; width: 100%;">
+            <h4 style="margin: 0 0 6px 0; color: var(--gc-primary); font-size: 1.05rem; font-weight: 700;">{{ milestone.title }}</h4>
+            <p style="margin: 0; font-size: 0.85rem; color: var(--gc-text-sub); line-height: 1.4; white-space: pre-wrap; font-weight: 400; max-height: 100px; overflow-y: auto;">
+              {{ milestone.description }}
+            </p>
+          </div>
         </div>
         <form (ngSubmit)="onSubmit()">
-          <div class="gc-modal-body" style="max-height: 75vh; overflow-y: auto;">
+          <div class="gc-modal-body" style="max-height: 55vh; overflow-y: auto;">
             <div *ngFor="let item of deliverablesList; let i = index" class="gc-deliverable-upload-box">
               <div class="gc-upload-header">
                 <strong>Deliverable {{ i + 1 }}: {{ item.title }}</strong>
@@ -28,7 +36,13 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
               </div>
               <div class="gc-form-field">
                 <label>Upload File</label>
-                <input type="file" (change)="onFileSelected($event, i)">
+                <div class="gc-file-upload-wrapper">
+                  <input type="file" id="fileInput_{{i}}" class="gc-file-input-hidden" (change)="onFileSelected($event, i)">
+                  <label for="fileInput_{{i}}" class="gc-file-upload-trigger" [class.has-file]="filesMap[i]">
+                    <i class="fa-solid" [class.fa-cloud-arrow-up]="!filesMap[i]" [class.fa-circle-check]="filesMap[i]"></i>
+                    <span>{{ filesMap[i] ? filesMap[i].name : 'Choose file or drag here' }}</span>
+                  </label>
+                </div>
               </div>
               <div class="gc-form-field" style="margin-bottom:0;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -60,8 +74,76 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
     </div>
   `,
   styles: [`
-    .gc-deliverable-upload-box { background: var(--gc-background); border: 1px solid var(--gc-border); border-radius: var(--gc-radius-md); padding: 1rem; margin-bottom: 1rem; }
-    .gc-upload-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.85rem; }
+    .gc-deliverable-upload-box { background: var(--gc-background); border: 1px solid var(--gc-border); border-radius: var(--gc-radius-md); padding: 1.25rem; margin-bottom: 1.25rem; }
+    .gc-upload-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; font-size: 0.88rem; }
+    
+    .gc-form-field {
+      margin-bottom: 1.25rem;
+    }
+    .gc-form-field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gc-text-sub);
+      margin-bottom: 0.5rem;
+    }
+    .gc-form-field input[type="url"],
+    .gc-form-field textarea {
+      width: 100%;
+      margin-top: 0.35rem;
+    }
+
+    .gc-file-upload-wrapper {
+      position: relative;
+      width: 100%;
+      margin-top: 0.35rem;
+    }
+    .gc-file-input-hidden {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .gc-file-upload-trigger {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 1.5rem 1rem;
+      border: 2px dashed var(--gc-border);
+      border-radius: var(--gc-radius-md);
+      background: var(--gc-card-sub, #f1f5f9);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--gc-text-sub);
+      text-align: center;
+    }
+    .gc-file-upload-trigger i {
+      font-size: 1.6rem;
+      color: var(--gc-primary);
+      transition: transform 0.2s ease;
+    }
+    .gc-file-upload-wrapper:hover .gc-file-upload-trigger {
+      border-color: var(--gc-primary);
+      background: rgba(37, 99, 235, 0.04);
+      color: var(--gc-text-main);
+    }
+    .gc-file-upload-wrapper:hover .gc-file-upload-trigger i {
+      transform: translateY(-2px);
+    }
+    .gc-file-upload-trigger.has-file {
+      border-color: var(--gc-success, #10b981);
+      background: rgba(16, 185, 129, 0.04);
+      color: var(--gc-text-main);
+    }
+    .gc-file-upload-trigger.has-file i {
+      color: var(--gc-success, #10b981);
+    }
   `]
 })
 export class UploadModalComponent implements OnInit {

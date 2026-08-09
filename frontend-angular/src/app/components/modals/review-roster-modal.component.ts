@@ -11,7 +11,7 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
   imports: [CommonModule, FormsModule],
   template: `
     <div class="gc-modal-backdrop" (click)="close()">
-      <div class="gc-modal-card" style="max-width: 800px;" (click)="$event.stopPropagation()">
+      <div class="gc-modal-card" style="max-width: 1050px; width: 95%;" (click)="$event.stopPropagation()">
         <div class="gc-modal-header">
           <h3>Student Submissions Roster - {{ milestone?.title }}</h3>
           <button type="button" class="gc-close-btn" (click)="close()">&times;</button>
@@ -20,6 +20,30 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
 
           <div *ngIf="activeGradingEntry" class="gc-grading-form-card">
             <h4>Grading Work for: {{ activeGradingEntry.studentName }}</h4>
+            
+            <div style="margin-bottom: 1.25rem; padding: 1rem; background: var(--gc-card-sub, #f8fafc); border: 1px solid var(--gc-border); border-radius: var(--gc-radius-md);">
+              <h5 style="margin: 0 0 6px 0; font-size: 0.8rem; font-weight: 700; color: var(--gc-text-sub);">SUBMISSION DETAILS</h5>
+              <div style="font-size: 0.85rem; margin-bottom: 8px; display: flex; gap: 8px;">
+                <span *ngIf="activeGradingEntry.fileUrl">
+                  <a [href]="'http://localhost:8080' + activeGradingEntry.fileUrl" target="_blank" class="gc-btn gc-btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">
+                    <i class="fa-solid fa-download"></i> File
+                  </a>
+                </span>
+                <span *ngIf="activeGradingEntry.submissionLink">
+                  <a [href]="activeGradingEntry.submissionLink" target="_blank" class="gc-btn gc-btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">
+                    <i class="fa-solid fa-link"></i> Link
+                  </a>
+                </span>
+              </div>
+              <div *ngIf="activeGradingEntry.comments" style="padding: 8px 12px; background: var(--gc-card); border-left: 3px solid var(--gc-info, #0EA5E9); border-radius: 6px; font-size: 0.85rem; margin-top: 8px;">
+                <span style="font-weight: 600; color: var(--gc-text-sub); display: block; font-size: 0.72rem; text-transform: uppercase; margin-bottom: 2px;">Student Note:</span>
+                <p style="margin: 0; color: var(--gc-text-main);">"{{ activeGradingEntry.comments }}"</p>
+              </div>
+              <div *ngIf="!activeGradingEntry.comments" style="font-size: 0.82rem; color: var(--gc-text-light); font-style: italic; margin-top: 4px;">
+                No private comments provided by student.
+              </div>
+            </div>
+
             <form (ngSubmit)="submitGrade()">
               <div class="gc-form-field">
                 <label>Evaluation Status</label>
@@ -64,9 +88,19 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
               </thead>
               <tbody>
                 <tr *ngFor="let item of rosterList">
-                  <td>
+                  <td style="max-width: 320px;">
                     <strong>{{ item.studentName }}</strong>
-                    <small style="display:block; color:var(--gc-text-sub);">{{ item.studentEmail }}</small>
+                    <small style="display:block; color:var(--gc-text-sub); margin-bottom: 6px;">{{ item.studentEmail }}</small>
+                    
+                    <div *ngIf="item.comments" style="margin-top: 6px; padding: 6px 10px; background: var(--gc-card-sub); border-radius: 6px; font-size: 0.8rem; border-left: 3px solid var(--gc-info, #0ea5e9); line-height: 1.3;">
+                      <span style="font-weight: 600; color: var(--gc-text-sub); display: block; font-size: 0.72rem; text-transform: uppercase; margin-bottom: 2px;">Student Note:</span>
+                      <p style="margin: 0; color: var(--gc-text-main);">"{{ item.comments }}"</p>
+                    </div>
+
+                    <div *ngIf="item.instructorFeedback" style="margin-top: 6px; padding: 6px 10px; background: rgba(16, 185, 129, 0.05); border-radius: 6px; font-size: 0.8rem; border-left: 3px solid var(--gc-success, #10b981); line-height: 1.3;">
+                      <span style="font-weight: 600; color: var(--gc-success, #10b981); display: block; font-size: 0.72rem; text-transform: uppercase; margin-bottom: 2px;">Teacher Feedback:</span>
+                      <p style="margin: 0; color: var(--gc-text-main);">"{{ item.instructorFeedback }}"</p>
+                    </div>
                   </td>
                   <td>
                     <span class="gc-badge" 
@@ -80,16 +114,18 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                   <td>{{ item.submittedAt ? (item.submittedAt | date:'short') : '&mdash;' }}</td>
                   <td><span class="gc-badge gc-badge-info">{{ item.timelinessLabel }}</span></td>
                   <td>
-                    <a *ngIf="item.fileUrl" [href]="'http://localhost:8080' + item.fileUrl" target="_blank" class="gc-btn gc-btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem;">
-                      <i class="fa-solid fa-download"></i> File
-                    </a>
-                    <a *ngIf="item.submissionLink" [href]="item.submissionLink" target="_blank" class="gc-btn gc-btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem;">
-                      <i class="fa-solid fa-link"></i> Link
-                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                      <a *ngIf="item.fileUrl" [href]="'http://localhost:8080' + item.fileUrl" target="_blank" class="gc-btn gc-btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem; text-align: center;">
+                        <i class="fa-solid fa-download"></i> File
+                      </a>
+                      <a *ngIf="item.submissionLink" [href]="item.submissionLink" target="_blank" class="gc-btn gc-btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem; text-align: center;">
+                        <i class="fa-solid fa-link"></i> Link
+                      </a>
+                    </div>
                   </td>
                   <td>
                     <button *ngIf="item.submissionId" type="button" class="gc-btn gc-btn-primary" style="padding:0.25rem 0.6rem; font-size:0.78rem;" (click)="startGrading(item)">
-                      Grade
+                      {{ item.status === 'APPROVED' || item.status === 'NEEDS_REVISION' ? 'Re-Grade' : 'Grade' }}
                     </button>
                     <span *ngIf="!item.submissionId" style="font-size:0.78rem; color:var(--gc-text-light);">No work</span>
                   </td>

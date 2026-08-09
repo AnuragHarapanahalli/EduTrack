@@ -163,9 +163,7 @@ public class SubmissionService {
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
 
         Subject subject = milestone.getSubject();
-        if (subject.getBatch() == null) return List.of();
-
-        List<User> students = userRepository.findByBatchIdAndRole(subject.getBatch().getId(), Role.STUDENT);
+        java.util.Set<User> students = subject.getEnrolledStudents();
         List<Submission> submissions = submissionRepository.findByMilestone(milestone);
 
         return students.stream().map(student -> {

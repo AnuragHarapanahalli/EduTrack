@@ -133,16 +133,8 @@ public class SubjectService {
         Subject subject = subjectRepository.findById(subjectId)
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
-        if (!subject.getEnrolledStudents().isEmpty()) {
-            return subject.getEnrolledStudents().stream()
-                    .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch() != null ? subject.getBatch().getId() : null, subject.getBatch() != null ? subject.getBatch().getName() : "N/A"))
-                    .collect(Collectors.toList());
-        }
-
-        if (subject.getBatch() == null) return List.of();
-
-        return userRepository.findByBatchIdAndRole(subject.getBatch().getId(), Role.STUDENT).stream()
-                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch().getId(), subject.getBatch().getName()))
+        return subject.getEnrolledStudents().stream()
+                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch() != null ? subject.getBatch().getId() : null, subject.getBatch() != null ? subject.getBatch().getName() : "N/A"))
                 .collect(Collectors.toList());
     }
 

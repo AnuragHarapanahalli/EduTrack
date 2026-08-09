@@ -240,9 +240,9 @@
                         </h3>
 
 
-                        <p>
+                        <p [title]="m.description || ''">
 
-                            {{m.description}}
+                            {{ m.description && m.description.length > 100 ? (m.description | slice:0:100) + '...' : (m.description || '') }}
 
                         </p>
 
@@ -275,13 +275,17 @@
 
 
                             <span
-                            *ngFor="let del of m.deliverablesList"
+                            *ngFor="let del of m.deliverablesList | slice:0:2"
                             class="gc-badge">
 
 
                                 {{del.title}}
 
 
+                            </span>
+
+                            <span *ngIf="m.deliverablesList && m.deliverablesList.length > 2" class="gc-badge gc-badge-info" style="font-weight: bold;">
+                                +{{m.deliverablesList.length - 2}}
                             </span>
 
 
