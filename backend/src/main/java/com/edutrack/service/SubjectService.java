@@ -11,6 +11,7 @@ import com.edutrack.repository.BatchRepository;
 import com.edutrack.repository.MilestoneRepository;
 import com.edutrack.repository.SubjectRepository;
 import com.edutrack.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,13 +25,15 @@ public class SubjectService {
     private final BatchRepository batchRepository;
     private final MilestoneRepository milestoneRepository;
     private final ValidationConfig validationConfig;
+    private final PasswordEncoder passwordEncoder;
 
-    public SubjectService(SubjectRepository subjectRepository, UserRepository userRepository, BatchRepository batchRepository, MilestoneRepository milestoneRepository, ValidationConfig validationConfig) {
+    public SubjectService(SubjectRepository subjectRepository, UserRepository userRepository, BatchRepository batchRepository, MilestoneRepository milestoneRepository, ValidationConfig validationConfig, PasswordEncoder passwordEncoder) {
         this.subjectRepository = subjectRepository;
         this.userRepository = userRepository;
         this.batchRepository = batchRepository;
         this.milestoneRepository = milestoneRepository;
         this.validationConfig = validationConfig;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public SubjectDto.SubjectResponse createSubject(SubjectDto.CreateSubjectRequest request, Long instructorId) {
@@ -109,11 +112,12 @@ public class SubjectService {
             // Register new student account automatically
             student = new User(
                     email.trim(),
-                    "$2a$10$E2UPv7arXnm8j.JtY8Z9k.kZ8yGvR7O3q6v5F6E3q6v5F6E3q6v5F", // BCrypt encoded "student123"
+                    passwordEncoder.encode("student123"),
                     trimmedName,
                     Role.STUDENT,
                     subject.getBatch()
             );
+            student.setNeedsPasswordReset(true);
         } else {
             student.setBatch(subject.getBatch());
         }
@@ -126,7 +130,7 @@ public class SubjectService {
             subjectRepository.save(subject);
         }
 
-        return new AuthDto.UserDto(savedStudent.getId(), savedStudent.getEmail(), savedStudent.getFullName(), savedStudent.getRole(), subject.getBatch().getId(), subject.getBatch().getName());
+        return new AuthDto.UserDto(savedStudent.getId(), savedStudent.getEmail(), savedStudent.getFullName(), savedStudent.getRole(), subject.getBatch().getId(), subject.getBatch().getName(), savedStudent.isNeedsPasswordReset());
     }
 
     public List<AuthDto.UserDto> getStudentsBySubject(Long subjectId) {
@@ -134,7 +138,7 @@ public class SubjectService {
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
         return subject.getEnrolledStudents().stream()
-                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch() != null ? subject.getBatch().getId() : null, subject.getBatch() != null ? subject.getBatch().getName() : "N/A"))
+                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch() != null ? subject.getBatch().getId() : null, subject.getBatch() != null ? subject.getBatch().getName() : "N/A", u.isNeedsPasswordReset()))
                 .collect(Collectors.toList());
     }
 

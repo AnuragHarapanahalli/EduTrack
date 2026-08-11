@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -56,6 +57,7 @@ import { Milestone } from './models/milestone.model';
   imports: [
 
     CommonModule,
+    FormsModule,
 
     HeaderComponent,
     SidebarComponent,
@@ -328,6 +330,38 @@ export class AppComponent implements OnInit {
         user.role
       );
     }
+  }
+
+  newPassword = '';
+  showResetPassword = false;
+  isResetSaving = false;
+  resetErrorMessage = '';
+
+  submitPasswordChange(): void {
+    const user = this.authService.currentUserVal;
+    if (!user) return;
+    if (!this.newPassword || this.newPassword.length < 6) {
+      this.resetErrorMessage = 'Password must be at least 6 characters long.';
+      return;
+    }
+
+    this.isResetSaving = true;
+    this.resetErrorMessage = '';
+
+    this.apiService.changePassword(user.id, this.newPassword).subscribe({
+      next: () => {
+        this.isResetSaving = false;
+        const updatedUser = { ...user, needsPasswordReset: false };
+        this.authService.setCurrentUser(updatedUser, this.authService.token || '');
+        this.newPassword = '';
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isResetSaving = false;
+        this.resetErrorMessage = err.error?.message || 'Failed to update password. Please try again.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   refreshCurrentSubjectState(): void {

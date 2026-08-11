@@ -16,14 +16,15 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthDto.AuthResponse> register(@RequestBody AuthDto.RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
-    }
-
     @PostMapping("/login")
     public ResponseEntity<AuthDto.AuthResponse> login(@RequestBody AuthDto.LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@RequestBody AuthDto.ChangePasswordRequest request) {
+        authService.changePassword(request);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/users/{id}")

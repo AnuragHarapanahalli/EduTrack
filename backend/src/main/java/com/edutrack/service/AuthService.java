@@ -28,41 +28,6 @@ public class AuthService {
         this.validationConfig = validationConfig;
     }
 
-    public AuthDto.AuthResponse register(AuthDto.RegisterRequest request) {
-        if (request.getFullName() == null || request.getFullName().trim().length() < validationConfig.getUserFullnameMin() || request.getFullName().trim().length() > validationConfig.getUserFullnameMax()) {
-            throw new IllegalArgumentException("Full name must be between " + validationConfig.getUserFullnameMin() + " and " + validationConfig.getUserFullnameMax() + " characters.");
-        }
-        if (request.getEmail() == null || request.getEmail().trim().length() > validationConfig.getUserEmailMax() || !request.getEmail().contains("@")) {
-            throw new IllegalArgumentException("Invalid email format, or email exceeds " + validationConfig.getUserEmailMax() + " characters.");
-        }
-        if (request.getPassword() == null || request.getPassword().length() < validationConfig.getUserPasswordMin() || request.getPassword().length() > validationConfig.getUserPasswordMax()) {
-            throw new IllegalArgumentException("Password must be between " + validationConfig.getUserPasswordMin() + " and " + validationConfig.getUserPasswordMax() + " characters.");
-        }
-
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email address is already in use!");
-        }
-
-        Batch batch = null;
-        if (request.getBatchId() != null) {
-            batch = batchRepository.findById(request.getBatchId()).orElse(null);
-        }
-
-        User user = new User(
-                request.getEmail(),
-                passwordEncoder.encode(request.getPassword()),
-                request.getFullName(),
-                request.getRole() != null ? request.getRole() : Role.STUDENT,
-                batch
-        );
-
-        User savedUser = userRepository.save(user);
-        String token = jwtTokenProvider.generateToken(savedUser.getEmail(), savedUser.getRole().name(), savedUser.getId());
-        
-        AuthDto.UserDto userDto = toUserDto(savedUser);
-        return new AuthDto.AuthResponse(token, userDto);
-    }
-
     public AuthDto.AuthResponse login(AuthDto.LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password."));
@@ -82,6 +47,19 @@ public class AuthService {
         return toUserDto(user);
     }
 
+    public void changePassword(AuthDto.ChangePasswordRequest request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (request.getNewPassword() == null || request.getNewPassword().length() < validationConfig.getUserPasswordMin() || request.getNewPassword().length() > validationConfig.getUserPasswordMax()) {
+            throw new IllegalArgumentException("Password must be between " + validationConfig.getUserPasswordMin() + " and " + validationConfig.getUserPasswordMax() + " characters.");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setNeedsPasswordReset(false);
+        userRepository.save(user);
+    }
+
     public AuthDto.UserDto toUserDto(User user) {
         Long batchId = user.getBatch() != null ? user.getBatch().getId() : null;
         String batchName = user.getBatch() != null ? user.getBatch().getName() : null;
@@ -91,7 +69,8 @@ public class AuthService {
                 user.getFullName(),
                 user.getRole(),
                 batchId,
-                batchName
+                batchName,
+                user.isNeedsPasswordReset()
         );
     }
 }

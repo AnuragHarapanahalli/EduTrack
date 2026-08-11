@@ -30,6 +30,9 @@ public class User {
 
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private boolean needsPasswordReset = false;
+
     public User() {
         this.createdAt = LocalDateTime.now();
     }
@@ -63,4 +66,7 @@ public class User {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public boolean isNeedsPasswordReset() { return needsPasswordReset; }
+    public void setNeedsPasswordReset(boolean needsPasswordReset) { this.needsPasswordReset = needsPasswordReset; }
 }

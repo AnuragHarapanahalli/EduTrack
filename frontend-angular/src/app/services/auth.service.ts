@@ -25,6 +25,10 @@ export class AuthService {
     return this.currentUserSignal();
   }
 
+  get token(): string | null {
+    return localStorage.getItem('edutrack_jwt_token');
+  }
+
 
   setCurrentUser(
     user: User | null,

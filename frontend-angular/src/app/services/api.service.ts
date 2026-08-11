@@ -48,25 +48,10 @@ export class ApiService {
       { email, password }
     );
   }
-
-
-  register(
-    fullName: string,
-    email: string,
-    password: string,
-    role: string,
-    batchId = 1
-  ): Observable<AuthResponse> {
-
-    return this.http.post<AuthResponse>(
-      `${this.baseUrl}/auth/register`,
-      {
-        fullName,
-        email,
-        password,
-        role,
-        batchId
-      }
+  changePassword(userId: number, newPassword: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/auth/change-password`,
+      { userId, newPassword }
     );
   }
 

@@ -86,4 +86,64 @@
     (gradeReturned)="refreshCurrentSubjectState()">
   </app-review-roster-modal>
 
+  <!-- Force Password Reset Modal -->
+  <div class="gc-modal-backdrop" *ngIf="authService.currentUser()?.needsPasswordReset">
+    <div class="gc-modal-card" style="max-width: 480px; padding: 2.5rem; text-align: center;" (click)="$event.stopPropagation()">
+      <div style="font-size: 3rem; color: #3b82f6; margin-bottom: 1.5rem;">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h2 style="font-weight: 800; font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--gc-text-main);">Reset Default Password</h2>
+      <p style="color: var(--gc-text-sub); font-size: 0.95rem; margin-bottom: 2rem;">
+        For your security, please update the default password assigned to your account.
+      </p>
+
+      <form (ngSubmit)="submitPasswordChange()">
+        <div class="gc-form-field" style="text-align: left; margin-bottom: 1.5rem;">
+          <label style="font-weight: 600;">New Password</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-key gc-input-icon"></i>
+            <input
+              [type]="showResetPassword ? 'text' : 'password'"
+              name="newPassword"
+              [(ngModel)]="newPassword"
+              placeholder="Min 6 characters"
+              required
+              style="width: 100%;"
+              #passInput="ngModel">
+            <button
+              type="button"
+              class="gc-pwd-toggle-btn"
+              (click)="showResetPassword = !showResetPassword"
+              title="Toggle password visibility">
+              <i class="fa-solid" [ngClass]="showResetPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <div *ngIf="newPassword && newPassword.length < 6" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.4rem;">
+            Password must be at least 6 characters long.
+          </div>
+        </div>
+
+        <div *ngIf="resetErrorMessage" style="color: #ef4444; background: rgba(239, 68, 68, 0.08); padding: 10px; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.88rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          {{ resetErrorMessage }}
+        </div>
+
+        <button
+          class="gc-primary-btn"
+          type="submit"
+          [disabled]="isResetSaving || !newPassword || newPassword.length < 6"
+          style="width: 100%; justify-content: center; padding: 14px;">
+          <span *ngIf="!isResetSaving">
+            <i class="fa-solid fa-lock-open"></i>
+            Update & Continue
+          </span>
+          <span *ngIf="isResetSaving">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            Updating Password...
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+
 </div>

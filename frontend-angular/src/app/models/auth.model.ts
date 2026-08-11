@@ -7,6 +7,7 @@ export interface User {
   role: Role;
   batchId?: number;
   batchName?: string;
+  needsPasswordReset?: boolean;
 }
 
 export interface LoginRequest {

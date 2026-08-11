@@ -18,17 +18,11 @@ import { Role } from '../../models/auth.model';
 })
 export class AuthComponent {
 
-  isLoginTab = true;
   showPassword = false;
   isSubmitting = false;
 
   loginEmail = '';
   loginPassword = '';
-
-  regFullName = '';
-  regEmail = '';
-  regPassword = '';
-  regRole: Role = 'STUDENT';
 
   errorMessage = '';
 
@@ -43,21 +37,11 @@ export class AuthComponent {
     this.themeService.toggleTheme();
   }
 
-  switchTab(isLogin: boolean) {
-    this.isLoginTab = isLogin;
-    this.errorMessage = '';
-  }
-
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
-  setRegRole(role: Role) {
-    this.regRole = role;
-  }
-
   fillDemo(email: string, password: string) {
-    this.isLoginTab = true;
     this.loginEmail = email;
     this.loginPassword = password;
     this.errorMessage = '';
@@ -96,66 +80,6 @@ export class AuthComponent {
         this.isSubmitting = false;
         this.errorMessage =
           err.error?.message || 'Login failed. Invalid credentials or server offline.';
-      }
-    });
-  }
-
-  onRegister() {
-    if (!this.regFullName || !this.regEmail || !this.regPassword) {
-      this.errorMessage = 'Please fill in all required registration fields.';
-      return;
-    }
-
-    const limits = this.viewStateService.validationLimits();
-
-    if (this.regFullName.trim().length < limits.userFullnameMin || this.regFullName.trim().length > limits.userFullnameMax) {
-      this.errorMessage = `Full name must be between ${limits.userFullnameMin} and ${limits.userFullnameMax} characters.`;
-      return;
-    }
-
-    if (this.regEmail.trim().length > limits.userEmailMax || !this.regEmail.includes('@')) {
-      this.errorMessage = `Please enter a valid email up to ${limits.userEmailMax} characters.`;
-      return;
-    }
-
-    if (this.regPassword.length < limits.userPasswordMin || this.regPassword.length > limits.userPasswordMax) {
-      this.errorMessage = `Password must be between ${limits.userPasswordMin} and ${limits.userPasswordMax} characters.`;
-      return;
-    }
-
-    this.errorMessage = '';
-    this.isSubmitting = true;
-
-    this.apiService.register(
-      this.regFullName.trim(),
-      this.regEmail.trim(),
-      this.regPassword,
-      this.regRole,
-      1
-    ).subscribe({
-      next: ({ user, token }) => {
-        this.authService.setCurrentUser(user, token);
-        const request =
-          user.role === 'INSTRUCTOR'
-            ? this.apiService.getSubjectsForInstructor(user.id)
-            : this.apiService.getSubjectsForStudent(user.id);
-
-        request.subscribe({
-          next: subjects => {
-            this.isSubmitting = false;
-            this.viewStateService.setUserSubjects(subjects);
-            this.viewStateService.setView('CLASSES_HOME');
-          },
-          error: () => {
-            this.isSubmitting = false;
-            this.viewStateService.setView('CLASSES_HOME');
-          }
-        });
-      },
-      error: err => {
-        this.isSubmitting = false;
-        this.errorMessage =
-          err.error?.message || 'Registration failed. Check email or server status.';
       }
     });
   }
