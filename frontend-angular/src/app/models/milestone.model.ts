@@ -23,6 +23,8 @@ export interface UserSubmission {
 
   marks?: number;
 
+  instructorFeedback?: string;
+
 }
 
 

@@ -1234,4 +1234,43 @@
 :host-context(.dark-theme) .gc-classwork-container .gc-badge-danger {
     background: rgba(239, 68, 68, 0.2) !important;
     color: #fca5a5 !important;
+}
+
+.gc-feedback-badge {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: rgba(37, 99, 235, 0.08);
+    border-left: 3px solid #2563eb;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    color: var(--gc-text-main);
+    line-height: 1.4;
+    word-break: break-word;
+    display: block;
+}
+
+.netflix-milestone-card.needs-revision .gc-feedback-badge {
+    background: rgba(249, 115, 22, 0.08);
+    border-left: 3px solid #f97316;
+}
+
+.netflix-milestone-card.completed .gc-feedback-badge {
+    background: rgba(34, 197, 94, 0.08);
+    border-left: 3px solid #22c55e;
+}
+
+:host-context(.dark-theme) .gc-feedback-badge {
+    background: rgba(99, 102, 241, 0.15);
+    border-left-color: #818cf8;
+    color: #e2e8f0;
+}
+
+:host-context(.dark-theme) .netflix-milestone-card.needs-revision .gc-feedback-badge {
+    background: rgba(249, 115, 22, 0.15);
+    border-left-color: #fb923c;
+}
+
+:host-context(.dark-theme) .netflix-milestone-card.completed .gc-feedback-badge {
+    background: rgba(34, 197, 94, 0.15);
+    border-left-color: #4ade80;
 }
