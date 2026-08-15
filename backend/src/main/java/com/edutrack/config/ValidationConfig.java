@@ -66,6 +66,9 @@ public class ValidationConfig {
     @Value("${submission.link.max:255}")
     private int submissionLinkMax;
 
+    @Value("${submission.file.max.bytes:26214400}")
+    private long submissionFileMaxBytes;
+
     // Getters
     public int getSubjectNameMin() { return subjectNameMin; }
     public int getSubjectNameMax() { return subjectNameMax; }
@@ -88,4 +91,5 @@ public class ValidationConfig {
 
     public int getSubmissionCommentsMax() { return submissionCommentsMax; }
     public int getSubmissionLinkMax() { return submissionLinkMax; }
+    public long getSubmissionFileMaxBytes() { return submissionFileMaxBytes; }
 }

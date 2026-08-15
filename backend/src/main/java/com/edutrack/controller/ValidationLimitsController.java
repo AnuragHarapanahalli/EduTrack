@@ -1,13 +1,14 @@
 package com.edutrack.controller;
 
-import com.edutrack.config.ValidationConfig;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.edutrack.config.ValidationConfig;
 
 @RestController
 @RequestMapping("/api/validation-limits")
@@ -43,6 +44,7 @@ public class ValidationLimitsController {
 
         limits.put("submissionCommentsMax", validationConfig.getSubmissionCommentsMax());
         limits.put("submissionLinkMax", validationConfig.getSubmissionLinkMax());
+        limits.put("submissionFileMaxBytes", validationConfig.getSubmissionFileMaxBytes());
 
         return ResponseEntity.ok(limits);
     }

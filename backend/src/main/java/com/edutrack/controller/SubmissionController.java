@@ -1,13 +1,22 @@
 package com.edutrack.controller;
 
-import com.edutrack.dto.SubmissionDto;
-import com.edutrack.service.SubmissionService;
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import com.edutrack.dto.SubmissionDto;
+import com.edutrack.service.SubmissionService;
 
 @RestController
 @RequestMapping("/api/submissions")
@@ -26,9 +35,10 @@ public class SubmissionController {
             @RequestParam("studentId") Long studentId,
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam(value = "submissionLink", required = false) String submissionLink,
+            @RequestParam(value = "deliverableIndex", required = false) Integer deliverableIndex,
             @RequestParam(value = "comments", required = false) String comments
     ) {
-        return ResponseEntity.ok(submissionService.submitDeliverable(milestoneId, studentId, file, submissionLink, comments));
+        return ResponseEntity.ok(submissionService.submitDeliverable(milestoneId, studentId, file, submissionLink, deliverableIndex, comments));
     }
 
     @PutMapping("/{id}/review")

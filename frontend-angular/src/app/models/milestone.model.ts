@@ -4,6 +4,10 @@ export interface DeliverableItem {
 
   isMandatory: boolean;
 
+  allowedFileExtensions?: string;
+
+  allowedLinkPatterns?: string;
+
 }
 
 

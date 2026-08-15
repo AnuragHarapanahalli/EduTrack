@@ -1,9 +1,21 @@
 package com.edutrack.service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.edutrack.config.ValidationConfig;
 import com.edutrack.dto.SubmissionDto;
 import com.edutrack.model.Milestone;
-import com.edutrack.model.Role;
 import com.edutrack.model.Subject;
 import com.edutrack.model.Submission;
 import com.edutrack.model.SubmissionStatus;
@@ -11,16 +23,13 @@ import com.edutrack.model.User;
 import com.edutrack.repository.MilestoneRepository;
 import com.edutrack.repository.SubmissionRepository;
 import com.edutrack.repository.UserRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class SubmissionService {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final SubmissionRepository submissionRepository;
     private final MilestoneRepository milestoneRepository;
@@ -41,6 +50,7 @@ public class SubmissionService {
             Long studentId,
             MultipartFile file,
             String submissionLink,
+            Integer deliverableIndex,
             String comments
     ) {
         Milestone milestone = milestoneRepository.findById(milestoneId)
@@ -52,9 +62,18 @@ public class SubmissionService {
         if (submissionLink != null && submissionLink.trim().length() > validationConfig.getSubmissionLinkMax()) {
             throw new IllegalArgumentException("Submission link must not exceed " + validationConfig.getSubmissionLinkMax() + " characters.");
         }
+        if (submissionLink != null && !submissionLink.trim().isEmpty() && !isValidSubmissionLink(submissionLink.trim())) {
+            throw new IllegalArgumentException("Submission link must be a valid URL.");
+        }
         if (comments != null && comments.trim().length() > validationConfig.getSubmissionCommentsMax()) {
             throw new IllegalArgumentException("Comments must not exceed " + validationConfig.getSubmissionCommentsMax() + " characters.");
         }
+        if (file != null && !file.isEmpty() && file.getSize() > validationConfig.getSubmissionFileMaxBytes()) {
+            throw new IllegalArgumentException("File size exceeded. Max allowed size is " + readableBytes(validationConfig.getSubmissionFileMaxBytes()) + ".");
+        }
+
+        JsonNode selectedDeliverable = getSelectedDeliverableConfig(milestone.getRequiredDeliverables(), deliverableIndex);
+        validateTeacherDefinedFormat(file, submissionLink, selectedDeliverable);
 
         // Check if student already has a submission for this milestone
         Optional<Submission> existingOpt = submissionRepository.findByMilestoneAndStudent(milestone, student);
@@ -93,6 +112,153 @@ public class SubmissionService {
         return toSubmissionResponse(saved);
     }
 
+    private JsonNode getSelectedDeliverableConfig(String requiredDeliverables, Integer deliverableIndex) {
+        if (requiredDeliverables == null || requiredDeliverables.isBlank()) return null;
+
+        try {
+            JsonNode root = OBJECT_MAPPER.readTree(requiredDeliverables);
+            if (!root.isArray() || root.size() == 0) return null;
+
+            int resolvedIndex;
+            if (deliverableIndex == null && root.size() == 1) {
+                resolvedIndex = 0;
+            } else if (deliverableIndex != null && deliverableIndex >= 0 && deliverableIndex < root.size()) {
+                resolvedIndex = deliverableIndex;
+            } else {
+                return null;
+            }
+
+            JsonNode node = root.get(resolvedIndex);
+            return node != null && node.isObject() ? node : null;
+        } catch (IOException ignored) {
+            return null;
+        }
+    }
+
+    private void validateTeacherDefinedFormat(MultipartFile file, String submissionLink, JsonNode deliverableConfig) {
+        if (deliverableConfig == null) return;
+
+        List<String> allowedFileExtensions = parseCsv(deliverableConfig.path("allowedFileExtensions").asText(""));
+        if (file != null && !file.isEmpty() && !allowedFileExtensions.isEmpty()) {
+            String extension = extractExtension(file.getOriginalFilename());
+            if (extension.isBlank() || !allowedFileExtensions.contains(extension.toLowerCase())) {
+                throw new IllegalArgumentException("File format is not allowed by teacher. Allowed file formats: " + String.join(", ", allowedFileExtensions) + ".");
+            }
+        }
+
+        List<String> allowedLinkPatterns = parseCsv(deliverableConfig.path("allowedLinkPatterns").asText(""));
+        if (submissionLink != null && !submissionLink.trim().isEmpty() && !allowedLinkPatterns.isEmpty()) {
+            String normalizedLink = submissionLink.trim();
+            boolean matches = allowedLinkPatterns.stream().anyMatch(pattern -> linkMatchesPattern(normalizedLink, pattern));
+            if (!matches) {
+                throw new IllegalArgumentException("Link format is not allowed by teacher. Allowed link formats: " + String.join(", ", allowedLinkPatterns) + ".");
+            }
+        }
+    }
+
+    private boolean isValidSubmissionLink(String link) {
+        return parseUriWithOptionalScheme(link) != null;
+    }
+
+    private boolean linkMatchesPattern(String submissionLink, String pattern) {
+        if (pattern == null || pattern.isBlank()) return false;
+
+        URI submissionUri = parseUriWithOptionalScheme(submissionLink);
+        if (submissionUri == null) return false;
+
+        String submissionHost = normalizeHost(submissionUri.getHost());
+        if (submissionHost.isBlank()) return false;
+
+        String normalizedPattern = pattern.trim().toLowerCase(Locale.ROOT);
+        URI patternUri = parseUriWithOptionalScheme(normalizedPattern);
+        if (patternUri == null) {
+            return submissionHost.contains(normalizedPattern);
+        }
+
+        String patternHost = normalizeHost(patternUri.getHost());
+        if (patternHost.isBlank()) return false;
+
+        boolean hostMatches = submissionHost.equals(patternHost) || submissionHost.endsWith("." + patternHost);
+        if (!hostMatches) return false;
+
+        String requiredPath = normalizePath(patternUri.getPath());
+        if (requiredPath.isEmpty()) return true;
+
+        String submissionPath = normalizePath(submissionUri.getPath());
+        return submissionPath.equals(requiredPath) || submissionPath.startsWith(requiredPath + "/");
+    }
+
+    private URI parseUriWithOptionalScheme(String value) {
+        if (value == null) return null;
+
+        String trimmed = value.trim();
+        if (trimmed.isBlank()) return null;
+
+        try {
+            URI direct = new URI(trimmed);
+            if (direct.getHost() != null) {
+                return direct;
+            }
+
+            if (direct.getScheme() == null) {
+                URI schemeLess = new URI("//" + trimmed);
+                if (schemeLess.getHost() != null) {
+                    return schemeLess;
+                }
+            }
+        } catch (URISyntaxException ignored) {
+            try {
+                URI schemeLess = new URI("//" + trimmed);
+                if (schemeLess.getHost() != null) {
+                    return schemeLess;
+                }
+            } catch (URISyntaxException ignoredAgain) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    private String normalizeHost(String host) {
+        return host == null ? "" : host.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private String normalizePath(String path) {
+        if (path == null || path.isBlank() || "/".equals(path)) return "";
+        String normalized = path.trim().toLowerCase(Locale.ROOT);
+        return normalized.endsWith("/") ? normalized.substring(0, normalized.length() - 1) : normalized;
+    }
+
+    private List<String> parseCsv(String value) {
+        if (value == null || value.isBlank()) return List.of();
+
+        List<String> result = new ArrayList<>();
+        for (String token : value.split(",")) {
+            String normalized = token == null ? "" : token.trim().toLowerCase();
+            if (!normalized.isBlank()) {
+                result.add(normalized);
+            }
+        }
+        return result;
+    }
+
+    private String extractExtension(String fileName) {
+        if (fileName == null || fileName.isBlank()) return "";
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex < 0 || dotIndex == fileName.length() - 1) return "";
+        return fileName.substring(dotIndex + 1).trim();
+    }
+
+    private String readableBytes(long bytes) {
+        double mb = bytes / (1024.0 * 1024.0);
+        if (mb >= 1.0) {
+            return String.format("%.1f MB", mb);
+        }
+        double kb = bytes / 1024.0;
+        return String.format("%.1f KB", kb);
+    }
+
     public SubmissionDto.SubmissionResponse reviewSubmission(Long submissionId, SubmissionDto.ReviewSubmissionRequest request) {
         Submission submission = submissionRepository.findById(submissionId)
                 .orElseThrow(() -> new RuntimeException("Submission not found"));
@@ -106,7 +272,8 @@ public class SubmissionService {
             submission.setQualityRating(qualityRating);
 
             double basePoints = submission.getMilestone().getBasePoints();
-            double timelinessMultiplier = submission.getTimelinessMultiplier() != null ? submission.getTimelinessMultiplier() : 1.0;
+            Double storedTimeliness = submission.getTimelinessMultiplier();
+            double timelinessMultiplier = storedTimeliness != null ? storedTimeliness : 1.0;
             
             // SRS Formula: Base Points * Timeliness Multiplier * (Quality Rating / 5.0)
             double finalPoints = basePoints * timelinessMultiplier * (qualityRating / 5.0);

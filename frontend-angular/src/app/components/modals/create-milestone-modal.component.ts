@@ -79,13 +79,27 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
 
               <div style="max-height: 140px; overflow-y: auto; padding-right: 5px;">
                 <div *ngFor="let item of deliverables; let i = index" class="gc-deliverable-row">
-                  <input type="text" [(ngModel)]="item.title" [name]="'del_title_' + i" placeholder="e.g. SRS PDF Document" required>
-                  <label class="gc-check-label">
-                    <input type="checkbox" [(ngModel)]="item.isMandatory" [name]="'del_mand_' + i"> Mandatory
-                  </label>
-                  <button type="button" class="gc-btn-delete-row" (click)="removeDeliverableRow(i)">
-                    <i class="fa-solid fa-trash-can"></i>
-                  </button>
+                  <div class="gc-deliverable-header-row">
+                    <input type="text" [(ngModel)]="item.title" [name]="'del_title_' + i" placeholder="e.g. SRS PDF Document" required>
+                    <label class="gc-check-label">
+                      <input type="checkbox" [(ngModel)]="item.isMandatory" [name]="'del_mand_' + i"> Mandatory
+                    </label>
+                    <button type="button" class="gc-btn-delete-row" (click)="removeDeliverableRow(i)">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                  <div class="gc-deliverable-format-row">
+                    <input
+                      type="text"
+                      [(ngModel)]="item.allowedFileExtensions"
+                      [name]="'del_file_formats_' + i"
+                      placeholder="Allowed file formats (e.g. pdf, docx, zip)">
+                    <input
+                      type="text"
+                      [(ngModel)]="item.allowedLinkPatterns"
+                      [name]="'del_link_formats_' + i"
+                      placeholder="Allowed link formats (e.g. github.com, drive.google.com)">
+                  </div>
                 </div>
               </div>
             </div>
@@ -222,13 +236,25 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
     }
     .gc-deliverable-row {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      flex-direction: column;
+      gap: 0.55rem;
       background: var(--gc-background);
       border: 1px solid var(--gc-border);
       padding: 0.4rem 0.65rem;
       border-radius: 10px;
       margin-bottom: 0.5rem;
+    }
+    .gc-deliverable-header-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+    }
+    .gc-deliverable-format-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      width: 100%;
     }
     .gc-deliverable-row input[type="text"] {
       flex: 1;
@@ -322,8 +348,8 @@ export class CreateMilestoneModalComponent implements OnInit {
   deadline = '';
   basePoints = 100;
   deliverables: DeliverableItem[] = [
-    { title: 'SRS Report / PDF', isMandatory: true },
-    { title: 'GitHub Repository URL', isMandatory: true }
+    { title: 'SRS Report / PDF', isMandatory: true, allowedFileExtensions: 'pdf' },
+    { title: 'GitHub Repository URL', isMandatory: true, allowedLinkPatterns: 'github.com' }
   ];
 
   errorMessage = '';
@@ -359,7 +385,12 @@ export class CreateMilestoneModalComponent implements OnInit {
   }
 
   addDeliverableRow() {
-    this.deliverables.push({ title: '', isMandatory: true });
+    this.deliverables.push({
+      title: '',
+      isMandatory: true,
+      allowedFileExtensions: '',
+      allowedLinkPatterns: ''
+    });
     this.cdr.detectChanges();
   }
 
@@ -396,7 +427,13 @@ export class CreateMilestoneModalComponent implements OnInit {
       description: this.description.trim(),
       deadline: this.deadline,
       basePoints: this.basePoints,
-      requiredDeliverables: JSON.stringify(this.deliverables),
+      requiredDeliverables: JSON.stringify(
+        this.deliverables.map(item => ({
+          ...item,
+          allowedFileExtensions: this.normalizeCsv(item.allowedFileExtensions),
+          allowedLinkPatterns: this.normalizeCsv(item.allowedLinkPatterns)
+        }))
+      ),
       isMandatory: this.deliverables.some(d => d.isMandatory)
     };
 
@@ -427,5 +464,14 @@ export class CreateMilestoneModalComponent implements OnInit {
         }
       });
     }
+  }
+
+  private normalizeCsv(value?: string): string {
+    if (!value) return '';
+    return value
+      .split(',')
+      .map(item => item.trim().toLowerCase())
+      .filter(Boolean)
+      .join(',');
   }
 }

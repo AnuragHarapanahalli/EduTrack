@@ -160,6 +160,7 @@ userSubjects(): SubjectModel[] {
     userPasswordMax: 30,
 
     submissionCommentsMax: 500,
-    submissionLinkMax: 255
+    submissionLinkMax: 255,
+    submissionFileMaxBytes: 26214400
   });
 }
