@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface BatchRepository extends JpaRepository<Batch, Long> {
     Optional<Batch> findByName(String name);
+    boolean existsByName(String name);
+    boolean existsByNameAndIdNot(String name, Long id);
 }

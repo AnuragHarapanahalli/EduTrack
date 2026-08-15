@@ -28,11 +28,47 @@
 
     <div class="gc-sidebar-divider"></div>
 
+    <!-- ================= ADMIN ACTIONS ================= -->
+
+    <div
+      class="gc-sidebar-section"
+      *ngIf="user?.role === 'ADMIN'">
+
+      <span class="gc-sidebar-label">
+        Administration
+      </span>
+
+      <a
+        class="gc-sidebar-item"
+        [class.active]="viewStateService.currentViewVal === 'ADMIN_PANEL' && viewStateService.adminTabVal === 'USERS'"
+        (click)="goToAdminTab('USERS')">
+        <i class="fa-solid fa-users-gear gc-sidebar-icon"></i>
+        <span>User Accounts</span>
+      </a>
+
+      <a
+        class="gc-sidebar-item"
+        [class.active]="viewStateService.currentViewVal === 'ADMIN_PANEL' && viewStateService.adminTabVal === 'MAPPINGS'"
+        (click)="goToAdminTab('MAPPINGS')">
+        <i class="fa-solid fa-diagram-project gc-sidebar-icon"></i>
+        <span>Batch Mappings</span>
+      </a>
+
+      <a
+        class="gc-sidebar-item"
+        [class.active]="viewStateService.currentViewVal === 'ADMIN_PANEL' && viewStateService.adminTabVal === 'STATS'"
+        (click)="goToAdminTab('STATS')">
+        <i class="fa-solid fa-chart-pie gc-sidebar-icon"></i>
+        <span>System Reports</span>
+      </a>
+
+    </div>
+
     <!-- ================= TEACHER ACTIONS ================= -->
 
     <div
-  class="gc-sidebar-section"
-  *ngIf="user?.role === 'INSTRUCTOR'">
+      class="gc-sidebar-section"
+      *ngIf="user?.role === 'INSTRUCTOR'">
 
   <button
         class="gc-sidebar-action-btn"

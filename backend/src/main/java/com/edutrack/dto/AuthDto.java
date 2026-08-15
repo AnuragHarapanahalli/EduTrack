@@ -66,6 +66,7 @@ public class AuthDto {
         private Long batchId;
         private String batchName;
         private boolean needsPasswordReset;
+        private boolean active = true;
 
         public UserDto() {}
 
@@ -77,6 +78,18 @@ public class AuthDto {
             this.batchId = batchId;
             this.batchName = batchName;
             this.needsPasswordReset = needsPasswordReset;
+            this.active = true;
+        }
+
+        public UserDto(Long id, String email, String fullName, Role role, Long batchId, String batchName, boolean needsPasswordReset, boolean active) {
+            this.id = id;
+            this.email = email;
+            this.fullName = fullName;
+            this.role = role;
+            this.batchId = batchId;
+            this.batchName = batchName;
+            this.needsPasswordReset = needsPasswordReset;
+            this.active = active;
         }
 
         public Long getId() { return id; }
@@ -99,6 +112,9 @@ public class AuthDto {
 
         public boolean isNeedsPasswordReset() { return needsPasswordReset; }
         public void setNeedsPasswordReset(boolean needsPasswordReset) { this.needsPasswordReset = needsPasswordReset; }
+
+        public boolean isActive() { return active; }
+        public void setActive(boolean active) { this.active = active; }
     }
 
     public static class ChangePasswordRequest {

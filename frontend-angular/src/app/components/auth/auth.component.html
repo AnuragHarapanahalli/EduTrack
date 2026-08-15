@@ -206,6 +206,22 @@
 
         </button>
 
+        <button
+          class="gc-demo-card"
+          [class.active]="loginEmail === 'admin@edutrack.edu'"
+          type="button"
+          (click)="fillDemo('admin@edutrack.edu','admin123')"
+          style="border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
+
+          <i class="fa-solid fa-user-shield" style="color: #3b82f6;"></i>
+
+          <div>
+            <strong>Admin</strong>
+            <small>System Admin</small>
+          </div>
+
+        </button>
+
       </div>
 
     </div>

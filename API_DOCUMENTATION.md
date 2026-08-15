@@ -409,3 +409,50 @@ Base URL: `http://localhost:8080/api`
 * **Status**: `200 OK`
 * **Content-Type**: `application/octet-stream` (or `application/pdf`, `image/png`)
 * **Header**: `Content-Disposition: inline; filename="a8f92b41-3e21-4b12-98ab-9c1234567890.pdf"`
+
+---
+
+## 🛡️ 7. Administrator Governance & Management Endpoints (`/api/admin`)
+
+### 7.1 List & Filter Users
+* **Endpoint**: `GET /api/admin/users?search={query}&role={role}&active={boolean}`
+* **Description**: Retrieves a searchable, filterable list of all user accounts across all roles.
+
+### 7.2 Create User Account
+* **Endpoint**: `POST /api/admin/users`
+* **Description**: Creates an Instructor, Student, or Admin user with validation and default temporary credentials.
+
+### 7.3 Update User Account
+* **Endpoint**: `PUT /api/admin/users/{id}`
+* **Description**: Modifies user details, role, batch assignment, and credentials.
+
+### 7.4 Deactivate / Reactivate User (Soft Delete)
+* **Endpoint**: `PATCH /api/admin/users/{id}/status`
+* **Description**: Toggles an account's active status without permanent database deletion.
+
+### 7.5 List Academic Batches
+* **Endpoint**: `GET /api/admin/batches`
+* **Description**: Fetches all batches with enrolled student and subject counts.
+
+### 7.6 Create Academic Batch
+* **Endpoint**: `POST /api/admin/batches`
+* **Description**: Creates a new cohort/section with academic year metadata.
+
+### 7.7 Assign Student to Batch
+* **Endpoint**: `POST /api/admin/batches/assign`
+* **Description**: Updates the batch assignment for a student.
+
+### 7.8 Bulk Assign Students to Batch
+* **Endpoint**: `POST /api/admin/batches/bulk-assign`
+* **Description**: Assigns multiple students to a batch in a single operation.
+
+### 7.9 Enroll / Unenroll Student in Subject
+* **Endpoint**: `POST /api/admin/subjects/{subjectId}/students/{studentId}`
+* **Endpoint**: `DELETE /api/admin/subjects/{subjectId}/students/{studentId}`
+* **Endpoint**: `POST /api/admin/subjects/{subjectId}/students/bulk`
+* **Description**: Maps and manages student enrollments in specific lab courses.
+
+### 7.10 System Telemetry & Statistics
+* **Endpoint**: `GET /api/admin/stats`
+* **Description**: Aggregates system metrics (users by role, active/inactive counts, subjects, milestones, submission status breakdown).
+

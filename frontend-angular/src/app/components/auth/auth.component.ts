@@ -59,6 +59,12 @@ export class AuthComponent {
     this.apiService.login(this.loginEmail, this.loginPassword).subscribe({
       next: ({ user, token }) => {
         this.authService.setCurrentUser(user, token);
+        if (user.role === 'ADMIN') {
+          this.isSubmitting = false;
+          this.viewStateService.setView('ADMIN_PANEL');
+          return;
+        }
+
         const request =
           user.role === 'INSTRUCTOR'
             ? this.apiService.getSubjectsForInstructor(user.id)

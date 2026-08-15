@@ -48,6 +48,8 @@ import { Milestone } from './models/milestone.model';
 
 
 
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+
 @Component({
 
   selector: 'app-root',
@@ -64,6 +66,7 @@ import { Milestone } from './models/milestone.model';
     AuthComponent,
 
     ClassesHomeComponent,
+    AdminPanelComponent,
 
     ClassHeaderComponent,
 
