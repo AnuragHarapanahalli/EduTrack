@@ -25,7 +25,7 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
             </p>
           </div>
         </div>
-        <form (ngSubmit)="onSubmit()">
+        <form (ngSubmit)="onSubmit()" novalidate>
           <div class="gc-modal-body" style="max-height: 55vh; overflow-y: auto;">
             <div *ngFor="let item of deliverablesList; let i = index" class="gc-deliverable-upload-box">
               <div class="gc-upload-header">
@@ -43,15 +43,32 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
                     <span>{{ filesMap[i] ? filesMap[i].name : 'Choose file or drag here' }}</span>
                   </label>
                 </div>
+                <small style="display:block; margin-top:6px; color: var(--gc-text-sub);">
+                  Max size: {{ formatBytes(viewStateService.validationLimits().submissionFileMaxBytes) }}
+                  <span *ngIf="allowedFileFormatsFor(item)"> | Allowed: {{ allowedFileFormatsFor(item) }}</span>
+                </small>
               </div>
               <div class="gc-form-field" style="margin-bottom:0;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                   <label style="margin: 0;">OR Repository / Video Link</label>
-                  <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
-                    {{ linksMap[i]?.trim()?.length || 0 }} / {{ viewStateService.validationLimits().submissionLinkMax }}
-                  </span>
+                  <div class="gc-link-meta-right">
+                    <span *ngIf="linkErrorsMap[i]" class="gc-inline-link-error">{{ linkErrorsMap[i] }}</span>
+                    <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
+                      {{ linksMap[i]?.trim()?.length || 0 }} / {{ viewStateService.validationLimits().submissionLinkMax }}
+                    </span>
+                  </div>
                 </div>
-                <input type="url" [(ngModel)]="linksMap[i]" [name]="'link_' + i" placeholder="https://github.com/user/project">
+                <input
+                  type="text"
+                  [(ngModel)]="linksMap[i]"
+                  [name]="'link_' + i"
+                  (ngModelChange)="onLinkInputChange(i)"
+                  (blur)="validateLinkForIndex(i)"
+                  [class.gc-input-error]="!!linkErrorsMap[i]"
+                  placeholder="github.com/user/project">
+                <small *ngIf="allowedLinkFormatsFor(item)" style="display:block; margin-top:6px; color: var(--gc-text-sub);">
+                  Allowed link format: {{ allowedLinkFormatsFor(item) }}
+                </small>
               </div>
             </div>
 
@@ -87,10 +104,38 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
       color: var(--gc-text-sub);
       margin-bottom: 0.5rem;
     }
-    .gc-form-field input[type="url"],
+    .gc-form-field input[type="text"],
     .gc-form-field textarea {
       width: 100%;
       margin-top: 0.35rem;
+    }
+
+    .gc-link-meta-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-end;
+      min-height: 18px;
+    }
+
+    .gc-inline-link-error {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--gc-danger);
+      background: color-mix(in srgb, var(--gc-danger) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--gc-danger) 28%, transparent);
+      border-radius: 999px;
+      padding: 2px 8px;
+      line-height: 1.2;
+      max-width: 260px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gc-input-error {
+      border-color: var(--gc-danger) !important;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--gc-danger) 18%, transparent) !important;
     }
 
     .gc-file-upload-wrapper {
@@ -154,6 +199,7 @@ export class UploadModalComponent implements OnInit {
   deliverablesList: DeliverableItem[] = [];
   filesMap: { [index: number]: File } = {};
   linksMap: { [index: number]: string } = {};
+  linkErrorsMap: { [index: number]: string } = {};
   comments = '';
 
   constructor(
@@ -182,8 +228,68 @@ export class UploadModalComponent implements OnInit {
   }
 
   onFileSelected(event: any, index: number) {
-    if (event.target.files.length > 0) {
-      this.filesMap[index] = event.target.files[0];
+    const selectedFile: File | undefined = event?.target?.files?.[0];
+    if (!selectedFile) return;
+
+    const limits = this.viewStateService.validationLimits();
+    if (selectedFile.size > limits.submissionFileMaxBytes) {
+      alert(
+        `File size exceeded. Max allowed size is ${this.formatBytes(limits.submissionFileMaxBytes)}. ` +
+        `Selected file size is ${this.formatBytes(selectedFile.size)}.`
+      );
+      delete this.filesMap[index];
+      event.target.value = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (!this.isFileAllowedForIndex(selectedFile, index)) {
+      const allowedList = this.allowedFileFormatsFor(this.deliverablesList[index]);
+      alert(`File format not allowed. Teacher allowed only: ${allowedList}.`);
+      delete this.filesMap[index];
+      event.target.value = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.filesMap[index] = selectedFile;
+    this.cdr.detectChanges();
+  }
+
+  validateLinkForIndex(index: number): boolean {
+    const link = this.linksMap[index]?.trim();
+    if (!link) {
+      this.clearLinkError(index);
+      return true;
+    }
+
+    const limits = this.viewStateService.validationLimits();
+    if (link.length > limits.submissionLinkMax) {
+      this.linkErrorsMap[index] = `Max ${limits.submissionLinkMax} characters`;
+      this.cdr.detectChanges();
+      return false;
+    }
+
+    if (!this.isValidSubmissionLink(link)) {
+      this.linkErrorsMap[index] = 'Enter a valid link';
+      this.cdr.detectChanges();
+      return false;
+    }
+
+    if (!this.isLinkAllowedForIndex(link, index)) {
+      const allowedList = this.allowedLinkFormatsFor(this.deliverablesList[index]);
+      this.linkErrorsMap[index] = `Allowed: ${allowedList}`;
+      this.cdr.detectChanges();
+      return false;
+    }
+
+    this.clearLinkError(index);
+    return true;
+  }
+
+  onLinkInputChange(index: number) {
+    if (this.linkErrorsMap[index]) {
+      this.clearLinkError(index);
       this.cdr.detectChanges();
     }
   }
@@ -204,14 +310,15 @@ export class UploadModalComponent implements OnInit {
       return;
     }
 
-    // Check link length
-    const firstLink = Object.values(this.linksMap).find(
-      link => link && link.trim().length > 0
-    );
-    if (firstLink && firstLink.trim().length > limits.submissionLinkMax) {
-      alert(`Submission Link must not exceed ${limits.submissionLinkMax} characters.`);
-      return;
+    const linkIndexes = Object.keys(this.linksMap).map(key => Number(key));
+    for (const index of linkIndexes) {
+      if (!this.validateLinkForIndex(index)) return;
     }
+
+    const firstLinkEntry = Object.entries(this.linksMap).find(
+      ([, link]) => link && link.trim().length > 0
+    );
+    const firstLink = firstLinkEntry?.[1]?.trim();
 
     if (this.comments && this.comments.trim().length > limits.submissionCommentsMax) {
       alert(`Private comments must not exceed ${limits.submissionCommentsMax} characters.`);
@@ -223,14 +330,22 @@ export class UploadModalComponent implements OnInit {
     formData.append('studentId', user.id.toString());
 
     // Upload first file (backend currently accepts one file)
-    const firstFile = Object.values(this.filesMap)[0];
+    const firstFileEntry = Object.entries(this.filesMap)[0];
+    const firstFile = firstFileEntry?.[1];
     if (firstFile) {
       formData.append('file', firstFile);
     }
 
     // Upload first link
     if (firstLink) {
-      formData.append('submissionLink', firstLink.trim());
+      formData.append('submissionLink', firstLink);
+    }
+
+    const firstIndex = firstFileEntry
+      ? Number(firstFileEntry[0])
+      : (firstLinkEntry ? Number(firstLinkEntry[0]) : null);
+    if (firstIndex !== null && !Number.isNaN(firstIndex)) {
+      formData.append('deliverableIndex', firstIndex.toString());
     }
 
     if (this.comments.trim()) {
@@ -248,5 +363,109 @@ export class UploadModalComponent implements OnInit {
         alert(err?.error?.message || 'Failed to submit assignment.');
       }
     });
+  }
+
+  allowedFileFormatsFor(item: DeliverableItem | undefined): string {
+    const values = this.parseCsv(item?.allowedFileExtensions);
+    return values.length ? values.join(', ') : '';
+  }
+
+  allowedLinkFormatsFor(item: DeliverableItem | undefined): string {
+    const values = this.parseCsv(item?.allowedLinkPatterns);
+    return values.length ? values.join(', ') : '';
+  }
+
+  formatBytes(bytes: number): string {
+    if (!bytes || bytes <= 0) return '0 B';
+    const mb = bytes / (1024 * 1024);
+    if (mb >= 1) return `${mb.toFixed(1)} MB`;
+    const kb = bytes / 1024;
+    return `${kb.toFixed(1)} KB`;
+  }
+
+  private isFileAllowedForIndex(file: File, index: number): boolean {
+    const allowed = this.parseCsv(this.deliverablesList[index]?.allowedFileExtensions);
+    if (!allowed.length) return true;
+    const extension = this.extractExtension(file.name).toLowerCase();
+    return !!extension && allowed.includes(extension);
+  }
+
+  private isLinkAllowedForIndex(link: string, index: number): boolean {
+    const allowed = this.parseCsv(this.deliverablesList[index]?.allowedLinkPatterns);
+    if (!allowed.length) return true;
+    return allowed.some(pattern => this.linkMatchesPattern(link, pattern));
+  }
+
+  private isValidSubmissionLink(link: string): boolean {
+    return this.parseLinkParts(link) !== null;
+  }
+
+  private linkMatchesPattern(link: string, pattern: string): boolean {
+    if (!pattern || !pattern.trim()) return false;
+
+    const linkParts = this.parseLinkParts(link);
+    if (!linkParts) return false;
+
+    const normalizedPattern = pattern.trim().toLowerCase();
+    const patternParts = this.parseLinkParts(normalizedPattern);
+    if (!patternParts) {
+      return this.normalizeHost(linkParts.host).includes(normalizedPattern);
+    }
+
+    const linkHost = this.normalizeHost(linkParts.host);
+    const patternHost = this.normalizeHost(patternParts.host);
+    if (!patternHost) return false;
+
+    const hostMatches = linkHost === patternHost || linkHost.endsWith(`.${patternHost}`);
+    if (!hostMatches) return false;
+
+    const requiredPath = this.normalizePath(patternParts.path);
+    if (!requiredPath) return true;
+
+    const linkPath = this.normalizePath(linkParts.path);
+    return linkPath === requiredPath || linkPath.startsWith(`${requiredPath}/`);
+  }
+
+  private parseLinkParts(value: string): { host: string; path: string } | null {
+    const trimmed = (value || '').trim();
+    if (!trimmed) return null;
+
+    const hasScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed);
+    const candidate = hasScheme ? trimmed : `//${trimmed}`;
+    const parsed = /^(?:[a-z][a-z0-9+.-]*:)?\/\/([^\/?#:]+)(?::\d+)?(\/[^?#]*)?/i.exec(candidate);
+    if (!parsed || !parsed[1]) return null;
+
+    return {
+      host: parsed[1],
+      path: parsed[2] || ''
+    };
+  }
+
+  private normalizeHost(host?: string): string {
+    return (host || '').trim().toLowerCase();
+  }
+
+  private normalizePath(path?: string): string {
+    if (!path || path === '/') return '';
+    const normalized = path.trim().toLowerCase();
+    return normalized.endsWith('/') ? normalized.slice(0, -1) : normalized;
+  }
+
+  private extractExtension(fileName: string): string {
+    const dotIndex = fileName.lastIndexOf('.');
+    if (dotIndex < 0 || dotIndex === fileName.length - 1) return '';
+    return fileName.substring(dotIndex + 1).trim();
+  }
+
+  private parseCsv(value?: string): string[] {
+    if (!value) return [];
+    return value
+      .split(',')
+      .map(item => item.trim().toLowerCase())
+      .filter(Boolean);
+  }
+
+  private clearLinkError(index: number) {
+    delete this.linkErrorsMap[index];
   }
 }
