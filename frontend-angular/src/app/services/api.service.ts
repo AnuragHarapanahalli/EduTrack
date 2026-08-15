@@ -25,7 +25,9 @@ import {
 })
 export class ApiService {
 
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = window.location.port === '4200'
+    ? 'http://localhost:8080/api'
+    : '/api';
 
 
   constructor(private http: HttpClient) {}

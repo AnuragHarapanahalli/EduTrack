@@ -25,7 +25,7 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
               <h5 style="margin: 0 0 6px 0; font-size: 0.8rem; font-weight: 700; color: var(--gc-text-sub);">SUBMISSION DETAILS</h5>
               <div style="font-size: 0.85rem; margin-bottom: 8px; display: flex; gap: 8px;">
                 <span *ngIf="activeGradingEntry.fileUrl">
-                  <a [href]="'http://localhost:8080' + activeGradingEntry.fileUrl" target="_blank" class="gc-btn gc-btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">
+                  <a [href]="serverHost + activeGradingEntry.fileUrl" target="_blank" class="gc-btn gc-btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">
                     <i class="fa-solid fa-download"></i> File
                   </a>
                 </span>
@@ -115,7 +115,7 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                   <td><span class="gc-badge gc-badge-info">{{ item.timelinessLabel }}</span></td>
                   <td>
                     <div style="display: flex; flex-direction: column; gap: 4px;">
-                      <a *ngIf="item.fileUrl" [href]="'http://localhost:8080' + item.fileUrl" target="_blank" class="gc-btn gc-btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem; text-align: center;">
+                      <a *ngIf="item.fileUrl" [href]="serverHost + item.fileUrl" target="_blank" class="gc-btn gc-btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem; text-align: center;">
                         <i class="fa-solid fa-download"></i> File
                       </a>
                       <a *ngIf="item.submissionLink" [href]="item.submissionLink" target="_blank" class="gc-btn gc-btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem; text-align: center;">
@@ -150,6 +150,7 @@ export class ReviewRosterModalComponent implements OnInit {
   @Output() closeModal = new EventEmitter<void>();
   @Output() gradeReturned = new EventEmitter<void>();
 
+  serverHost = window.location.port === '4200' ? 'http://localhost:8080' : '';
   rosterList: MilestoneRosterEntry[] = [];
   activeGradingEntry: MilestoneRosterEntry | null = null;
   gradeStatus: SubmissionStatus = 'APPROVED';
