@@ -305,6 +305,13 @@
     border-radius:12px;
     background:#FEF2F2;
     color:#DC2626;
+    border:1px solid rgba(220,38,38,0.12);
+}
+
+:host-context(.dark-theme) .gc-auth-error {
+    background:rgba(220,38,38,0.15) !important;
+    color:#F87171 !important;
+    border:1px solid rgba(220,38,38,0.3) !important;
 }
 
 /* DARK MODE */

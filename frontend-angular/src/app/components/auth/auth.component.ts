@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -30,7 +30,8 @@ export class AuthComponent {
     private authService: AuthService,
     private apiService: ApiService,
     public viewStateService: ViewStateService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   toggleTheme() {
@@ -45,16 +46,19 @@ export class AuthComponent {
     this.loginEmail = email;
     this.loginPassword = password;
     this.errorMessage = '';
+    this.cdr.detectChanges();
   }
 
   onLogin() {
     if (!this.loginEmail || !this.loginPassword) {
       this.errorMessage = 'Please enter both email and password.';
+      this.cdr.detectChanges();
       return;
     }
 
     this.errorMessage = '';
     this.isSubmitting = true;
+    this.cdr.detectChanges();
 
     this.apiService.login(this.loginEmail, this.loginPassword).subscribe({
       next: ({ user, token }) => {
@@ -62,6 +66,7 @@ export class AuthComponent {
         if (user.role === 'ADMIN') {
           this.isSubmitting = false;
           this.viewStateService.setView('ADMIN_PANEL');
+          this.cdr.detectChanges();
           return;
         }
 
@@ -75,17 +80,31 @@ export class AuthComponent {
             this.isSubmitting = false;
             this.viewStateService.setUserSubjects(subjects);
             this.viewStateService.setView('CLASSES_HOME');
+            this.cdr.detectChanges();
           },
           error: () => {
             this.isSubmitting = false;
             this.viewStateService.setView('CLASSES_HOME');
+            this.cdr.detectChanges();
           }
         });
       },
       error: err => {
         this.isSubmitting = false;
-        this.errorMessage =
-          err.error?.message || 'Login failed. Invalid credentials or server offline.';
+        console.error('Login error:', err);
+        if (err.error && typeof err.error === 'object' && err.error.message) {
+          this.errorMessage = err.error.message;
+        } else if (err.error && typeof err.error === 'string') {
+          try {
+            const parsed = JSON.parse(err.error);
+            this.errorMessage = parsed.message || 'Login failed.';
+          } catch (e) {
+            this.errorMessage = err.error;
+          }
+        } else {
+          this.errorMessage = err.message || 'Login failed. Invalid credentials or server offline.';
+        }
+        this.cdr.detectChanges(); // Force immediate template update
       }
     });
   }

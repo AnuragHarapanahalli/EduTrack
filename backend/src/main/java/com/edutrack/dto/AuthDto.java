@@ -22,7 +22,6 @@ public class AuthDto {
         private String password;
         private String fullName;
         private Role role;
-        private Long batchId;
 
         public RegisterRequest() {}
 
@@ -37,9 +36,6 @@ public class AuthDto {
 
         public Role getRole() { return role; }
         public void setRole(Role role) { this.role = role; }
-
-        public Long getBatchId() { return batchId; }
-        public void setBatchId(Long batchId) { this.batchId = batchId; }
     }
 
     public static class AuthResponse {
@@ -63,31 +59,25 @@ public class AuthDto {
         private String email;
         private String fullName;
         private Role role;
-        private Long batchId;
-        private String batchName;
         private boolean needsPasswordReset;
         private boolean active = true;
 
         public UserDto() {}
 
-        public UserDto(Long id, String email, String fullName, Role role, Long batchId, String batchName, boolean needsPasswordReset) {
+        public UserDto(Long id, String email, String fullName, Role role, boolean needsPasswordReset) {
             this.id = id;
             this.email = email;
             this.fullName = fullName;
             this.role = role;
-            this.batchId = batchId;
-            this.batchName = batchName;
             this.needsPasswordReset = needsPasswordReset;
             this.active = true;
         }
 
-        public UserDto(Long id, String email, String fullName, Role role, Long batchId, String batchName, boolean needsPasswordReset, boolean active) {
+        public UserDto(Long id, String email, String fullName, Role role, boolean needsPasswordReset, boolean active) {
             this.id = id;
             this.email = email;
             this.fullName = fullName;
             this.role = role;
-            this.batchId = batchId;
-            this.batchName = batchName;
             this.needsPasswordReset = needsPasswordReset;
             this.active = active;
         }
@@ -103,12 +93,6 @@ public class AuthDto {
 
         public Role getRole() { return role; }
         public void setRole(Role role) { this.role = role; }
-
-        public Long getBatchId() { return batchId; }
-        public void setBatchId(Long batchId) { this.batchId = batchId; }
-
-        public String getBatchName() { return batchName; }
-        public void setBatchName(String batchName) { this.batchName = batchName; }
 
         public boolean isNeedsPasswordReset() { return needsPasswordReset; }
         public void setNeedsPasswordReset(boolean needsPasswordReset) { this.needsPasswordReset = needsPasswordReset; }

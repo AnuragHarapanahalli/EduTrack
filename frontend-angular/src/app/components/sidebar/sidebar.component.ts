@@ -51,7 +51,7 @@ export class SidebarComponent {
     this.viewStateService.closeSidebar();
   }
 
-  goToAdminTab(tab: 'USERS' | 'MAPPINGS' | 'STATS'): void {
+  goToAdminTab(tab: 'USERS' | 'CLASSES' | 'LOGS' | 'STATS'): void {
     this.viewStateService.goAdminPanel(tab);
   }
 

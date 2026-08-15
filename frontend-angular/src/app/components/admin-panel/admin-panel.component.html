@@ -14,7 +14,7 @@
         <span>Elevated Administrator Portal</span>
       </div>
       <h2>System Administration & Governance</h2>
-      <p>Manage user accounts, regulate batch memberships, map lab courses, and inspect system telemetry.</p>
+      <p>Manage user accounts, regulate course enrollments, map lab classes, and inspect system telemetry.</p>
     </div>
 
     <!-- Navigation Tabs -->
@@ -30,11 +30,19 @@
 
       <button
         class="gc-admin-tab-btn"
-        [class.active]="viewStateService.adminTabVal === 'MAPPINGS'"
-        (click)="setTab('MAPPINGS')">
-        <i class="fa-solid fa-diagram-project"></i>
-        <span>Batch & Subject Mappings</span>
-        <span class="gc-tab-count" *ngIf="batches.length">{{ batches.length }}</span>
+        [class.active]="viewStateService.adminTabVal === 'CLASSES'"
+        (click)="setTab('CLASSES')">
+        <i class="fa-solid fa-book"></i>
+        <span>Lab Classes</span>
+        <span class="gc-tab-count" *ngIf="subjects.length">{{ subjects.length }}</span>
+      </button>
+
+      <button
+        class="gc-admin-tab-btn"
+        [class.active]="viewStateService.adminTabVal === 'LOGS'"
+        (click)="setTab('LOGS')">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Audit History</span>
       </button>
 
       <button
@@ -80,7 +88,7 @@
         </div>
         <div class="gc-kpi-body">
           <span class="gc-kpi-label">Faculty / Instructors</span>
-          <strong class="gc-kpi-val">{{ stats?.totalInstructors ?? 0 }}</strong>
+          <strong class="gc-kpi-val">{{ stats?.totalInstructors ?? instructorUsers.length }}</strong>
         </div>
       </div>
 
@@ -102,7 +110,7 @@
         <input
           type="text"
           class="gc-search-input"
-          placeholder="Search by name, email, or batch..."
+          placeholder="Search by name or email..."
           [(ngModel)]="searchQuery"
           (ngModelChange)="onSearchChange()">
       </div>
@@ -127,7 +135,17 @@
           </select>
         </div>
 
-        <button class="gc-btn-create" (click)="openCreateUserModal()">
+        <button class="gc-btn-secondary" type="button" (click)="openCsvModal('STUDENT')" style="font-size: 0.82rem; padding: 12px 14px; border-radius: 14px; display: inline-flex; align-items: center; gap: 6px; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+          <i class="fa-solid fa-user-graduate"></i>
+          <span>Import Students</span>
+        </button>
+
+        <button class="gc-btn-secondary" type="button" (click)="openCsvModal('INSTRUCTOR')" style="font-size: 0.82rem; padding: 12px 14px; border-radius: 14px; display: inline-flex; align-items: center; gap: 6px; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+          <i class="fa-solid fa-chalkboard-user"></i>
+          <span>Import Teachers</span>
+        </button>
+
+        <button class="gc-btn-create" type="button" (click)="openCreateUserModal()">
           <i class="fa-solid fa-user-plus"></i>
           <span>Create New User</span>
         </button>
@@ -155,7 +173,6 @@
           <tr>
             <th>User</th>
             <th>Role</th>
-            <th>Batch / Cohort</th>
             <th>Status</th>
             <th>Associated Courses</th>
             <th>Registered</th>
@@ -180,16 +197,6 @@
               <span class="gc-role-pill" [ngClass]="getRoleBadgeClass(user.role)">
                 <i class="fa-solid" [ngClass]="user.role === 'ADMIN' ? 'fa-shield' : (user.role === 'INSTRUCTOR' ? 'fa-chalkboard-user' : 'fa-user-graduate')"></i>
                 {{ user.role }}
-              </span>
-            </td>
-
-            <td>
-              <span *ngIf="user.batchName" class="gc-batch-pill">
-                <i class="fa-solid fa-graduation-cap"></i>
-                {{ user.batchName }}
-              </span>
-              <span *ngIf="!user.batchName" class="gc-unassigned-text">
-                {{ user.role === 'STUDENT' ? 'Unassigned' : '—' }}
               </span>
             </td>
 
@@ -239,344 +246,177 @@
   </div>
 
   <!-- ================================================================= -->
-  <!-- TAB 2: BATCH & SUBJECT MAPPINGS -->
+  <!-- TAB: LAB CLASSES / SUBJECTS DIRECTORY -->
   <!-- ================================================================= -->
-  <div class="gc-admin-tab-content" *ngIf="viewStateService.adminTabVal === 'MAPPINGS'">
-
-    <div class="gc-mappings-layout">
-
-      <!-- Left Column: Batches & Student Batch Assignments -->
-      <div class="gc-mapping-column">
-
-        <!-- Batches Header -->
-        <div class="gc-section-card">
-          <div class="gc-section-header">
-            <div>
-              <h3><i class="fa-solid fa-layer-group"></i> Academic Batches</h3>
-              <p>Configure student cohorts and assign students to sections.</p>
-            </div>
-            <button class="gc-btn-secondary" (click)="openCreateBatchModal()">
-              <i class="fa-solid fa-plus"></i> New Batch
-            </button>
-          </div>
-
-          <!-- Batch Pills / Cards -->
-          <div class="gc-batch-cards-grid">
-            <div
-              class="gc-batch-summary-card"
-              [class.active]="selectedBatchFilter === 'ALL'"
-              (click)="selectedBatchFilter = 'ALL'">
-              <strong>All Students</strong>
-              <small>{{ studentUsers.length }} total</small>
-            </div>
-
-            <div
-              *ngFor="let b of batches"
-              class="gc-batch-summary-card"
-              [class.active]="selectedBatchFilter === b.id"
-              (click)="selectedBatchFilter = b.id">
-              <strong>{{ b.name }}</strong>
-              <small>{{ b.studentCount }} students • {{ b.subjectCount }} subjects</small>
-            </div>
-
-            <div
-              class="gc-batch-summary-card"
-              [class.active]="selectedBatchFilter === 'UNASSIGNED'"
-              (click)="selectedBatchFilter = 'UNASSIGNED'">
-              <strong>Unassigned</strong>
-              <small>{{ (studentUsers.length - batches.length) > 0 ? 'Needs Batch' : '0 pending' }}</small>
-            </div>
-          </div>
+  <div class="gc-admin-tab-content" *ngIf="viewStateService.adminTabVal === 'CLASSES'">
+    
+    <div class="gc-section-card">
+      <div class="gc-section-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h3><i class="fa-solid fa-book"></i> Active Lab Classes</h3>
+          <p>Inspect all created subject courses, see student statistics, and assign or change faculty instructors.</p>
         </div>
-
-        <!-- Student Assignment Table with Bulk Action -->
-        <div class="gc-section-card">
-          <div class="gc-section-header">
-            <div>
-              <h4>Batch Assignment Manager</h4>
-              <p>Move students across cohorts or bulk-assign in one click.</p>
-            </div>
-          </div>
-
-          <!-- Bulk Assign Toolbar -->
-          <div class="gc-bulk-toolbar" *ngIf="selectedStudentIdsForBatch.size > 0">
-            <div class="gc-bulk-count">
-              <i class="fa-solid fa-check-double"></i>
-              <span>{{ selectedStudentIdsForBatch.size }} student(s) selected</span>
-            </div>
-
-            <div class="gc-bulk-controls">
-              <select [(ngModel)]="targetBatchIdForBulk" class="gc-filter-select">
-                <option [ngValue]="null">-- Remove from Batch --</option>
-                <option *ngFor="let b of batches" [ngValue]="b.id">{{ b.name }}</option>
-              </select>
-
-              <button
-                class="gc-btn-primary gc-btn-sm"
-                [disabled]="isBulkAssigningBatch"
-                (click)="executeBulkBatchAssign()">
-                <i class="fa-solid" [ngClass]="isBulkAssigningBatch ? 'fa-circle-notch fa-spin' : 'fa-arrow-right-to-bracket'"></i>
-                Assign Selected
-              </button>
-            </div>
-          </div>
-
-          <div class="gc-mapping-table-wrapper">
-            <table class="gc-table gc-table-sm">
-              <thead>
-                <tr>
-                  <th style="width: 40px;">
-                    <input
-                      type="checkbox"
-                      [checked]="isAllStudentsSelected()"
-                      (change)="toggleSelectAllStudents()">
-                  </th>
-                  <th>Student</th>
-                  <th>Current Batch</th>
-                  <th>Quick Reassign</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let student of filteredStudentsForBatchMapping">
-                  <td>
-                    <input
-                      type="checkbox"
-                      [checked]="selectedStudentIdsForBatch.has(student.id)"
-                      (change)="toggleStudentSelection(student.id)">
-                  </td>
-                  <td>
-                    <div class="gc-student-mini">
-                      <strong>{{ student.fullName }}</strong>
-                      <small>{{ student.email }}</small>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="gc-batch-pill" *ngIf="student.batchName">{{ student.batchName }}</span>
-                    <span class="gc-unassigned-text" *ngIf="!student.batchName">None</span>
-                  </td>
-                  <td>
-                    <select
-                      class="gc-table-select"
-                      [value]="student.batchId || ''"
-                      (change)="onQuickBatchChange(student, $event)">
-                      <option value="">-- No Batch --</option>
-                      <option *ngFor="let b of batches" [value]="b.id">{{ b.name }}</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr *ngIf="filteredStudentsForBatchMapping.length === 0">
-                  <td colspan="4" class="text-center" style="padding: 2rem; color: var(--gc-text-sub);">
-                    No students found under this filter.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
+        <button class="gc-btn-primary gc-btn-sm" type="button" (click)="openCreateClassModal()" style="font-size: 0.82rem; padding: 8px 16px; border-radius: 10px; height: auto; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-plus"></i> Create Lab Class
+        </button>
       </div>
 
-      <!-- Right Column: Classes to Batches & Subject Enrollment Mapping -->
-      <div class="gc-mapping-column">
-
-        <!-- Class to Batch Assignment Section -->
-        <div class="gc-section-card">
-          <div class="gc-section-header">
-            <div>
-              <h3><i class="fa-solid fa-chalkboard"></i> Classes & Lab Courses</h3>
-              <p>Assign courses to batches and auto-enroll batch students.</p>
-            </div>
-            <button class="gc-btn-secondary" (click)="openCreateClassModal()">
-              <i class="fa-solid fa-plus"></i> New Class
-            </button>
-          </div>
-
-          <div class="gc-mapping-table-wrapper" style="max-height: 250px;">
-            <table class="gc-table gc-table-sm">
-              <thead>
-                <tr>
-                  <th>Class / Course</th>
-                  <th>Faculty</th>
-                  <th>Assigned Batch</th>
-                  <th class="text-right">Batch Sync</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let s of subjects">
-                  <td>
-                    <div class="gc-student-mini">
-                      <strong>{{ s.name }}</strong>
-                      <small>{{ s.code }}</small>
-                    </div>
-                  </td>
-                  <td>
-                    <span style="font-size: 0.82rem; color: var(--gc-text-sub);">
-                      {{ s.instructorName }}
-                    </span>
-                  </td>
-                  <td>
-                    <select
-                      class="gc-table-select"
-                      [value]="s.batchId || ''"
-                      (change)="onQuickSubjectBatchChange(s, $event)">
-                      <option *ngFor="let b of batches" [value]="b.id">{{ b.name }}</option>
-                    </select>
-                  </td>
-                  <td class="text-right">
-                    <button
-                      class="gc-btn-secondary gc-btn-xs"
-                      (click)="autoEnrollBatchStudentsForSubject(s)"
-                      title="Auto-enroll all students in this batch into this class">
-                      <i class="fa-solid fa-arrows-rotate"></i> Sync Batch
-                    </button>
-                  </td>
-                </tr>
-                <tr *ngIf="subjects.length === 0">
-                  <td colspan="4" class="text-center" style="padding: 1.5rem; color: var(--gc-text-sub);">
-                    No subjects / classes available. Click "New Class" to create one.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      <div class="gc-table-card">
+        <div *ngIf="isLoadingSubjects" class="gc-loading-state">
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+          <span>Loading classes...</span>
         </div>
 
-        <!-- Subject Student Enrollment Mapping Card -->
-        <div class="gc-section-card">
-          <div class="gc-section-header">
-            <div>
-              <h3><i class="fa-solid fa-graduation-cap"></i> Student Course Enrollments</h3>
-              <p>Enroll and unenroll individual students from specific lab courses.</p>
-            </div>
-          </div>
-
-          <!-- Select Subject Dropdown -->
-          <div class="gc-subject-selector-box">
-            <label>Select Target Subject / Lab Course:</label>
-            <select
-              class="gc-form-select"
-              [ngModel]="selectedSubjectId"
-              (ngModelChange)="onSelectSubject(subjects.find(s => s.id === +$event)!)">
-              <option *ngFor="let s of subjects" [value]="s.id">
-                {{ s.name }} ({{ s.code }}) — {{ s.instructorName }}
-              </option>
-            </select>
-          </div>
-
-          <!-- Active Subject Info Bar -->
-          <div class="gc-subject-meta-card" *ngIf="selectedSubject">
-            <div class="meta-item">
-              <span class="meta-lbl">Course Code</span>
-              <strong class="meta-val">{{ selectedSubject.code }}</strong>
-            </div>
-            <div class="meta-item">
-              <span class="meta-lbl">Faculty</span>
-              <strong class="meta-val">{{ selectedSubject.instructorName }}</strong>
-            </div>
-            <div class="meta-item">
-              <span class="meta-lbl">Batch</span>
-              <strong class="meta-val">{{ selectedSubject.batchName }}</strong>
-            </div>
-            <div class="meta-item">
-              <span class="meta-lbl">Enrolled</span>
-              <strong class="meta-val highlight">{{ enrolledStudentsInSubject.length }} Students</strong>
-            </div>
-          </div>
-
-          <!-- Side-by-side Roster & Available Lists -->
-          <div class="gc-dual-panel-grid">
-
-            <!-- Enrolled Panel -->
-            <div class="gc-dual-panel">
-              <div class="dual-panel-head">
-                <span>Enrolled ({{ enrolledStudentsInSubject.length }})</span>
-              </div>
-              <div class="dual-panel-body">
-                <div *ngFor="let student of enrolledStudentsInSubject" class="gc-student-card-item">
-                  <div class="student-card-left">
-                    <div class="mini-avatar">{{ getInitials(student.fullName) }}</div>
-                    <div class="student-card-info">
-                      <strong>{{ student.fullName }}</strong>
-                      <small>{{ student.email }}</small>
-                    </div>
-                  </div>
-                  <button
-                    class="gc-btn-danger-icon"
-                    (click)="unenrollStudent(student.id)"
-                    title="Remove from Subject">
-                    <i class="fa-solid fa-user-minus"></i>
-                  </button>
-                </div>
-
-                <div *ngIf="enrolledStudentsInSubject.length === 0" class="empty-panel-msg">
-                  No students currently enrolled in this subject.
-                </div>
-              </div>
-            </div>
-
-            <!-- Available to Enroll Panel -->
-            <div class="gc-dual-panel">
-              <div class="dual-panel-head">
-                <span>Available Students ({{ availableStudentsForSubject.length }})</span>
-                <button
-                  class="gc-btn-primary gc-btn-xs"
-                  *ngIf="selectedStudentIdsForEnrollment.size > 0"
-                  (click)="bulkEnrollSelectedStudents()"
-                  [disabled]="isEnrolling">
-                  <i class="fa-solid fa-user-plus"></i>
-                  Enroll ({{ selectedStudentIdsForEnrollment.size }})
-                </button>
-              </div>
-              <div class="dual-panel-body">
-                <div *ngFor="let student of availableStudentsForSubject" class="gc-student-card-item">
-                  <div class="student-card-left">
-                    <input
-                      type="checkbox"
-                      [checked]="selectedStudentIdsForEnrollment.has(student.id)"
-                      (change)="toggleEnrollmentSelection(student.id)">
-                    <div class="student-card-info">
-                      <strong>{{ student.fullName }}</strong>
-                      <small>{{ student.batchName || 'No Batch' }}</small>
-                    </div>
-                  </div>
-                  <button
-                    class="gc-btn-success-icon"
-                    (click)="enrollStudent(student.id)"
-                    title="Enroll into Subject">
-                    <i class="fa-solid fa-plus"></i>
-                  </button>
-                </div>
-
-                <div *ngIf="availableStudentsForSubject.length === 0" class="empty-panel-msg">
-                  All students are already enrolled!
-                </div>
-              </div>
-            </div>
-
-          </div>
-
+        <div *ngIf="!isLoadingSubjects && subjects.length === 0" class="gc-empty-state">
+          <i class="fa-solid fa-book-open"></i>
+          <h3>No lab classes exist yet</h3>
+          <p>Teachers/Instructors create classes themselves inside their portals.</p>
         </div>
+
+        <table class="gc-table" *ngIf="!isLoadingSubjects && subjects.length > 0">
+          <thead>
+            <tr>
+              <th>Class / Code</th>
+              <th>Enrolled Students</th>
+              <th>Assignments / Milestones</th>
+              <th>Assigned Faculty Instructor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of subjects">
+              <td>
+                <div class="gc-student-mini">
+                  <strong>{{ s.name }}</strong>
+                  <small>{{ s.code }}</small>
+                </div>
+              </td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span class="gc-subject-count-pill" style="background: rgba(16, 185, 129, 0.08); color: #10b981; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    {{ s.enrolledStudentsCount }} Students
+                  </span>
+                  <button 
+                    class="gc-btn-secondary" 
+                    (click)="openRosterModal(s)"
+                    title="Manage Course Roster"
+                    style="font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; height: auto; min-height: 0; line-height: 1.2;">
+                    <i class="fa-solid fa-user-plus"></i> Manage
+                  </button>
+                </div>
+              </td>
+              <td>
+                <span class="gc-subject-count-pill" style="background: rgba(245, 158, 11, 0.08); color: #f59e0b; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;">
+                  <i class="fa-solid fa-list-check"></i>
+                  {{ s.totalMilestones }} Assignments
+                </span>
+              </td>
+              <td>
+                <div class="gc-instructor-edit-cell">
+                  <div *ngIf="updatingInstructorSubjectId === s.id" class="gc-updating-spinner" style="font-size: 0.88rem; color: var(--gc-text-sub);">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="margin-right: 4px;"></i>
+                    Updating...
+                  </div>
+                  <select 
+                    *ngIf="updatingInstructorSubjectId !== s.id"
+                    [value]="s.instructorId || ''"
+                    (change)="changeInstructor(s, $event)"
+                    class="gc-table-select">
+                    <option *ngFor="let prof of instructorUsers" [value]="prof.id">
+                      {{ prof.fullName }} ({{ prof.email }})
+                    </option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
     </div>
 
   </div>
 
   <!-- ================================================================= -->
-  <!-- TAB 3: SYSTEM REPORTS & TELEMETRY STATS -->
+  <!-- TAB: AUDIT LOGS HISTORY -->
+  <!-- ================================================================= -->
+  <div class="gc-admin-tab-content" *ngIf="viewStateService.adminTabVal === 'LOGS'">
+
+    <div class="gc-section-card">
+      <div class="gc-section-header">
+        <div>
+          <h3><i class="fa-solid fa-clock-rotate-left"></i> System Audit Logs</h3>
+          <p>Track administrator governance actions, user account changes, and classroom modifications.</p>
+        </div>
+      </div>
+
+      <div class="gc-table-card">
+        <div *ngIf="isLoadingLogs" class="gc-loading-state">
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+          <span>Loading system audit logs...</span>
+        </div>
+
+        <div *ngIf="!isLoadingLogs && auditLogs.length === 0" class="gc-empty-state">
+          <i class="fa-solid fa-list-check"></i>
+          <h3>No audit logs available</h3>
+          <p>Actions performed by administrators will appear here in chronological order.</p>
+        </div>
+
+        <table class="gc-table" *ngIf="!isLoadingLogs && auditLogs.length > 0">
+          <thead>
+            <tr>
+              <th style="width: 180px;">Timestamp</th>
+              <th style="width: 180px;">Action Category</th>
+              <th>Event Details</th>
+              <th style="width: 250px;">Performed By</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of auditLogs">
+              <td>
+                <span class="gc-date-text" style="font-weight: 500;">
+                  {{ log.timestamp | date:'medium' }}
+                </span>
+              </td>
+              <td>
+                <span class="gc-role-pill" [ngClass]="log.action.includes('CREATE') ? 'badge-role-instructor' : (log.action.includes('TOGGLE') || log.action.includes('CHANGE') ? 'badge-role-admin' : 'badge-role-student')" style="font-size: 0.72rem; letter-spacing: 0.04em;">
+                  {{ log.action }}
+                </span>
+              </td>
+              <td>
+                <span style="font-size: 0.88rem; color: var(--gc-text-main); line-height: 1.4;">
+                  {{ log.details }}
+                </span>
+              </td>
+              <td>
+                <span class="gc-date-text" style="color: var(--gc-text-sub); font-size: 0.82rem;">
+                  <i class="fa-solid fa-user-shield" style="margin-right: 4px; font-size: 0.75rem;"></i>
+                  {{ log.performedByEmail }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <!-- ================================================================= -->
+  <!-- TAB 3: SYSTEM REPORTS & TELEMETRY -->
   <!-- ================================================================= -->
   <div class="gc-admin-tab-content" *ngIf="viewStateService.adminTabVal === 'STATS'">
 
-    <div class="gc-stats-dashboard" *ngIf="stats">
-
-      <!-- Row 1: High Level Metrics Grid -->
-      <div class="gc-stats-grid-4">
+    <div class="gc-stats-grid" *ngIf="stats">
+      <!-- Row 1: KPI Widgets -->
+      <div class="gc-stats-row-widgets">
         <div class="gc-stat-widget">
           <div class="stat-icon-wrapper bg-blue">
             <i class="fa-solid fa-users"></i>
           </div>
           <div class="stat-info">
-            <span class="stat-title">Total Users</span>
+            <span class="stat-title">Platform Users</span>
             <strong class="stat-number">{{ stats.totalUsers }}</strong>
             <span class="stat-sub">{{ stats.activeUsers }} active • {{ stats.inactiveUsers }} deactivated</span>
           </div>
@@ -600,7 +440,7 @@
           <div class="stat-info">
             <span class="stat-title">Enrolled Students</span>
             <strong class="stat-number">{{ stats.totalStudents }}</strong>
-            <span class="stat-sub">Grouped in {{ stats.totalBatches }} batches</span>
+            <span class="stat-sub">Active in courses roster</span>
           </div>
         </div>
 
@@ -781,28 +621,15 @@
           </div>
         </div>
 
-        <div class="gc-form-row-2">
-          <div class="gc-form-field">
-            <label>System Role <span class="required">*</span></label>
-            <div class="gc-input-icon-group">
-              <i class="fa-solid fa-id-badge gc-input-icon"></i>
-              <select [(ngModel)]="userForm.role" name="role">
-                <option value="STUDENT">Student</option>
-                <option value="INSTRUCTOR">Instructor / Faculty</option>
-                <option value="ADMIN">Administrator</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="gc-form-field" *ngIf="userForm.role === 'STUDENT'">
-            <label>Assigned Batch</label>
-            <div class="gc-input-icon-group">
-              <i class="fa-solid fa-graduation-cap gc-input-icon"></i>
-              <select [(ngModel)]="userForm.batchId" name="batchId">
-                <option [ngValue]="null">-- Unassigned --</option>
-                <option *ngFor="let b of batches" [ngValue]="b.id">{{ b.name }}</option>
-              </select>
-            </div>
+        <div class="gc-form-field">
+          <label>System Role <span class="required">*</span></label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-id-badge gc-input-icon"></i>
+            <select [(ngModel)]="userForm.role" name="role">
+              <option value="STUDENT">Student</option>
+              <option value="INSTRUCTOR">Instructor / Faculty</option>
+              <option value="ADMIN">Administrator</option>
+            </select>
           </div>
         </div>
 
@@ -847,61 +674,129 @@
   </div>
 
   <!-- ================================================================= -->
-  <!-- MODAL: CREATE BATCH -->
+  <!-- MODAL: MANAGE COURSE ROSTER -->
   <!-- ================================================================= -->
-  <div class="gc-modal-backdrop" *ngIf="showCreateBatchModal" (click)="closeCreateBatchModal()">
-    <div class="gc-modal-card" style="max-width: 460px;" (click)="$event.stopPropagation()">
+  <div class="gc-modal-backdrop" *ngIf="showRosterModal" (click)="closeRosterModal()">
+    <div class="gc-modal-card" style="max-width: 800px; width: 90%;" (click)="$event.stopPropagation()">
       <div class="gc-modal-header">
-        <div class="modal-title-pod">
-          <i class="fa-solid fa-layer-group"></i>
-          <h3>Create Academic Batch</h3>
+        <div class="modal-title-pod" *ngIf="selectedSubjectForRoster">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <h3>Roster Management: {{ selectedSubjectForRoster.name }}</h3>
         </div>
-        <button class="gc-modal-close" (click)="closeCreateBatchModal()">
+        <button class="gc-modal-close" (click)="closeRosterModal()">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <form (ngSubmit)="saveBatch()" class="gc-modal-body">
-        <div class="gc-form-error" *ngIf="batchFormError">
-          <i class="fa-solid fa-circle-exclamation"></i>
-          {{ batchFormError }}
-        </div>
-
-        <div class="gc-form-field">
-          <label>Batch / Cohort Name <span class="required">*</span></label>
-          <div class="gc-input-icon-group">
-            <i class="fa-solid fa-users gc-input-icon"></i>
-            <input
-              type="text"
-              [(ngModel)]="newBatchName"
-              name="batchName"
-              placeholder="e.g. B.Tech CSE 2026 - Batch C"
-              required>
+      <div class="gc-modal-body" *ngIf="selectedSubjectForRoster" style="max-height: 60vh; overflow-y: auto;">
+        
+        <!-- Info Cards -->
+        <div class="gc-subject-meta-card" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; background: var(--gc-background); padding: 12px; border-radius: 8px; border: 1px solid var(--gc-border);">
+          <div class="meta-item" style="flex: 1;">
+            <span class="meta-lbl" style="font-size: 0.75rem; color: var(--gc-text-sub); display: block; text-transform: uppercase;">Course Code</span>
+            <strong class="meta-val" style="font-size: 0.95rem; color: var(--gc-text-main);">{{ selectedSubjectForRoster.code }}</strong>
+          </div>
+          <div class="meta-item" style="flex: 1;">
+            <span class="meta-lbl" style="font-size: 0.75rem; color: var(--gc-text-sub); display: block; text-transform: uppercase;">Faculty Instructor</span>
+            <strong class="meta-val" style="font-size: 0.95rem; color: var(--gc-text-main);">{{ selectedSubjectForRoster.instructorName }}</strong>
+          </div>
+          <div class="meta-item" style="flex: 1;">
+            <span class="meta-lbl" style="font-size: 0.75rem; color: var(--gc-text-sub); display: block; text-transform: uppercase;">Enrolled Students</span>
+            <strong class="meta-val highlight" style="font-size: 0.95rem; color: #10b981;">{{ enrolledStudentsInSubject.length }} Students</strong>
           </div>
         </div>
 
-        <div class="gc-form-field">
-          <label>Academic Year</label>
-          <div class="gc-input-icon-group">
-            <i class="fa-solid fa-calendar gc-input-icon"></i>
-            <input
-              type="text"
-              [(ngModel)]="newBatchAcademicYear"
-              name="academicYear"
-              placeholder="e.g. 2025-2026">
+        <!-- Dual Panel Layout inside Modal -->
+        <div class="gc-dual-panel-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          
+          <!-- Column 1: Enrolled Panel -->
+          <div class="gc-dual-panel" style="border: 1px solid var(--gc-border); border-radius: 10px; background: var(--gc-surface); display: flex; flex-direction: column; height: 350px;">
+            <div class="dual-panel-head" style="padding: 12px 16px; border-bottom: 1px solid var(--gc-border); font-weight: 600; font-size: 0.9rem; color: var(--gc-text-main); display: flex; justify-content: space-between; align-items: center; background: var(--gc-background);">
+              <span>Enrolled Students ({{ enrolledStudentsInSubject.length }})</span>
+            </div>
+            <div class="dual-panel-body" style="padding: 12px; overflow-y: auto; flex-grow: 1;">
+              
+              <div *ngFor="let student of enrolledStudentsInSubject" class="gc-student-card-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-radius: 8px; margin-bottom: 8px; background: var(--gc-background); border: 1px solid var(--gc-border);">
+                <div class="student-card-left" style="display: flex; align-items: center; gap: 8px;">
+                  <div class="mini-avatar" style="width: 32px; height: 32px; border-radius: 50%; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">
+                    {{ getInitials(student.fullName) }}
+                  </div>
+                  <div class="student-card-info" style="display: flex; flex-direction: column;">
+                    <strong style="font-size: 0.88rem; color: var(--gc-text-main);">{{ student.fullName }}</strong>
+                    <small style="font-size: 0.75rem; color: var(--gc-text-sub);">{{ student.email }}</small>
+                  </div>
+                </div>
+                <button
+                  class="gc-btn-danger-icon"
+                  type="button"
+                  (click)="unenrollStudent(student.id)"
+                  [disabled]="isEnrolling"
+                  style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 4px 8px; font-size: 1rem;"
+                  title="Remove Student">
+                  <i class="fa-solid fa-user-minus"></i>
+                </button>
+              </div>
+
+              <div *ngIf="enrolledStudentsInSubject.length === 0" class="empty-panel-msg" style="text-align: center; color: var(--gc-text-sub); padding: 2rem 0; font-size: 0.88rem;">
+                No students enrolled.
+              </div>
+            </div>
           </div>
+
+          <!-- Column 2: Available Students Panel -->
+          <div class="gc-dual-panel" style="border: 1px solid var(--gc-border); border-radius: 10px; background: var(--gc-surface); display: flex; flex-direction: column; height: 350px;">
+            <div class="dual-panel-head" style="padding: 12px 16px; border-bottom: 1px solid var(--gc-border); font-weight: 600; font-size: 0.9rem; color: var(--gc-text-main); display: flex; justify-content: space-between; align-items: center; background: var(--gc-background);">
+              <span>Available ({{ availableStudentsForSubject.length }})</span>
+              <button
+                class="gc-btn-primary gc-btn-xs"
+                type="button"
+                *ngIf="selectedStudentIdsForEnrollment.size > 0"
+                (click)="bulkEnrollSelectedStudents()"
+                [disabled]="isEnrolling"
+                style="font-size: 0.72rem; padding: 4px 8px; height: auto; min-height: 0; line-height: 1.2;">
+                <i class="fa-solid fa-user-plus"></i> Enroll Selected ({{ selectedStudentIdsForEnrollment.size }})
+              </button>
+            </div>
+            <div class="dual-panel-body" style="padding: 12px; overflow-y: auto; flex-grow: 1;">
+              
+              <div *ngFor="let student of availableStudentsForSubject" class="gc-student-card-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-radius: 8px; margin-bottom: 8px; background: var(--gc-background); border: 1px solid var(--gc-border);">
+                <div class="student-card-left" style="display: flex; align-items: center; gap: 8px;">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedStudentIdsForEnrollment.has(student.id)"
+                    (change)="toggleEnrollmentSelection(student.id)"
+                    style="cursor: pointer; width: 15px; height: 15px;">
+                  <div class="student-card-info" style="display: flex; flex-direction: column; margin-left: 4px;">
+                    <strong style="font-size: 0.88rem; color: var(--gc-text-main);">{{ student.fullName }}</strong>
+                    <small style="font-size: 0.75rem; color: var(--gc-text-sub);">{{ student.email }}</small>
+                  </div>
+                </div>
+                <button
+                  class="gc-btn-success-icon"
+                  type="button"
+                  (click)="enrollStudent(student.id)"
+                  [disabled]="isEnrolling"
+                  style="border: none; background: transparent; color: #10b981; cursor: pointer; padding: 4px 8px; font-size: 1rem;"
+                  title="Enroll Student">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+
+              <div *ngIf="availableStudentsForSubject.length === 0" class="empty-panel-msg" style="text-align: center; color: var(--gc-text-sub); padding: 2rem 0; font-size: 0.88rem;">
+                All active students enrolled.
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div class="gc-modal-footer">
-          <button type="button" class="gc-btn-secondary" (click)="closeCreateBatchModal()">
-            Cancel
-          </button>
-          <button type="submit" class="gc-btn-primary" [disabled]="isSavingBatch">
-            <i class="fa-solid" [ngClass]="isSavingBatch ? 'fa-circle-notch fa-spin' : 'fa-check'"></i>
-            Save Batch
-          </button>
-        </div>
-      </form>
+      </div>
+
+      <div class="gc-modal-footer">
+        <button type="button" class="gc-btn-primary" (click)="closeRosterModal()">
+          Done
+        </button>
+      </div>
     </div>
   </div>
 
@@ -952,29 +847,15 @@
           </div>
         </div>
 
-        <div class="gc-form-row-2">
-          <div class="gc-form-field">
-            <label>Assigned Faculty / Instructor <span class="required">*</span></label>
-            <div class="gc-input-icon-group">
-              <i class="fa-solid fa-chalkboard-user gc-input-icon"></i>
-              <select [(ngModel)]="newClassForm.instructorId" name="classInstructor">
-                <option *ngFor="let prof of instructorUsers" [value]="prof.id">
-                  {{ prof.fullName }}
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div class="gc-form-field">
-            <label>Assigned Batch / Cohort <span class="required">*</span></label>
-            <div class="gc-input-icon-group">
-              <i class="fa-solid fa-graduation-cap gc-input-icon"></i>
-              <select [(ngModel)]="newClassForm.batchId" name="classBatch">
-                <option *ngFor="let b of batches" [value]="b.id">
-                  {{ b.name }}
-                </option>
-              </select>
-            </div>
+        <div class="gc-form-field">
+          <label>Assigned Faculty / Instructor <span class="required">*</span></label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-chalkboard-user gc-input-icon"></i>
+            <select [(ngModel)]="newClassForm.instructorId" name="classInstructor" class="gc-table-select" style="width: 100%; padding: 10px 14px 10px 38px;">
+              <option *ngFor="let prof of instructorUsers" [value]="prof.id">
+                {{ prof.fullName }} ({{ prof.email }})
+              </option>
+            </select>
           </div>
         </div>
 
@@ -991,20 +872,77 @@
           </div>
         </div>
 
-        <div class="gc-checkbox-field">
-          <label>
-            <input type="checkbox" [(ngModel)]="newClassForm.autoEnrollBatchStudents" name="autoEnrollBatch">
-            <span>Automatically enroll all students from this batch into this class</span>
-          </label>
-        </div>
-
         <div class="gc-modal-footer">
           <button type="button" class="gc-btn-secondary" (click)="closeCreateClassModal()">
             Cancel
           </button>
           <button type="submit" class="gc-btn-primary" [disabled]="isSavingClass">
             <i class="fa-solid" [ngClass]="isSavingClass ? 'fa-circle-notch fa-spin' : 'fa-check'"></i>
-            Create & Assign Class
+            Create Class
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: BULK IMPORT USERS (CSV) -->
+  <!-- ================================================================= -->
+  <div class="gc-modal-backdrop" *ngIf="showCsvModal" (click)="closeCsvModal()">
+    <div class="gc-modal-card" (click)="$event.stopPropagation()">
+      <div class="gc-modal-header">
+        <div class="modal-title-pod">
+          <i class="fa-solid fa-file-csv"></i>
+          <h3>Bulk Import {{ csvUploadRole === 'STUDENT' ? 'Students' : 'Teachers' }} (CSV)</h3>
+        </div>
+        <button class="gc-modal-close" (click)="closeCsvModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form (ngSubmit)="uploadCsv()" class="gc-modal-body">
+        <div class="gc-form-error" *ngIf="csvFormError">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          {{ csvFormError }}
+        </div>
+
+        <div style="font-size: 0.88rem; color: var(--gc-text-sub); margin-bottom: 1.5rem; line-height: 1.5;">
+          Upload a CSV file containing {{ csvUploadRole === 'STUDENT' ? 'student' : 'teacher' }} details. The file must contain a header line, with columns in the following order:
+          <strong style="display: block; margin: 8px 0; padding: 10px; background: var(--gc-background); border-radius: 8px; font-family: monospace; color: var(--gc-text-main);">
+            fullName,email
+          </strong>
+          
+          <button 
+            type="button" 
+            class="gc-btn-secondary gc-btn-sm" 
+            (click)="downloadTemplate()"
+            style="font-size: 0.78rem; padding: 6px 12px; margin-top: 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-download"></i> Download Template CSV
+          </button>
+          
+          <br><br>
+          <em>Note: Default temporary credentials will be auto-generated for all imported accounts.</em>
+        </div>
+
+        <div class="gc-form-field">
+          <label>Select CSV File <span class="required">*</span></label>
+          <div class="gc-input-icon-group" style="border: 1px dashed var(--gc-border); border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: center; background: var(--gc-background);">
+            <input
+              type="file"
+              (change)="onCsvFileSelected($event)"
+              accept=".csv"
+              required
+              style="cursor: pointer; opacity: 1; position: relative;">
+          </div>
+        </div>
+
+        <div class="gc-modal-footer">
+          <button type="button" class="gc-btn-secondary" (click)="closeCsvModal()">
+            Cancel
+          </button>
+          <button type="submit" class="gc-btn-primary" [disabled]="isUploadingCsv || !selectedCsvFile">
+            <i class="fa-solid" [ngClass]="isUploadingCsv ? 'fa-circle-notch fa-spin' : 'fa-upload'"></i>
+            Import Accounts
           </button>
         </div>
       </form>

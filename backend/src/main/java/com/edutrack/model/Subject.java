@@ -22,10 +22,6 @@ public class Subject {
     @JoinColumn(name = "instructor_id", nullable = false)
     private User instructor;
 
-    @ManyToOne
-    @JoinColumn(name = "batch_id", nullable = false)
-    private Batch batch;
-
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -38,11 +34,10 @@ public class Subject {
 
     public Subject() {}
 
-    public Subject(String name, String code, User instructor, Batch batch, String description) {
+    public Subject(String name, String code, User instructor, String description) {
         this.name = name;
         this.code = code;
         this.instructor = instructor;
-        this.batch = batch;
         this.description = description;
     }
 
@@ -57,9 +52,6 @@ public class Subject {
 
     public User getInstructor() { return instructor; }
     public void setInstructor(User instructor) { this.instructor = instructor; }
-
-    public Batch getBatch() { return batch; }
-    public void setBatch(Batch batch) { this.batch = batch; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }

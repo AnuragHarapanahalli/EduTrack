@@ -15,10 +15,9 @@ import {
   AdminUser,
   CreateAdminUserRequest,
   UpdateAdminUserRequest,
-  AdminBatch,
-  CreateBatchRequest,
   CreateSubjectAdminRequest,
-  SystemStats
+  SystemStats,
+  AuditLog
 } from '../models/admin.model';
 
 @Injectable({
@@ -296,37 +295,6 @@ export class ApiService {
     );
   }
 
-  getAdminBatches(): Observable<AdminBatch[]> {
-    return this.http.get<AdminBatch[]>(
-      `${this.baseUrl}/admin/batches`,
-      this.options
-    );
-  }
-
-  createAdminBatch(batchData: CreateBatchRequest): Observable<AdminBatch> {
-    return this.http.post<AdminBatch>(
-      `${this.baseUrl}/admin/batches`,
-      batchData,
-      this.options
-    );
-  }
-
-  assignStudentBatch(studentId: number, batchId: number | null): Observable<AdminUser> {
-    return this.http.post<AdminUser>(
-      `${this.baseUrl}/admin/batches/assign`,
-      { studentId, batchId: batchId || 0 },
-      this.options
-    );
-  }
-
-  bulkAssignStudentBatch(studentIds: number[], batchId: number | null): Observable<void> {
-    return this.http.post<void>(
-      `${this.baseUrl}/admin/batches/bulk-assign`,
-      { studentIds, batchId: batchId || 0 },
-      this.options
-    );
-  }
-
   enrollStudentInSubject(subjectId: number, studentId: number): Observable<void> {
     return this.http.post<void>(
       `${this.baseUrl}/admin/subjects/${subjectId}/students/${studentId}`,
@@ -358,30 +326,39 @@ export class ApiService {
     );
   }
 
-  assignSubjectToBatch(subjectId: number, batchId: number, autoEnroll: boolean = true): Observable<Subject> {
-    const params = new HttpParams().set('autoEnroll', autoEnroll.toString());
-    return this.http.put<Subject>(
-      `${this.baseUrl}/admin/subjects/${subjectId}/batch/${batchId}`,
-      {},
-      {
-        ...this.options,
-        params
-      }
-    );
-  }
-
-  autoEnrollBatchStudents(subjectId: number): Observable<Subject> {
-    return this.http.post<Subject>(
-      `${this.baseUrl}/admin/subjects/${subjectId}/auto-enroll-batch`,
-      {},
-      this.options
-    );
-  }
-
   getAdminStats(): Observable<SystemStats> {
     return this.http.get<SystemStats>(
       `${this.baseUrl}/admin/stats`,
       this.options
+    );
+  }
+
+  getAuditLogs(): Observable<AuditLog[]> {
+    return this.http.get<AuditLog[]>(
+      `${this.baseUrl}/admin/logs`,
+      this.options
+    );
+  }
+
+  changeSubjectInstructor(subjectId: number, instructorId: number): Observable<Subject> {
+    return this.http.put<Subject>(
+      `${this.baseUrl}/admin/subjects/${subjectId}/instructor/${instructorId}`,
+      {},
+      this.options
+    );
+  }
+
+  uploadUsersCsv(file: File, role: string): Observable<AdminUser[]> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const params = new HttpParams().set('role', role);
+    return this.http.post<AdminUser[]>(
+      `${this.baseUrl}/admin/users/bulk`,
+      formData,
+      {
+        ...this.options,
+        params
+      }
     );
   }
 

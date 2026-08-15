@@ -3,10 +3,8 @@ package com.edutrack.service;
 import com.edutrack.config.JwtTokenProvider;
 import com.edutrack.config.ValidationConfig;
 import com.edutrack.dto.AuthDto;
-import com.edutrack.model.Batch;
 import com.edutrack.model.Role;
 import com.edutrack.model.User;
-import com.edutrack.repository.BatchRepository;
 import com.edutrack.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,14 +13,12 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final BatchRepository batchRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final ValidationConfig validationConfig;
 
-    public AuthService(UserRepository userRepository, BatchRepository batchRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, ValidationConfig validationConfig) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, ValidationConfig validationConfig) {
         this.userRepository = userRepository;
-        this.batchRepository = batchRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.validationConfig = validationConfig;
@@ -65,15 +61,11 @@ public class AuthService {
     }
 
     public AuthDto.UserDto toUserDto(User user) {
-        Long batchId = user.getBatch() != null ? user.getBatch().getId() : null;
-        String batchName = user.getBatch() != null ? user.getBatch().getName() : null;
         return new AuthDto.UserDto(
                 user.getId(),
                 user.getEmail(),
                 user.getFullName(),
                 user.getRole(),
-                batchId,
-                batchName,
                 user.isNeedsPasswordReset(),
                 user.isActive()
         );

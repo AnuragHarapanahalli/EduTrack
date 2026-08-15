@@ -15,7 +15,8 @@ export type ClassTab =
 
 export type AdminTab =
   | 'USERS'
-  | 'MAPPINGS'
+  | 'CLASSES'
+  | 'LOGS'
   | 'STATS';
 
 @Injectable({

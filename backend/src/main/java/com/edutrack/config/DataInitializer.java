@@ -13,20 +13,17 @@ import java.util.Set;
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
-    private final BatchRepository batchRepository;
     private final SubjectRepository subjectRepository;
     private final MilestoneRepository milestoneRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(
             UserRepository userRepository,
-            BatchRepository batchRepository,
             SubjectRepository subjectRepository,
             MilestoneRepository milestoneRepository,
             PasswordEncoder passwordEncoder
     ) {
         this.userRepository = userRepository;
-        this.batchRepository = batchRepository;
         this.subjectRepository = subjectRepository;
         this.milestoneRepository = milestoneRepository;
         this.passwordEncoder = passwordEncoder;
@@ -38,26 +35,21 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("🌱 Initializing EduTrack Demo Seed Data...");
 
-        // 1. Create Batches
-        Batch batchA = batchRepository.save(new Batch("B.Tech CSE 2026 - Batch A", "2025-2026"));
-        Batch batchB = batchRepository.save(new Batch("B.Tech CSE 2026 - Batch B", "2025-2026"));
+        // 1. Create Users (Admin, Instructors, Students)
+        User admin = userRepository.save(new User("admin@edutrack.edu", passwordEncoder.encode("admin123"), "System Administrator", Role.ADMIN));
+        User profSharma = userRepository.save(new User("sharma@edutrack.edu", passwordEncoder.encode("prof123"), "Prof. Rajesh Sharma", Role.INSTRUCTOR));
+        User profVerma = userRepository.save(new User("prof.verma@edutrack.edu", passwordEncoder.encode("prof123"), "Dr. Vikram Verma", Role.INSTRUCTOR));
 
-        // 2. Create Users (Admin, Instructors, Students)
-        User admin = userRepository.save(new User("admin@edutrack.edu", passwordEncoder.encode("admin123"), "System Administrator", Role.ADMIN, null));
-        User profSharma = userRepository.save(new User("sharma@edutrack.edu", passwordEncoder.encode("prof123"), "Prof. Rajesh Sharma", Role.INSTRUCTOR, null));
-        User profVerma = userRepository.save(new User("prof.verma@edutrack.edu", passwordEncoder.encode("prof123"), "Dr. Vikram Verma", Role.INSTRUCTOR, null));
+        User studentAnurag = userRepository.save(new User("anurag@edutrack.edu", passwordEncoder.encode("student123"), "Anurag Harapanahalli", Role.STUDENT));
+        User studentPriya = userRepository.save(new User("priya@edutrack.edu", passwordEncoder.encode("student123"), "Priya Patel", Role.STUDENT));
+        User studentRahul = userRepository.save(new User("rahul@edutrack.edu", passwordEncoder.encode("student123"), "Rahul Sharma", Role.STUDENT));
 
-        User studentAnurag = userRepository.save(new User("anurag@edutrack.edu", passwordEncoder.encode("student123"), "Anurag Harapanahalli", Role.STUDENT, batchA));
-        User studentPriya = userRepository.save(new User("priya@edutrack.edu", passwordEncoder.encode("student123"), "Priya Patel", Role.STUDENT, batchA));
-        User studentRahul = userRepository.save(new User("rahul@edutrack.edu", passwordEncoder.encode("student123"), "Rahul Sharma", Role.STUDENT, batchB));
-
-        // 3. Create Subjects for Prof. Sharma (Batch A)
+        // 2. Create Subjects for Prof. Sharma
         // Subject 1: PBL3
         Subject pblSubject = new Subject(
                 "CSE20140 - Project Based Learning III",
                 "CSE20140-PBL3",
                 profSharma,
-                batchA,
                 "Hands-on fullstack application development lab focusing on software architecture, design patterns, and deployment."
         );
         pblSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentPriya));
@@ -68,20 +60,18 @@ public class DataInitializer implements CommandLineRunner {
                 "CSE20120 - Database Management Systems",
                 "CSE20120-DBMS",
                 profSharma,
-                batchA,
                 "Fundamentals of relational databases, SQL programming, normalization, transaction management, and indexing techniques."
         );
         dbmsSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentPriya));
         dbmsSubject = subjectRepository.save(dbmsSubject);
 
 
-        // 4. Create Subjects for Dr. Verma (Batch B)
+        // 3. Create Subjects for Dr. Verma
         // Subject 1: Fullstack Web Dev
         Subject webDevSubject = new Subject(
                 "CSE30110 - Fullstack Web Development",
                 "CSE30110-WEB",
                 profVerma,
-                batchB,
                 "Advanced web engineering covering RESTful services, frontend frameworks, and cloud deployment."
         );
         webDevSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentRahul));
@@ -92,14 +82,13 @@ public class DataInitializer implements CommandLineRunner {
                 "CSE30130 - Cloud Computing & Microservices",
                 "CSE30130-CLOUD",
                 profVerma,
-                batchB,
                 "Architecting cloud-native applications, containerization using Docker, orchestration via Kubernetes, and serverless compute paradigms."
         );
         cloudSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentRahul));
         cloudSubject = subjectRepository.save(cloudSubject);
 
 
-        // 5. Create Milestones for PBL3
+        // 4. Create Milestones for PBL3
         // Milestone 1: OVERDUE / LATE DEADLINE (2 Days Ago)
         milestoneRepository.save(new Milestone(
                 pblSubject,
@@ -133,7 +122,7 @@ public class DataInitializer implements CommandLineRunner {
         ));
 
 
-        // 6. Create Milestones for DBMS
+        // 5. Create Milestones for DBMS
         milestoneRepository.save(new Milestone(
                 dbmsSubject,
                 "Milestone 1: ER Modelling & Relational Diagram",
@@ -155,7 +144,7 @@ public class DataInitializer implements CommandLineRunner {
         ));
 
 
-        // 7. Create Milestones for Fullstack Web Dev
+        // 6. Create Milestones for Fullstack Web Dev
         milestoneRepository.save(new Milestone(
                 webDevSubject,
                 "Milestone 1: HTML5/CSS3 Responsive Layout Design",
@@ -167,7 +156,7 @@ public class DataInitializer implements CommandLineRunner {
         ));
 
 
-        // 8. Create Milestones for Cloud Computing & Microservices
+        // 7. Create Milestones for Cloud Computing & Microservices
         milestoneRepository.save(new Milestone(
                 cloudSubject,
                 "Milestone 1: Docker Containerization",

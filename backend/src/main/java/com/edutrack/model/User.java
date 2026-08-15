@@ -24,10 +24,6 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @ManyToOne
-    @JoinColumn(name = "batch_id")
-    private Batch batch;
-
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
@@ -41,12 +37,11 @@ public class User {
         this.active = true;
     }
 
-    public User(String email, String password, String fullName, Role role, Batch batch) {
+    public User(String email, String password, String fullName, Role role) {
         this.email = email;
         this.password = password;
         this.fullName = fullName;
         this.role = role;
-        this.batch = batch;
         this.createdAt = LocalDateTime.now();
         this.active = true;
     }
@@ -65,9 +60,6 @@ public class User {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
-
-    public Batch getBatch() { return batch; }
-    public void setBatch(Batch batch) { this.batch = batch; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

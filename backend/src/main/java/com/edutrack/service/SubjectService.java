@@ -3,11 +3,9 @@ package com.edutrack.service;
 import com.edutrack.config.ValidationConfig;
 import com.edutrack.dto.AuthDto;
 import com.edutrack.dto.SubjectDto;
-import com.edutrack.model.Batch;
 import com.edutrack.model.Role;
 import com.edutrack.model.Subject;
 import com.edutrack.model.User;
-import com.edutrack.repository.BatchRepository;
 import com.edutrack.repository.MilestoneRepository;
 import com.edutrack.repository.SubjectRepository;
 import com.edutrack.repository.UserRepository;
@@ -22,15 +20,13 @@ public class SubjectService {
 
     private final SubjectRepository subjectRepository;
     private final UserRepository userRepository;
-    private final BatchRepository batchRepository;
     private final MilestoneRepository milestoneRepository;
     private final ValidationConfig validationConfig;
     private final PasswordEncoder passwordEncoder;
 
-    public SubjectService(SubjectRepository subjectRepository, UserRepository userRepository, BatchRepository batchRepository, MilestoneRepository milestoneRepository, ValidationConfig validationConfig, PasswordEncoder passwordEncoder) {
+    public SubjectService(SubjectRepository subjectRepository, UserRepository userRepository, MilestoneRepository milestoneRepository, ValidationConfig validationConfig, PasswordEncoder passwordEncoder) {
         this.subjectRepository = subjectRepository;
         this.userRepository = userRepository;
-        this.batchRepository = batchRepository;
         this.milestoneRepository = milestoneRepository;
         this.validationConfig = validationConfig;
         this.passwordEncoder = passwordEncoder;
@@ -39,9 +35,6 @@ public class SubjectService {
     public SubjectDto.SubjectResponse createSubject(SubjectDto.CreateSubjectRequest request, Long instructorId) {
         User instructor = userRepository.findById(instructorId)
                 .orElseThrow(() -> new RuntimeException("Instructor not found"));
-
-        Batch batch = batchRepository.findById(request.getBatchId())
-                .orElseThrow(() -> new RuntimeException("Batch not found"));
 
         if (request.getName() == null || request.getName().trim().length() < validationConfig.getSubjectNameMin() || request.getName().trim().length() > validationConfig.getSubjectNameMax()) {
             throw new IllegalArgumentException("Subject name must be between " + validationConfig.getSubjectNameMin() + " and " + validationConfig.getSubjectNameMax() + " characters.");
@@ -57,7 +50,6 @@ public class SubjectService {
                 request.getName(),
                 request.getCode(),
                 instructor,
-                batch,
                 request.getDescription()
         );
 
@@ -114,12 +106,9 @@ public class SubjectService {
                     email.trim(),
                     passwordEncoder.encode("student123"),
                     trimmedName,
-                    Role.STUDENT,
-                    subject.getBatch()
+                    Role.STUDENT
             );
             student.setNeedsPasswordReset(true);
-        } else {
-            student.setBatch(subject.getBatch());
         }
 
         User savedStudent = userRepository.save(student);
@@ -130,7 +119,7 @@ public class SubjectService {
             subjectRepository.save(subject);
         }
 
-        return new AuthDto.UserDto(savedStudent.getId(), savedStudent.getEmail(), savedStudent.getFullName(), savedStudent.getRole(), subject.getBatch().getId(), subject.getBatch().getName(), savedStudent.isNeedsPasswordReset(), savedStudent.isActive());
+        return new AuthDto.UserDto(savedStudent.getId(), savedStudent.getEmail(), savedStudent.getFullName(), savedStudent.getRole(), savedStudent.isNeedsPasswordReset(), savedStudent.isActive());
     }
 
     public List<AuthDto.UserDto> getStudentsBySubject(Long subjectId) {
@@ -138,7 +127,7 @@ public class SubjectService {
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
         return subject.getEnrolledStudents().stream()
-                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch() != null ? subject.getBatch().getId() : null, subject.getBatch() != null ? subject.getBatch().getName() : "N/A", u.isNeedsPasswordReset(), u.isActive()))
+                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), u.isNeedsPasswordReset(), u.isActive()))
                 .collect(Collectors.toList());
     }
 
@@ -149,12 +138,11 @@ public class SubjectService {
         response.setCode(subject.getCode());
         response.setInstructorName(subject.getInstructor() != null ? subject.getInstructor().getFullName() : "N/A");
         response.setInstructorId(subject.getInstructor() != null ? subject.getInstructor().getId() : null);
-        response.setBatchName(subject.getBatch() != null ? subject.getBatch().getName() : "N/A");
-        response.setBatchId(subject.getBatch() != null ? subject.getBatch().getId() : null);
         response.setDescription(subject.getDescription());
         
         Long count = milestoneRepository.countBySubject(subject);
         response.setTotalMilestones(count != null ? count.intValue() : 0);
+        response.setEnrolledStudentsCount(subject.getEnrolledStudents() != null ? subject.getEnrolledStudents().size() : 0);
         return response;
     }
 }

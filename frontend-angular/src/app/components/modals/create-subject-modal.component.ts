@@ -494,9 +494,7 @@ name:this.name.trim(),
 
 code:this.code.trim().toUpperCase(),
 
-description:this.description.trim(),
-
-batchId:1
+description:this.description.trim()
 
 };
 

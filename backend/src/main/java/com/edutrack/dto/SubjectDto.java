@@ -5,7 +5,6 @@ public class SubjectDto {
     public static class CreateSubjectRequest {
         private String name;
         private String code;
-        private Long batchId;
         private String description;
 
         public CreateSubjectRequest() {}
@@ -15,9 +14,6 @@ public class SubjectDto {
 
         public String getCode() { return code; }
         public void setCode(String code) { this.code = code; }
-
-        public Long getBatchId() { return batchId; }
-        public void setBatchId(Long batchId) { this.batchId = batchId; }
 
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
@@ -29,10 +25,9 @@ public class SubjectDto {
         private String code;
         private String instructorName;
         private Long instructorId;
-        private String batchName;
-        private Long batchId;
         private String description;
         private int totalMilestones;
+        private int enrolledStudentsCount;
 
         public SubjectResponse() {}
 
@@ -51,16 +46,13 @@ public class SubjectDto {
         public Long getInstructorId() { return instructorId; }
         public void setInstructorId(Long instructorId) { this.instructorId = instructorId; }
 
-        public String getBatchName() { return batchName; }
-        public void setBatchName(String batchName) { this.batchName = batchName; }
-
-        public Long getBatchId() { return batchId; }
-        public void setBatchId(Long batchId) { this.batchId = batchId; }
-
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
 
         public int getTotalMilestones() { return totalMilestones; }
         public void setTotalMilestones(int totalMilestones) { this.totalMilestones = totalMilestones; }
+
+        public int getEnrolledStudentsCount() { return enrolledStudentsCount; }
+        public void setEnrolledStudentsCount(int enrolledStudentsCount) { this.enrolledStudentsCount = enrolledStudentsCount; }
     }
 }

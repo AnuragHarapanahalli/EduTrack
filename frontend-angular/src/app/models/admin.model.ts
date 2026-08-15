@@ -5,8 +5,6 @@ export interface AdminUser {
   email: string;
   fullName: string;
   role: Role;
-  batchId?: number;
-  batchName?: string;
   active: boolean;
   needsPasswordReset: boolean;
   createdAt: string;
@@ -18,7 +16,6 @@ export interface CreateAdminUserRequest {
   email: string;
   password?: string;
   role: Role;
-  batchId?: number;
 }
 
 export interface UpdateAdminUserRequest {
@@ -26,21 +23,7 @@ export interface UpdateAdminUserRequest {
   email?: string;
   password?: string;
   role?: Role;
-  batchId?: number;
   active?: boolean;
-}
-
-export interface AdminBatch {
-  id: number;
-  name: string;
-  academicYear?: string;
-  studentCount: number;
-  subjectCount: number;
-}
-
-export interface CreateBatchRequest {
-  name: string;
-  academicYear?: string;
 }
 
 export interface SystemStats {
@@ -51,7 +34,6 @@ export interface SystemStats {
   activeUsers: number;
   inactiveUsers: number;
 
-  totalBatches: number;
   totalSubjects: number;
   totalMilestones: number;
   totalSubmissions: number;
@@ -66,8 +48,13 @@ export interface CreateSubjectAdminRequest {
   name: string;
   code: string;
   instructorId: number;
-  batchId: number;
   description?: string;
-  autoEnrollBatchStudents?: boolean;
 }
 
+export interface AuditLog {
+  id: number;
+  action: string;
+  details: string;
+  performedByEmail: string;
+  timestamp: string;
+}

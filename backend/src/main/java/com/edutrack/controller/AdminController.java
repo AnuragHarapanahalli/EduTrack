@@ -1,12 +1,15 @@
 package com.edutrack.controller;
 
 import com.edutrack.dto.AdminDto;
+import com.edutrack.dto.SubjectDto;
+import com.edutrack.model.AuditLog;
 import com.edutrack.model.Role;
 import com.edutrack.service.AdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
@@ -38,6 +41,14 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createUser(request));
     }
 
+    @PostMapping("/users/bulk")
+    public ResponseEntity<List<AdminDto.AdminUserResponse>> bulkUploadUsers(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "role", defaultValue = "STUDENT") Role role
+    ) {
+        return ResponseEntity.ok(adminService.bulkUploadUsers(file, role));
+    }
+
     @PutMapping("/users/{id}")
     public ResponseEntity<AdminDto.AdminUserResponse> updateUser(
             @PathVariable Long id,
@@ -55,29 +66,8 @@ public class AdminController {
     }
 
     // ==========================================
-    // BATCH & SUBJECT MAPPINGS
+    // SUBJECT ENROLLMENT & CREATION
     // ==========================================
-
-    @GetMapping("/batches")
-    public ResponseEntity<List<AdminDto.BatchResponse>> getAllBatches() {
-        return ResponseEntity.ok(adminService.getAllBatches());
-    }
-
-    @PostMapping("/batches")
-    public ResponseEntity<AdminDto.BatchResponse> createBatch(@RequestBody AdminDto.CreateBatchRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createBatch(request));
-    }
-
-    @PostMapping("/batches/assign")
-    public ResponseEntity<AdminDto.AdminUserResponse> assignStudentToBatch(@RequestBody AdminDto.AssignBatchRequest request) {
-        return ResponseEntity.ok(adminService.assignStudentToBatch(request.getStudentId(), request.getBatchId()));
-    }
-
-    @PostMapping("/batches/bulk-assign")
-    public ResponseEntity<Void> bulkAssignStudentsToBatch(@RequestBody AdminDto.BulkAssignBatchRequest request) {
-        adminService.bulkAssignStudentsToBatch(request);
-        return ResponseEntity.ok().build();
-    }
 
     @PostMapping("/subjects/{subjectId}/students/{studentId}")
     public ResponseEntity<Void> enrollStudentInSubject(
@@ -113,28 +103,25 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createSubjectByAdmin(request));
     }
 
-    @PutMapping("/subjects/{subjectId}/batch/{batchId}")
-    public ResponseEntity<com.edutrack.dto.SubjectDto.SubjectResponse> assignSubjectToBatch(
+    @PutMapping("/subjects/{subjectId}/instructor/{instructorId}")
+    public ResponseEntity<com.edutrack.dto.SubjectDto.SubjectResponse> changeSubjectInstructor(
             @PathVariable Long subjectId,
-            @PathVariable Long batchId,
-            @RequestParam(defaultValue = "true") boolean autoEnroll
+            @PathVariable Long instructorId
     ) {
-        return ResponseEntity.ok(adminService.assignSubjectToBatch(subjectId, batchId, autoEnroll));
-    }
-
-    @PostMapping("/subjects/{subjectId}/auto-enroll-batch")
-    public ResponseEntity<com.edutrack.dto.SubjectDto.SubjectResponse> autoEnrollBatchStudents(
-            @PathVariable Long subjectId
-    ) {
-        return ResponseEntity.ok(adminService.autoEnrollBatchStudentsInSubject(subjectId));
+        return ResponseEntity.ok(adminService.changeSubjectInstructor(subjectId, instructorId));
     }
 
     // ==========================================
-    // SYSTEM STATS & REPORTS
+    // SYSTEM STATS, AUDIT LOGS & REPORTS
     // ==========================================
 
     @GetMapping("/stats")
     public ResponseEntity<AdminDto.SystemStatsResponse> getSystemStats() {
         return ResponseEntity.ok(adminService.getSystemStats());
+    }
+
+    @GetMapping("/logs")
+    public ResponseEntity<List<AuditLog>> getAuditLogs() {
+        return ResponseEntity.ok(adminService.getAuditLogs());
     }
 }

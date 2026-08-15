@@ -5,8 +5,6 @@ export interface User {
   email: string;
   fullName: string;
   role: Role;
-  batchId?: number;
-  batchName?: string;
   needsPasswordReset?: boolean;
   active?: boolean;
 }
@@ -21,7 +19,6 @@ export interface RegisterRequest {
   email: string;
   password: string;
   role: Role;
-  batchId?: number;
 }
 
 export interface AuthResponse {

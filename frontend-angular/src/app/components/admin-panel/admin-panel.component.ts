@@ -9,9 +9,8 @@ import {
   AdminUser,
   CreateAdminUserRequest,
   UpdateAdminUserRequest,
-  AdminBatch,
-  CreateBatchRequest,
-  SystemStats
+  SystemStats,
+  AuditLog
 } from '../../models/admin.model';
 import { Subject } from '../../models/subject.model';
 import { Role } from '../../models/auth.model';
@@ -27,14 +26,14 @@ export class AdminPanelComponent implements OnInit {
 
   // State
   isLoadingUsers = false;
-  isLoadingBatches = false;
   isLoadingStats = false;
   isLoadingSubjects = false;
+  isLoadingLogs = false;
 
   // Data
   users: AdminUser[] = [];
-  batches: AdminBatch[] = [];
   subjects: Subject[] = [];
+  auditLogs: AuditLog[] = [];
   stats: SystemStats | null = null;
 
   // User Filter & Search
@@ -51,14 +50,12 @@ export class AdminPanelComponent implements OnInit {
     fullName: string;
     email: string;
     role: Role;
-    batchId: number | null;
     password?: string;
     active?: boolean;
   } = {
     fullName: '',
     email: '',
     role: 'STUDENT',
-    batchId: null,
     password: '',
     active: true
   };
@@ -67,39 +64,34 @@ export class AdminPanelComponent implements OnInit {
   isSavingUser = false;
   showFormPassword = false;
 
-  // Batch Creation
-  showCreateBatchModal = false;
-  newBatchName = '';
-  newBatchAcademicYear = '';
-  batchFormError = '';
-  isSavingBatch = false;
+  // Subject Edit Instructor State
+  updatingInstructorSubjectId: number | null = null;
 
-  // Class / Course Creation by Admin
+  // Class Roster Management Modal
+  showRosterModal = false;
+  selectedSubjectForRoster: Subject | null = null;
+  enrolledStudentsInSubject: AdminUser[] = [];
+  availableStudentsForSubject: AdminUser[] = [];
+  selectedStudentIdsForEnrollment: Set<number> = new Set<number>();
+  isEnrolling = false;
+
+  // Create Class Modal State
   showCreateClassModal = false;
   newClassForm = {
     name: '',
     code: '',
     instructorId: 0,
-    batchId: 0,
-    description: '',
-    autoEnrollBatchStudents: true
+    description: ''
   };
   classFormError = '';
   isSavingClass = false;
 
-  // Batch Mapping Tab State
-  selectedBatchFilter: number | 'ALL' | 'UNASSIGNED' = 'ALL';
-  selectedStudentIdsForBatch: Set<number> = new Set<number>();
-  targetBatchIdForBulk: number | null = null;
-  isBulkAssigningBatch = false;
-
-  // Subject Enrollment Tab State
-  selectedSubjectId: number | null = null;
-  selectedSubject: Subject | null = null;
-  enrolledStudentsInSubject: AdminUser[] = [];
-  availableStudentsForSubject: AdminUser[] = [];
-  selectedStudentIdsForEnrollment: Set<number> = new Set<number>();
-  isEnrolling = false;
+  // Bulk Import Users (CSV) State
+  showCsvModal = false;
+  selectedCsvFile: File | null = null;
+  isUploadingCsv = false;
+  csvFormError = '';
+  csvUploadRole: 'STUDENT' | 'INSTRUCTOR' = 'STUDENT';
 
   // Notification Toast
   toastMessage = '';
@@ -120,15 +112,19 @@ export class AdminPanelComponent implements OnInit {
 
   loadAllData(): void {
     this.loadUsers();
-    this.loadBatches();
-    this.loadSubjects();
     this.loadStats();
+    this.loadSubjects();
+    this.loadLogs();
   }
 
   setTab(tab: AdminTab): void {
     this.viewStateService.setAdminTab(tab);
     if (tab === 'STATS') {
       this.loadStats();
+    } else if (tab === 'LOGS') {
+      this.loadLogs();
+    } else if (tab === 'CLASSES') {
+      this.loadSubjects();
     }
   }
 
@@ -159,7 +155,7 @@ export class AdminPanelComponent implements OnInit {
       next: (data) => {
         this.users = data;
         this.isLoadingUsers = false;
-        if (this.selectedSubjectId) {
+        if (this.showRosterModal && this.selectedSubjectForRoster) {
           this.refreshSubjectEnrollmentLists();
         }
         this.cdr.detectChanges();
@@ -187,7 +183,6 @@ export class AdminPanelComponent implements OnInit {
       fullName: '',
       email: '',
       role: 'STUDENT',
-      batchId: this.batches.length > 0 ? this.batches[0].id : null,
       password: '',
       active: true
     };
@@ -203,7 +198,6 @@ export class AdminPanelComponent implements OnInit {
       fullName: user.fullName,
       email: user.email,
       role: user.role,
-      batchId: user.batchId || null,
       password: '',
       active: user.active
     };
@@ -236,7 +230,6 @@ export class AdminPanelComponent implements OnInit {
         fullName: this.userForm.fullName.trim(),
         email: this.userForm.email.trim(),
         role: this.userForm.role,
-        batchId: this.userForm.role === 'STUDENT' ? (this.userForm.batchId || 0) : 0,
         active: this.userForm.active
       };
       if (this.userForm.password && this.userForm.password.trim()) {
@@ -250,6 +243,7 @@ export class AdminPanelComponent implements OnInit {
           this.showToast('User updated successfully!');
           this.loadUsers();
           this.loadStats();
+          this.loadLogs();
         },
         error: (err) => {
           this.isSavingUser = false;
@@ -261,8 +255,7 @@ export class AdminPanelComponent implements OnInit {
       const payload: CreateAdminUserRequest = {
         fullName: this.userForm.fullName.trim(),
         email: this.userForm.email.trim(),
-        role: this.userForm.role,
-        batchId: this.userForm.role === 'STUDENT' ? (this.userForm.batchId || undefined) : undefined
+        role: this.userForm.role
       };
       if (this.userForm.password && this.userForm.password.trim()) {
         payload.password = this.userForm.password.trim();
@@ -274,8 +267,8 @@ export class AdminPanelComponent implements OnInit {
           this.closeUserModal();
           this.showToast('User created successfully!');
           this.loadUsers();
-          this.loadBatches();
           this.loadStats();
+          this.loadLogs();
         },
         error: (err) => {
           this.isSavingUser = false;
@@ -296,6 +289,7 @@ export class AdminPanelComponent implements OnInit {
         user.active = updated.active;
         this.showToast(`User ${user.fullName} is now ${user.active ? 'Active' : 'Deactivated'}.`);
         this.loadStats();
+        this.loadLogs();
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -305,261 +299,77 @@ export class AdminPanelComponent implements OnInit {
   }
 
   // ==========================================
-  // BATCHES
+  // BULK IMPORT USER (CSV)
   // ==========================================
 
-  loadBatches(): void {
-    this.isLoadingBatches = true;
-    this.apiService.getAdminBatches().subscribe({
-      next: (data) => {
-        this.batches = data;
-        this.isLoadingBatches = false;
-        if (!this.targetBatchIdForBulk && this.batches.length > 0) {
-          this.targetBatchIdForBulk = this.batches[0].id;
-        }
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.isLoadingBatches = false;
-        this.showToast(err.error?.message || 'Failed to load batches', 'error');
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  openCreateBatchModal(): void {
-    this.newBatchName = '';
-    this.newBatchAcademicYear = '';
-    this.batchFormError = '';
-    this.showCreateBatchModal = true;
+  openCsvModal(role: 'STUDENT' | 'INSTRUCTOR'): void {
+    this.csvUploadRole = role;
+    this.selectedCsvFile = null;
+    this.csvFormError = '';
+    this.showCsvModal = true;
     this.cdr.detectChanges();
   }
 
-  closeCreateBatchModal(): void {
-    this.showCreateBatchModal = false;
+  closeCsvModal(): void {
+    this.showCsvModal = false;
     this.cdr.detectChanges();
   }
 
-  saveBatch(): void {
-    if (!this.newBatchName || !this.newBatchName.trim()) {
-      this.batchFormError = 'Batch name is required.';
+  onCsvFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedCsvFile = file;
+    }
+  }
+
+  downloadTemplate(): void {
+    const headers = 'fullName,email\n';
+    const row = this.csvUploadRole === 'STUDENT' 
+      ? '"Rahul Sharma","rahul@edutrack.edu"\n"Priya Patel","priya@edutrack.edu"\n'
+      : '"Prof. Rajesh Sharma","sharma@edutrack.edu"\n"Dr. Amit Verma","verma@edutrack.edu"\n';
+    
+    const blob = new Blob([headers + row], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${this.csvUploadRole.toLowerCase()}_import_template.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  uploadCsv(): void {
+    if (!this.selectedCsvFile) {
+      this.csvFormError = 'Please select a CSV file to upload.';
       return;
     }
 
-    this.isSavingBatch = true;
-    this.batchFormError = '';
+    this.isUploadingCsv = true;
+    this.csvFormError = '';
+    this.cdr.detectChanges();
 
-    const payload: CreateBatchRequest = {
-      name: this.newBatchName.trim(),
-      academicYear: this.newBatchAcademicYear ? this.newBatchAcademicYear.trim() : undefined
-    };
-
-    this.apiService.createAdminBatch(payload).subscribe({
-      next: (created) => {
-        this.isSavingBatch = false;
-        this.closeCreateBatchModal();
-        this.showToast(`Batch "${created.name}" created successfully!`);
-        this.loadBatches();
+    this.apiService.uploadUsersCsv(this.selectedCsvFile, this.csvUploadRole).subscribe({
+      next: (imported) => {
+        this.isUploadingCsv = false;
+        this.closeCsvModal();
+        const roleLabel = this.csvUploadRole === 'STUDENT' ? 'Student' : 'Instructor';
+        this.showToast(`Imported ${imported.length} ${roleLabel} accounts successfully!`);
+        this.loadUsers();
         this.loadStats();
+        this.loadLogs();
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        this.isSavingBatch = false;
-        this.batchFormError = err.error?.message || 'Failed to create batch.';
+        this.isUploadingCsv = false;
+        this.csvFormError = err.error?.message || 'Failed to parse or upload CSV file.';
         this.cdr.detectChanges();
       }
     });
   }
 
   // ==========================================
-  // BATCH MAPPINGS
-  // ==========================================
-
-  get instructorUsers(): AdminUser[] {
-    return this.users.filter(u => u.role === 'INSTRUCTOR');
-  }
-
-  get studentUsers(): AdminUser[] {
-    return this.users.filter(u => u.role === 'STUDENT');
-  }
-
-  openCreateClassModal(): void {
-    const defaultInstructorId = this.instructorUsers.length > 0 ? this.instructorUsers[0].id : 0;
-    const defaultBatchId = this.batches.length > 0 ? this.batches[0].id : 0;
-
-    this.newClassForm = {
-      name: '',
-      code: '',
-      instructorId: defaultInstructorId,
-      batchId: defaultBatchId,
-      description: '',
-      autoEnrollBatchStudents: true
-    };
-    this.classFormError = '';
-    this.showCreateClassModal = true;
-    this.cdr.detectChanges();
-  }
-
-  closeCreateClassModal(): void {
-    this.showCreateClassModal = false;
-    this.cdr.detectChanges();
-  }
-
-  saveClass(): void {
-    if (!this.newClassForm.name || this.newClassForm.name.trim().length < 3) {
-      this.classFormError = 'Course name must be at least 3 characters long.';
-      return;
-    }
-    if (!this.newClassForm.code || this.newClassForm.code.trim().length < 3) {
-      this.classFormError = 'Course code must be at least 3 characters long.';
-      return;
-    }
-    if (!this.newClassForm.instructorId) {
-      this.classFormError = 'Please select a faculty instructor.';
-      return;
-    }
-    if (!this.newClassForm.batchId) {
-      this.classFormError = 'Please select a target batch.';
-      return;
-    }
-
-    this.isSavingClass = true;
-    this.classFormError = '';
-
-    this.apiService.createAdminSubject(this.newClassForm).subscribe({
-      next: (created) => {
-        this.isSavingClass = false;
-        this.closeCreateClassModal();
-        this.showToast(`Class "${created.name}" created and assigned to ${created.batchName}!`);
-        this.loadSubjects();
-        this.loadUsers();
-        this.loadBatches();
-        this.loadStats();
-      },
-      error: (err) => {
-        this.isSavingClass = false;
-        this.classFormError = err.error?.message || 'Failed to create class.';
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  onQuickSubjectBatchChange(subject: Subject, event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const newBatchId = Number(select.value);
-    if (!newBatchId) return;
-
-    this.apiService.assignSubjectToBatch(subject.id, newBatchId, true).subscribe({
-      next: (updated) => {
-        subject.batchId = updated.batchId;
-        subject.batchName = updated.batchName;
-        this.showToast(`Reassigned "${subject.name}" to ${updated.batchName} & synced batch students!`);
-        this.loadBatches();
-        this.loadUsers();
-        if (this.selectedSubjectId === subject.id) {
-          this.selectedSubject = updated;
-          this.refreshSubjectEnrollmentLists();
-        }
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.showToast(err.error?.message || 'Failed to assign class to batch', 'error');
-        this.loadSubjects();
-      }
-    });
-  }
-
-  autoEnrollBatchStudentsForSubject(subject: Subject): void {
-    this.apiService.autoEnrollBatchStudents(subject.id).subscribe({
-      next: (updated) => {
-        this.showToast(`Auto-enrolled all students from ${subject.batchName} into "${subject.name}"!`);
-        this.loadUsers();
-        if (this.selectedSubjectId === subject.id) {
-          this.selectedSubject = updated;
-          this.refreshSubjectEnrollmentLists();
-        }
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.showToast(err.error?.message || 'Failed to auto-enroll batch students', 'error');
-      }
-    });
-  }
-
-  get filteredStudentsForBatchMapping(): AdminUser[] {
-    return this.studentUsers.filter(s => {
-      if (this.selectedBatchFilter === 'ALL') return true;
-      if (this.selectedBatchFilter === 'UNASSIGNED') return !s.batchId;
-      return s.batchId === this.selectedBatchFilter;
-    });
-  }
-
-  toggleStudentSelection(studentId: number): void {
-    if (this.selectedStudentIdsForBatch.has(studentId)) {
-      this.selectedStudentIdsForBatch.delete(studentId);
-    } else {
-      this.selectedStudentIdsForBatch.add(studentId);
-    }
-  }
-
-  toggleSelectAllStudents(): void {
-    const list = this.filteredStudentsForBatchMapping;
-    if (this.selectedStudentIdsForBatch.size === list.length && list.length > 0) {
-      this.selectedStudentIdsForBatch.clear();
-    } else {
-      this.selectedStudentIdsForBatch = new Set(list.map(s => s.id));
-    }
-  }
-
-  isAllStudentsSelected(): boolean {
-    const list = this.filteredStudentsForBatchMapping;
-    return list.length > 0 && this.selectedStudentIdsForBatch.size === list.length;
-  }
-
-  onQuickBatchChange(student: AdminUser, event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const newBatchId = select.value ? Number(select.value) : null;
-
-    this.apiService.assignStudentBatch(student.id, newBatchId).subscribe({
-      next: (updated) => {
-        student.batchId = updated.batchId;
-        student.batchName = updated.batchName;
-        this.showToast(`Updated batch for ${student.fullName}`);
-        this.loadBatches();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.showToast(err.error?.message || 'Failed to assign batch', 'error');
-        this.loadUsers();
-      }
-    });
-  }
-
-  executeBulkBatchAssign(): void {
-    if (this.selectedStudentIdsForBatch.size === 0) {
-      this.showToast('Please select at least one student.', 'error');
-      return;
-    }
-
-    const ids = Array.from(this.selectedStudentIdsForBatch);
-    this.isBulkAssigningBatch = true;
-
-    this.apiService.bulkAssignStudentBatch(ids, this.targetBatchIdForBulk).subscribe({
-      next: () => {
-        this.isBulkAssigningBatch = false;
-        this.showToast(`Successfully assigned ${ids.length} students to batch!`);
-        this.selectedStudentIdsForBatch.clear();
-        this.loadUsers();
-        this.loadBatches();
-      },
-      error: (err) => {
-        this.isBulkAssigningBatch = false;
-        this.showToast(err.error?.message || 'Failed to bulk assign batch', 'error');
-      }
-    });
-  }
-
-  // ==========================================
-  // SUBJECT ENROLLMENT MAPPING
+  // SUBJECTS & INSTRUCTORS
   // ==========================================
 
   loadSubjects(): void {
@@ -568,34 +378,72 @@ export class AdminPanelComponent implements OnInit {
       next: (data) => {
         this.subjects = data;
         this.isLoadingSubjects = false;
-        if (!this.selectedSubjectId && this.subjects.length > 0) {
-          this.onSelectSubject(this.subjects[0]);
-        }
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.isLoadingSubjects = false;
-        this.showToast(err.error?.message || 'Failed to load subjects', 'error');
+        this.showToast(err.error?.message || 'Failed to load lab classes', 'error');
         this.cdr.detectChanges();
       }
     });
   }
 
-  onSelectSubject(subject: Subject): void {
-    this.selectedSubjectId = subject.id;
-    this.selectedSubject = subject;
+  changeInstructor(subject: Subject, event: any): void {
+    const instructorId = +event.target.value;
+    if (!instructorId) return;
+
+    this.updatingInstructorSubjectId = subject.id;
+    this.apiService.changeSubjectInstructor(subject.id, instructorId).subscribe({
+      next: (updatedSubject) => {
+        this.updatingInstructorSubjectId = null;
+        subject.instructorId = updatedSubject.instructorId;
+        subject.instructorName = updatedSubject.instructorName;
+        this.showToast(`Instructor for "${subject.name}" updated successfully!`);
+        this.loadLogs(); // Refresh logs to capture this action
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.updatingInstructorSubjectId = null;
+        this.showToast(err.error?.message || 'Failed to update class instructor', 'error');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ==========================================
+  // STUDENT ENROLLMENTS (ROSTER MODAL)
+  // ==========================================
+
+  openRosterModal(subject: Subject): void {
+    this.selectedSubjectForRoster = subject;
     this.refreshSubjectEnrollmentLists();
+    this.showRosterModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeRosterModal(): void {
+    this.showRosterModal = false;
+    this.selectedSubjectForRoster = null;
+    this.enrolledStudentsInSubject = [];
+    this.availableStudentsForSubject = [];
+    this.selectedStudentIdsForEnrollment.clear();
+    this.cdr.detectChanges();
   }
 
   refreshSubjectEnrollmentLists(): void {
-    if (!this.selectedSubjectId) return;
+    if (!this.selectedSubjectForRoster) return;
 
-    this.apiService.getEnrolledStudents(this.selectedSubjectId).subscribe({
+    this.apiService.getEnrolledStudents(this.selectedSubjectForRoster.id).subscribe({
       next: (enrolled) => {
         const enrolledIds = new Set(enrolled.map(e => e.id));
         this.enrolledStudentsInSubject = this.studentUsers.filter(u => enrolledIds.has(u.id));
         this.availableStudentsForSubject = this.studentUsers.filter(u => !enrolledIds.has(u.id));
         this.selectedStudentIdsForEnrollment.clear();
+
+        // Sync local subject student count
+        if (this.selectedSubjectForRoster) {
+          this.selectedSubjectForRoster.enrolledStudentsCount = this.enrolledStudentsInSubject.length;
+        }
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -605,15 +453,15 @@ export class AdminPanelComponent implements OnInit {
   }
 
   enrollStudent(studentId: number): void {
-    if (!this.selectedSubjectId) return;
+    if (!this.selectedSubjectForRoster) return;
     this.isEnrolling = true;
 
-    this.apiService.enrollStudentInSubject(this.selectedSubjectId, studentId).subscribe({
+    this.apiService.enrollStudentInSubject(this.selectedSubjectForRoster.id, studentId).subscribe({
       next: () => {
         this.isEnrolling = false;
         this.showToast('Student enrolled successfully!');
         this.refreshSubjectEnrollmentLists();
-        this.loadUsers();
+        this.loadLogs();
       },
       error: (err) => {
         this.isEnrolling = false;
@@ -623,15 +471,15 @@ export class AdminPanelComponent implements OnInit {
   }
 
   unenrollStudent(studentId: number): void {
-    if (!this.selectedSubjectId) return;
+    if (!this.selectedSubjectForRoster) return;
     this.isEnrolling = true;
 
-    this.apiService.unenrollStudentFromSubject(this.selectedSubjectId, studentId).subscribe({
+    this.apiService.unenrollStudentFromSubject(this.selectedSubjectForRoster.id, studentId).subscribe({
       next: () => {
         this.isEnrolling = false;
         this.showToast('Student removed from subject.');
         this.refreshSubjectEnrollmentLists();
-        this.loadUsers();
+        this.loadLogs();
       },
       error: (err) => {
         this.isEnrolling = false;
@@ -649,22 +497,118 @@ export class AdminPanelComponent implements OnInit {
   }
 
   bulkEnrollSelectedStudents(): void {
-    if (!this.selectedSubjectId || this.selectedStudentIdsForEnrollment.size === 0) return;
+    if (!this.selectedSubjectForRoster || this.selectedStudentIdsForEnrollment.size === 0) return;
     const ids = Array.from(this.selectedStudentIdsForEnrollment);
     this.isEnrolling = true;
 
-    this.apiService.bulkEnrollStudentsInSubject(this.selectedSubjectId, ids).subscribe({
+    this.apiService.bulkEnrollStudentsInSubject(this.selectedSubjectForRoster.id, ids).subscribe({
       next: () => {
         this.isEnrolling = false;
-        this.showToast(`Enrolled ${ids.length} students in ${this.selectedSubject?.name}`);
+        this.showToast(`Enrolled ${ids.length} students into class.`);
         this.refreshSubjectEnrollmentLists();
-        this.loadUsers();
+        this.loadLogs();
       },
       error: (err) => {
         this.isEnrolling = false;
         this.showToast(err.error?.message || 'Failed to bulk enroll students', 'error');
       }
     });
+  }
+
+  // ==========================================
+  // CREATE CLASS / LAB SUBJECT
+  // ==========================================
+
+  openCreateClassModal(): void {
+    this.newClassForm = {
+      name: '',
+      code: '',
+      instructorId: this.instructorUsers.length > 0 ? this.instructorUsers[0].id : 0,
+      description: ''
+    };
+    this.classFormError = '';
+    this.showCreateClassModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeCreateClassModal(): void {
+    this.showCreateClassModal = false;
+    this.cdr.detectChanges();
+  }
+
+  saveClass(): void {
+    if (!this.newClassForm.name || this.newClassForm.name.trim().length < 3) {
+      this.classFormError = 'Class name must be at least 3 characters.';
+      return;
+    }
+    if (!this.newClassForm.code || this.newClassForm.code.trim().length < 3) {
+      this.classFormError = 'Course code must be at least 3 characters.';
+      return;
+    }
+    if (!this.newClassForm.instructorId) {
+      this.classFormError = 'Please assign an instructor/faculty member.';
+      return;
+    }
+
+    this.isSavingClass = true;
+    this.classFormError = '';
+    this.cdr.detectChanges();
+
+    const payload = {
+      name: this.newClassForm.name.trim(),
+      code: this.newClassForm.code.trim(),
+      instructorId: +this.newClassForm.instructorId,
+      description: this.newClassForm.description ? this.newClassForm.description.trim() : ''
+    };
+
+    this.apiService.createAdminSubject(payload).subscribe({
+      next: () => {
+        this.isSavingClass = false;
+        this.closeCreateClassModal();
+        this.showToast('Lab Class created successfully!');
+        this.loadSubjects();
+        this.loadStats();
+        this.loadLogs();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isSavingClass = false;
+        this.classFormError = err.error?.message || 'Failed to create lab class.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ==========================================
+  // AUDIT LOGS
+  // ==========================================
+
+  loadLogs(): void {
+    this.isLoadingLogs = true;
+    this.apiService.getAuditLogs().subscribe({
+      next: (data) => {
+        this.auditLogs = data;
+        this.isLoadingLogs = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isLoadingLogs = false;
+        this.showToast(err.error?.message || 'Failed to load system audit logs', 'error');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ==========================================
+  // HELPERS
+  // ==========================================
+
+  get instructorUsers(): AdminUser[] {
+    return this.users.filter(u => u.role === 'INSTRUCTOR');
+  }
+
+  get studentUsers(): AdminUser[] {
+    return this.users.filter(u => u.role === 'STUDENT');
   }
 
   // ==========================================

@@ -48,10 +48,18 @@
 
       <a
         class="gc-sidebar-item"
-        [class.active]="viewStateService.currentViewVal === 'ADMIN_PANEL' && viewStateService.adminTabVal === 'MAPPINGS'"
-        (click)="goToAdminTab('MAPPINGS')">
-        <i class="fa-solid fa-diagram-project gc-sidebar-icon"></i>
-        <span>Batch Mappings</span>
+        [class.active]="viewStateService.currentViewVal === 'ADMIN_PANEL' && viewStateService.adminTabVal === 'CLASSES'"
+        (click)="goToAdminTab('CLASSES')">
+        <i class="fa-solid fa-book gc-sidebar-icon"></i>
+        <span>Lab Classes</span>
+      </a>
+
+      <a
+        class="gc-sidebar-item"
+        [class.active]="viewStateService.currentViewVal === 'ADMIN_PANEL' && viewStateService.adminTabVal === 'LOGS'"
+        (click)="goToAdminTab('LOGS')">
+        <i class="fa-solid fa-clock-rotate-left gc-sidebar-icon"></i>
+        <span>Audit History</span>
       </a>
 
       <a
