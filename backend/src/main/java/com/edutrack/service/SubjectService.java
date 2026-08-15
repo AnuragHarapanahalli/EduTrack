@@ -130,7 +130,7 @@ public class SubjectService {
             subjectRepository.save(subject);
         }
 
-        return new AuthDto.UserDto(savedStudent.getId(), savedStudent.getEmail(), savedStudent.getFullName(), savedStudent.getRole(), subject.getBatch().getId(), subject.getBatch().getName(), savedStudent.isNeedsPasswordReset());
+        return new AuthDto.UserDto(savedStudent.getId(), savedStudent.getEmail(), savedStudent.getFullName(), savedStudent.getRole(), subject.getBatch().getId(), subject.getBatch().getName(), savedStudent.isNeedsPasswordReset(), savedStudent.isActive());
     }
 
     public List<AuthDto.UserDto> getStudentsBySubject(Long subjectId) {
@@ -138,7 +138,7 @@ public class SubjectService {
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
         return subject.getEnrolledStudents().stream()
-                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch() != null ? subject.getBatch().getId() : null, subject.getBatch() != null ? subject.getBatch().getName() : "N/A", u.isNeedsPasswordReset()))
+                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), subject.getBatch() != null ? subject.getBatch().getId() : null, subject.getBatch() != null ? subject.getBatch().getName() : "N/A", u.isNeedsPasswordReset(), u.isActive()))
                 .collect(Collectors.toList());
     }
 

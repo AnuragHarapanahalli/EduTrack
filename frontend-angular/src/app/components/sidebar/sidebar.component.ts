@@ -51,6 +51,10 @@ export class SidebarComponent {
     this.viewStateService.closeSidebar();
   }
 
+  goToAdminTab(tab: 'USERS' | 'MAPPINGS' | 'STATS'): void {
+    this.viewStateService.goAdminPanel(tab);
+  }
+
   createClass(): void {
     this.openCreateSubjectModal.emit();
   }

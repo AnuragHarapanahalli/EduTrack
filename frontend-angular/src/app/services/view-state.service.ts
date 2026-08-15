@@ -4,13 +4,19 @@ import { Subject as SubjectModel } from '../models/subject.model';
 export type MainView =
   | 'AUTH'
   | 'CLASSES_HOME'
-  | 'CLASS_DETAIL';
+  | 'CLASS_DETAIL'
+  | 'ADMIN_PANEL';
 
 export type ClassTab =
   | 'STREAM'
   | 'CLASSWORK'
   | 'PEOPLE'
   | 'LEADERBOARD';
+
+export type AdminTab =
+  | 'USERS'
+  | 'MAPPINGS'
+  | 'STATS';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +28,8 @@ export class ViewStateService {
   currentView = signal<MainView>('AUTH');
 
   currentTab = signal<ClassTab>('STREAM');
+
+  adminTab = signal<AdminTab>('USERS');
 
   currentSubject = signal<SubjectModel | null>(null);
 
@@ -38,10 +46,15 @@ export class ViewStateService {
   get currentTabVal(): ClassTab {
     return this.currentTab();
   }
+
+  get adminTabVal(): AdminTab {
+    return this.adminTab();
+  }
+
   // Compatibility with new UI
-get activeClassTabVal(): string {
-  return this.currentTab().toLowerCase();
-}
+  get activeClassTabVal(): string {
+    return this.currentTab().toLowerCase();
+  }
 
   get currentSubjectVal(): SubjectModel | null {
     return this.currentSubject();
@@ -61,9 +74,26 @@ get activeClassTabVal(): string {
     this.currentView.set(view);
   }
 
+  setAdminTab(tab: AdminTab): void {
+    this.adminTab.set(tab);
+  }
+
+  goAdminPanel(tab: AdminTab = 'USERS'): void {
+    this.currentSubject.set(null);
+    this.adminTab.set(tab);
+    this.currentView.set('ADMIN_PANEL');
+    this.closeSidebar();
+  }
+
   goDashboard(): void {
     this.currentSubject.set(null);
-    this.currentView.set('CLASSES_HOME');
+    const userJson = localStorage.getItem('edutrack_user');
+    const user = userJson ? JSON.parse(userJson) : null;
+    if (user?.role === 'ADMIN') {
+      this.currentView.set('ADMIN_PANEL');
+    } else {
+      this.currentView.set('CLASSES_HOME');
+    }
     this.closeSidebar();
   }
 

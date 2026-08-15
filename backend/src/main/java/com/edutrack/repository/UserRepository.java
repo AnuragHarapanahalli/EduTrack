@@ -16,4 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRole(Role role);
     List<User> findByBatch(Batch batch);
     List<User> findByBatchIdAndRole(Long batchId, Role role);
+    long countByRole(Role role);
+    long countByActive(boolean active);
+    List<User> findByActive(boolean active);
+    List<User> findByRoleAndActive(Role role, boolean active);
 }

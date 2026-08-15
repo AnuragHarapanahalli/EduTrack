@@ -12,6 +12,10 @@
 
     <app-auth *ngIf="viewStateService.currentViewVal==='AUTH'"></app-auth>
 
+    <app-admin-panel
+      *ngIf="viewStateService.currentViewVal==='ADMIN_PANEL' || (viewStateService.currentViewVal==='CLASSES_HOME' && authService.currentUser()?.role === 'ADMIN')">
+    </app-admin-panel>
+
     <app-classes-home
       *ngIf="viewStateService.currentViewVal==='CLASSES_HOME' && authService.currentUser()?.role === 'INSTRUCTOR'"
       (openCreateSubjectModal)="showCreateSubjectModal=true">
