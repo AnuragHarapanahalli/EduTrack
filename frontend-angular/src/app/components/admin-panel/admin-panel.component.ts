@@ -217,13 +217,39 @@ export class AdminPanelComponent implements OnInit {
   }
 
   saveUser(): void {
-    if (!this.userForm.fullName || this.userForm.fullName.trim().length < 2) {
-      this.userFormError = 'Full name must be at least 2 characters long.';
+    const limits = this.viewStateService.validationLimits();
+    const minNameLen = limits?.userFullnameMin || 2;
+    const maxNameLen = limits?.userFullnameMax || 50;
+    const maxEmailLen = limits?.userEmailMax || 100;
+
+    if (!this.userForm.fullName || this.userForm.fullName.trim().length < minNameLen) {
+      this.userFormError = `Full name must be at least ${minNameLen} characters long.`;
+      return;
+    }
+    if (this.userForm.fullName.trim().length > maxNameLen) {
+      this.userFormError = `Full name cannot exceed ${maxNameLen} characters.`;
       return;
     }
     if (!this.userForm.email || !this.userForm.email.trim().includes('@')) {
       this.userFormError = 'A valid email address is required.';
       return;
+    }
+    if (this.userForm.email.trim().length > maxEmailLen) {
+      this.userFormError = `Email address cannot exceed ${maxEmailLen} characters.`;
+      return;
+    }
+
+    if (!this.isEditingUser && this.userForm.password && this.userForm.password.trim()) {
+      const minPassLen = limits?.userPasswordMin || 6;
+      const maxPassLen = limits?.userPasswordMax || 100;
+      if (this.userForm.password.trim().length < minPassLen) {
+        this.userFormError = `Password must be at least ${minPassLen} characters long.`;
+        return;
+      }
+      if (this.userForm.password.trim().length > maxPassLen) {
+        this.userFormError = `Password cannot exceed ${maxPassLen} characters.`;
+        return;
+      }
     }
 
     this.isSavingUser = true;
@@ -541,12 +567,31 @@ export class AdminPanelComponent implements OnInit {
   }
 
   saveClass(): void {
-    if (!this.newClassForm.name || this.newClassForm.name.trim().length < 3) {
-      this.classFormError = 'Class name must be at least 3 characters.';
+    const limits = this.viewStateService.validationLimits();
+    const minNameLen = limits?.subjectNameMin || 3;
+    const maxNameLen = limits?.subjectNameMax || 100;
+    const minCodeLen = limits?.subjectCodeMin || 3;
+    const maxCodeLen = limits?.subjectCodeMax || 20;
+    const maxDescLen = limits?.subjectDescriptionMax || 1000;
+
+    if (!this.newClassForm.name || this.newClassForm.name.trim().length < minNameLen) {
+      this.classFormError = `Class name must be at least ${minNameLen} characters.`;
       return;
     }
-    if (!this.newClassForm.code || this.newClassForm.code.trim().length < 3) {
-      this.classFormError = 'Course code must be at least 3 characters.';
+    if (this.newClassForm.name.trim().length > maxNameLen) {
+      this.classFormError = `Class name cannot exceed ${maxNameLen} characters.`;
+      return;
+    }
+    if (!this.newClassForm.code || this.newClassForm.code.trim().length < minCodeLen) {
+      this.classFormError = `Course code must be at least ${minCodeLen} characters.`;
+      return;
+    }
+    if (this.newClassForm.code.trim().length > maxCodeLen) {
+      this.classFormError = `Course code cannot exceed ${maxCodeLen} characters.`;
+      return;
+    }
+    if (this.newClassForm.description && this.newClassForm.description.trim().length > maxDescLen) {
+      this.classFormError = `Course description cannot exceed ${maxDescLen} characters.`;
       return;
     }
     if (!this.newClassForm.instructorId) {
