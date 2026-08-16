@@ -18,7 +18,7 @@ public class Subject {
     @Column(nullable = false, unique = true)
     private String code; // e.g. "PBL-III-2026"
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instructor_id", nullable = false)
     private User instructor;
 

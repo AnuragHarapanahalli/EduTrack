@@ -93,6 +93,10 @@ export class AdminPanelComponent implements OnInit {
   csvFormError = '';
   csvUploadRole: 'STUDENT' | 'INSTRUCTOR' = 'STUDENT';
 
+  // Audit Logs Pagination State
+  logPage = 0;
+  hasMoreLogs = true;
+
   // Notification Toast
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
@@ -585,15 +589,37 @@ export class AdminPanelComponent implements OnInit {
 
   loadLogs(): void {
     this.isLoadingLogs = true;
-    this.apiService.getAuditLogs().subscribe({
+    this.logPage = 0;
+    this.hasMoreLogs = true;
+    this.apiService.getAuditLogs(this.logPage, 50).subscribe({
       next: (data) => {
         this.auditLogs = data;
         this.isLoadingLogs = false;
+        if (data.length < 50) {
+          this.hasMoreLogs = false;
+        }
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.isLoadingLogs = false;
         this.showToast(err.error?.message || 'Failed to load system audit logs', 'error');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadMoreLogs(): void {
+    this.logPage++;
+    this.apiService.getAuditLogs(this.logPage, 50).subscribe({
+      next: (data) => {
+        if (data.length < 50) {
+          this.hasMoreLogs = false;
+        }
+        this.auditLogs = [...this.auditLogs, ...data];
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.showToast(err.error?.message || 'Failed to load older logs', 'error');
         this.cdr.detectChanges();
       }
     });

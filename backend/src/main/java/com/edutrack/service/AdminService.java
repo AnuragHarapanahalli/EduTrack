@@ -8,6 +8,9 @@ import com.edutrack.repository.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
@@ -366,8 +369,8 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
-    public List<AuditLog> getAuditLogs() {
-        return auditLogRepository.findAllByOrderByTimestampDesc();
+    public List<AuditLog> getAuditLogs(int page, int size) {
+        return auditLogRepository.findAllByOrderByTimestampDesc(PageRequest.of(page, size)).getContent();
     }
 
     // ==========================================

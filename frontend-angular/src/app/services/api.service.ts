@@ -335,10 +335,16 @@ export class ApiService {
     );
   }
 
-  getAuditLogs(): Observable<AuditLog[]> {
+  getAuditLogs(page: number = 0, size: number = 50): Observable<AuditLog[]> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
     return this.http.get<AuditLog[]>(
       `${this.baseUrl}/admin/logs`,
-      this.options
+      {
+        ...this.options,
+        params
+      }
     );
   }
 
