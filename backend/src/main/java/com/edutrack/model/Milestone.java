@@ -27,6 +27,10 @@ public class Milestone {
     @Column(nullable = false)
     private Double basePoints; // Default base points, e.g. 100.0
 
+    @Column(nullable = false)
+    private Double maxMarks = 100.0; // Maximum marks configured by instructor
+
+    @Column(length = 2000)
     private String requiredDeliverables; // e.g. "Github Repo URL, SRS PDF"
 
     private Boolean isMandatory = true;
@@ -36,6 +40,7 @@ public class Milestone {
     public Milestone() {
         this.createdAt = LocalDateTime.now();
         this.isMandatory = true;
+        this.maxMarks = 100.0;
     }
 
     public Milestone(Subject subject, String title, String description, LocalDateTime deadline, Double basePoints, String requiredDeliverables) {
@@ -51,6 +56,7 @@ public class Milestone {
         this.requiredDeliverables = requiredDeliverables;
         this.isMandatory = isMandatory != null ? isMandatory : true;
         this.createdAt = LocalDateTime.now();
+        this.maxMarks = 100.0;
     }
 
     public Long getId() { return id; }
@@ -79,4 +85,7 @@ public class Milestone {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public Double getMaxMarks() { return maxMarks; }
+    public void setMaxMarks(Double maxMarks) { this.maxMarks = maxMarks; }
 }

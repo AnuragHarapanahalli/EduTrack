@@ -45,12 +45,12 @@ public class LeaderboardService {
             List<Submission> studentSubmissions = submissionRepository.findBySubjectAndStudent(subjectId, student.getId());
             
             double totalPoints = studentSubmissions.stream()
-                    .filter(s -> s.getStatus() == SubmissionStatus.APPROVED)
+                    .filter(s -> s.getStatus() == SubmissionStatus.APPROVED && s.getMarksLocked() != Boolean.FALSE)
                     .mapToDouble(s -> s.getFinalPoints() != null ? s.getFinalPoints() : 0.0)
                     .sum();
 
             long approvedCount = studentSubmissions.stream()
-                    .filter(s -> s.getStatus() == SubmissionStatus.APPROVED)
+                    .filter(s -> s.getStatus() == SubmissionStatus.APPROVED && s.getMarksLocked() != Boolean.FALSE)
                     .count();
 
             double completionPercentage = totalMilestones > 0 ? ((double) approvedCount / totalMilestones) * 100.0 : 0.0;

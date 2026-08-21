@@ -432,7 +432,9 @@
     min-width:340px;
 
 
-    height:380px;
+    min-height:380px;
+
+    height:auto;
 
 
     padding:1.7rem;

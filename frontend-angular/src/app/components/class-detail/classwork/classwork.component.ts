@@ -552,6 +552,29 @@ export class ClassworkComponent implements OnInit, OnDestroy {
 
 
 
+  downloadMarksCsv(): void {
+    const subject = this.viewStateService.currentSubject();
+    if (!subject) return;
+
+    this.apiService.exportSubjectMarksCsv(subject.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${subject.code || 'class'}-marks.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Failed to download marks CSV:', err);
+        alert('Failed to download marks CSV. Please try again.');
+      }
+    });
+  }
+
+
   refresh(){
 
     const user =

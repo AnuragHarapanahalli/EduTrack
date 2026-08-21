@@ -73,4 +73,10 @@ public class SubmissionController {
         if (sub == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(sub);
     }
+
+    @PostMapping("/milestone/{milestoneId}/lock-all")
+    public ResponseEntity<Void> lockAllSubmissionsForMilestone(@PathVariable Long milestoneId) {
+        submissionService.lockAllSubmissionsForMilestone(milestoneId);
+        return ResponseEntity.ok().build();
+    }
 }

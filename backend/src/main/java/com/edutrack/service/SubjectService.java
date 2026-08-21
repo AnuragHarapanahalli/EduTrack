@@ -9,8 +9,14 @@ import com.edutrack.model.User;
 import com.edutrack.repository.MilestoneRepository;
 import com.edutrack.repository.SubjectRepository;
 import com.edutrack.repository.UserRepository;
+import com.edutrack.repository.SubmissionRepository;
+import com.edutrack.model.Milestone;
+import com.edutrack.model.Submission;
+import com.edutrack.model.SubmissionStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,13 +27,22 @@ public class SubjectService {
     private final SubjectRepository subjectRepository;
     private final UserRepository userRepository;
     private final MilestoneRepository milestoneRepository;
+    private final SubmissionRepository submissionRepository;
     private final ValidationConfig validationConfig;
     private final PasswordEncoder passwordEncoder;
 
-    public SubjectService(SubjectRepository subjectRepository, UserRepository userRepository, MilestoneRepository milestoneRepository, ValidationConfig validationConfig, PasswordEncoder passwordEncoder) {
+    public SubjectService(
+            SubjectRepository subjectRepository,
+            UserRepository userRepository,
+            MilestoneRepository milestoneRepository,
+            SubmissionRepository submissionRepository,
+            ValidationConfig validationConfig,
+            PasswordEncoder passwordEncoder
+    ) {
         this.subjectRepository = subjectRepository;
         this.userRepository = userRepository;
         this.milestoneRepository = milestoneRepository;
+        this.submissionRepository = submissionRepository;
         this.validationConfig = validationConfig;
         this.passwordEncoder = passwordEncoder;
     }
@@ -144,5 +159,72 @@ public class SubjectService {
         response.setTotalMilestones(count != null ? count.intValue() : 0);
         response.setEnrolledStudentsCount(subject.getEnrolledStudents() != null ? subject.getEnrolledStudents().size() : 0);
         return response;
+    }
+
+    public byte[] exportSubjectMarksCsv(Long subjectId) {
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new RuntimeException("Subject not found"));
+
+        List<Milestone> milestones = milestoneRepository.findBySubjectOrderByDeadlineAsc(subject);
+        java.util.Set<User> enrolledStudents = subject.getEnrolledStudents();
+        List<Submission> submissions = submissionRepository.findByMilestoneSubjectId(subjectId);
+
+        StringBuilder csv = new StringBuilder();
+        // Header
+        csv.append("Student Name,Student Email");
+        for (Milestone milestone : milestones) {
+            csv.append(",").append(escapeCsvField(milestone.getTitle() + " (Obtained / Max)"));
+        }
+        csv.append(",Total Obtained Marks,Total Max Marks,Leaderboard Points\n");
+
+        // Rows
+        for (User student : enrolledStudents) {
+            csv.append(escapeCsvField(student.getFullName())).append(",")
+               .append(escapeCsvField(student.getEmail()));
+
+            double totalObtained = 0.0;
+            double totalMax = 0.0;
+            double totalPoints = 0.0;
+
+            for (Milestone milestone : milestones) {
+                Optional<Submission> subOpt = submissions.stream()
+                    .filter(s -> s.getStudent().getId().equals(student.getId()) && s.getMilestone().getId().equals(milestone.getId()))
+                    .findFirst();
+
+                if (subOpt.isPresent() && subOpt.get().getStatus() == SubmissionStatus.APPROVED && subOpt.get().getMarksLocked() != Boolean.FALSE) {
+                    Submission sub = subOpt.get();
+                    double obtained = sub.getObtainedMarks() != null ? sub.getObtainedMarks() : 0.0;
+                    double maxMarksVal = milestone.getMaxMarks() != null ? milestone.getMaxMarks() : 100.0;
+                    if (maxMarksVal <= 0) maxMarksVal = 100.0;
+
+                    if (sub.getObtainedMarks() == null && sub.getQualityRating() != null) {
+                        obtained = (sub.getQualityRating() / 5.0) * maxMarksVal;
+                    }
+
+                    csv.append(",").append(Math.round(obtained * 100.0) / 100.0).append(" / ").append(maxMarksVal);
+                    totalObtained += obtained;
+                    totalMax += maxMarksVal;
+                    totalPoints += sub.getFinalPoints() != null ? sub.getFinalPoints() : 0.0;
+                } else {
+                    csv.append(",-");
+                }
+            }
+
+            csv.append(",").append(Math.round(totalObtained * 100.0) / 100.0)
+               .append(",").append(Math.round(totalMax * 100.0) / 100.0)
+               .append(",").append(Math.round(totalPoints * 100.0) / 100.0)
+               .append("\n");
+        }
+
+        return csv.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    private String escapeCsvField(String field) {
+        if (field == null) return "";
+        String value = field.replace("\"", "\"\"");
+        if (value.contains(",") || value.contains("\n") || value.contains("\"")) {
+            return "\"" + value + "\"";
+        }
+        return value;
     }
 }

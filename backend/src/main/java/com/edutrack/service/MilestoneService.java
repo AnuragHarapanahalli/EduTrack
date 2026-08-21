@@ -58,6 +58,7 @@ public class MilestoneService {
                 request.getRequiredDeliverables(),
                 request.getIsMandatory() != null ? request.getIsMandatory() : true
         );
+        milestone.setMaxMarks(request.getMaxMarks() != null ? request.getMaxMarks() : 100.0);
 
         Milestone saved = milestoneRepository.save(milestone);
         return toMilestoneResponse(saved);
@@ -73,6 +74,7 @@ public class MilestoneService {
         if (request.getDescription() != null) milestone.setDescription(request.getDescription());
         if (request.getDeadline() != null) milestone.setDeadline(LocalDateTime.parse(request.getDeadline()));
         if (request.getBasePoints() != null) milestone.setBasePoints(request.getBasePoints());
+        if (request.getMaxMarks() != null) milestone.setMaxMarks(request.getMaxMarks());
         if (request.getRequiredDeliverables() != null) milestone.setRequiredDeliverables(request.getRequiredDeliverables());
         if (request.getIsMandatory() != null) milestone.setIsMandatory(request.getIsMandatory());
 
@@ -112,6 +114,7 @@ public class MilestoneService {
         response.setDescription(milestone.getDescription());
         response.setDeadline(milestone.getDeadline());
         response.setBasePoints(milestone.getBasePoints());
+        response.setMaxMarks(milestone.getMaxMarks() != null ? milestone.getMaxMarks() : 100.0);
         response.setRequiredDeliverables(milestone.getRequiredDeliverables());
         response.setIsMandatory(milestone.getIsMandatory() != null ? milestone.getIsMandatory() : true);
         response.setIsOverdue(LocalDateTime.now().isAfter(milestone.getDeadline()));

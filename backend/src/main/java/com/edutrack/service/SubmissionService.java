@@ -95,8 +95,8 @@ public class SubmissionService {
             submission.setFileUrl("/uploads/" + storedFileName);
         }
 
-        if (submissionLink != null && !submissionLink.trim().isEmpty()) {
-            submission.setSubmissionLink(submissionLink.trim());
+        if (submissionLink != null) {
+            submission.setSubmissionLink(submissionLink.trim().isEmpty() ? null : submissionLink.trim());
         }
 
         submission.setComments(comments);
@@ -138,20 +138,33 @@ public class SubmissionService {
     private void validateTeacherDefinedFormat(MultipartFile file, String submissionLink, JsonNode deliverableConfig) {
         if (deliverableConfig == null) return;
 
-        List<String> allowedFileExtensions = parseCsv(deliverableConfig.path("allowedFileExtensions").asText(""));
-        if (file != null && !file.isEmpty() && !allowedFileExtensions.isEmpty()) {
-            String extension = extractExtension(file.getOriginalFilename());
-            if (extension.isBlank() || !allowedFileExtensions.contains(extension.toLowerCase())) {
-                throw new IllegalArgumentException("File format is not allowed by teacher. Allowed file formats: " + String.join(", ", allowedFileExtensions) + ".");
+        boolean acceptsFile = deliverableConfig.path("acceptsFile").asBoolean(true);
+        boolean acceptsLink = deliverableConfig.path("acceptsLink").asBoolean(true);
+
+        if (file != null && !file.isEmpty()) {
+            if (!acceptsFile) {
+                throw new IllegalArgumentException("File uploads are not accepted for this deliverable.");
+            }
+            List<String> allowedFileExtensions = parseCsv(deliverableConfig.path("allowedFileExtensions").asText(""));
+            if (!allowedFileExtensions.isEmpty()) {
+                String extension = extractExtension(file.getOriginalFilename());
+                if (extension.isBlank() || !allowedFileExtensions.contains(extension.toLowerCase())) {
+                    throw new IllegalArgumentException("File format is not allowed by teacher. Allowed file formats: " + String.join(", ", allowedFileExtensions) + ".");
+                }
             }
         }
 
-        List<String> allowedLinkPatterns = parseCsv(deliverableConfig.path("allowedLinkPatterns").asText(""));
-        if (submissionLink != null && !submissionLink.trim().isEmpty() && !allowedLinkPatterns.isEmpty()) {
-            String normalizedLink = submissionLink.trim();
-            boolean matches = allowedLinkPatterns.stream().anyMatch(pattern -> linkMatchesPattern(normalizedLink, pattern));
-            if (!matches) {
-                throw new IllegalArgumentException("Link format is not allowed by teacher. Allowed link formats: " + String.join(", ", allowedLinkPatterns) + ".");
+        if (submissionLink != null && !submissionLink.trim().isEmpty()) {
+            if (!acceptsLink) {
+                throw new IllegalArgumentException("Link submissions are not accepted for this deliverable.");
+            }
+            List<String> allowedLinkPatterns = parseCsv(deliverableConfig.path("allowedLinkPatterns").asText(""));
+            if (!allowedLinkPatterns.isEmpty()) {
+                String normalizedLink = submissionLink.trim();
+                boolean matches = allowedLinkPatterns.stream().anyMatch(pattern -> linkMatchesPattern(normalizedLink, pattern));
+                if (!matches) {
+                    throw new IllegalArgumentException("Link format is not allowed by teacher. Allowed link formats: " + String.join(", ", allowedLinkPatterns) + ".");
+                }
             }
         }
     }
@@ -266,17 +279,29 @@ public class SubmissionService {
         submission.setStatus(request.getStatus());
         submission.setInstructorFeedback(request.getFeedback());
         submission.setReviewedAt(LocalDateTime.now());
+        submission.setObtainedMarks(request.getObtainedMarks());
+        submission.setMarksLocked(request.getMarksLocked() != null ? request.getMarksLocked() : false);
 
         if (request.getStatus() == SubmissionStatus.APPROVED) {
             int qualityRating = request.getQualityRating() != null ? Math.max(1, Math.min(5, request.getQualityRating())) : 5;
+            double maxMarksVal = submission.getMilestone().getMaxMarks() != null ? submission.getMilestone().getMaxMarks() : 100.0;
+            if (maxMarksVal <= 0) maxMarksVal = 100.0;
+
+            double qualityRatio;
+            if (request.getObtainedMarks() != null) {
+                qualityRatio = request.getObtainedMarks() / maxMarksVal;
+                qualityRating = (int) Math.max(1, Math.min(5, Math.round(qualityRatio * 5.0)));
+            } else {
+                qualityRatio = qualityRating / 5.0;
+            }
             submission.setQualityRating(qualityRating);
 
             double basePoints = submission.getMilestone().getBasePoints();
             Double storedTimeliness = submission.getTimelinessMultiplier();
             double timelinessMultiplier = storedTimeliness != null ? storedTimeliness : 1.0;
             
-            // SRS Formula: Base Points * Timeliness Multiplier * (Quality Rating / 5.0)
-            double finalPoints = basePoints * timelinessMultiplier * (qualityRating / 5.0);
+            // Generalized Formula: Base Points * Timeliness Multiplier * (Obtained / Max)
+            double finalPoints = basePoints * timelinessMultiplier * qualityRatio;
             submission.setFinalPoints(Math.round(finalPoints * 100.0) / 100.0);
         } else {
             submission.setFinalPoints(0.0);
@@ -354,6 +379,8 @@ public class SubmissionService {
                 r.setQualityRating(sub.getQualityRating());
                 r.setFinalPoints(sub.getFinalPoints());
                 r.setInstructorFeedback(sub.getInstructorFeedback());
+                r.setObtainedMarks(sub.getObtainedMarks());
+                r.setMarksLocked(sub.getMarksLocked() != null ? sub.getMarksLocked() : false);
 
                 // Timeliness Label
                 if (sub.getTimelinessMultiplier() != null) {
@@ -393,6 +420,21 @@ public class SubmissionService {
         response.setFinalPoints(submission.getFinalPoints());
         response.setInstructorFeedback(submission.getInstructorFeedback());
         response.setReviewedAt(submission.getReviewedAt());
+        response.setObtainedMarks(submission.getObtainedMarks());
+        response.setMarksLocked(submission.getMarksLocked() != null ? submission.getMarksLocked() : false);
         return response;
+    }
+
+    public void lockAllSubmissionsForMilestone(Long milestoneId) {
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new RuntimeException("Milestone not found"));
+
+        List<Submission> submissions = submissionRepository.findByMilestone(milestone);
+        for (Submission sub : submissions) {
+            if (sub.getMarksLocked() != Boolean.TRUE) {
+                sub.setMarksLocked(true);
+                submissionRepository.save(sub);
+            }
+        }
     }
 }

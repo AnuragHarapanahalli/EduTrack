@@ -10,6 +10,7 @@ public class MilestoneDto {
         private String description;
         private String deadline; // ISO format "2026-08-15T23:59:00"
         private Double basePoints;
+        private Double maxMarks;
         private String requiredDeliverables;
         private Boolean isMandatory;
 
@@ -30,6 +31,9 @@ public class MilestoneDto {
         public Double getBasePoints() { return basePoints; }
         public void setBasePoints(Double basePoints) { this.basePoints = basePoints; }
 
+        public Double getMaxMarks() { return maxMarks; }
+        public void setMaxMarks(Double maxMarks) { this.maxMarks = maxMarks; }
+
         public String getRequiredDeliverables() { return requiredDeliverables; }
         public void setRequiredDeliverables(String requiredDeliverables) { this.requiredDeliverables = requiredDeliverables; }
 
@@ -45,6 +49,7 @@ public class MilestoneDto {
         private String description;
         private LocalDateTime deadline;
         private Double basePoints;
+        private Double maxMarks;
         private String requiredDeliverables;
         private Boolean isMandatory;
         private Boolean isOverdue;
@@ -71,6 +76,9 @@ public class MilestoneDto {
 
         public Double getBasePoints() { return basePoints; }
         public void setBasePoints(Double basePoints) { this.basePoints = basePoints; }
+
+        public Double getMaxMarks() { return maxMarks; }
+        public void setMaxMarks(Double maxMarks) { this.maxMarks = maxMarks; }
 
         public String getRequiredDeliverables() { return requiredDeliverables; }
         public void setRequiredDeliverables(String requiredDeliverables) { this.requiredDeliverables = requiredDeliverables; }

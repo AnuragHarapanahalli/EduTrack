@@ -9,6 +9,8 @@ public class SubmissionDto {
         private SubmissionStatus status; // APPROVED or NEEDS_REVISION
         private Integer qualityRating; // 1 to 5
         private String feedback;
+        private Double obtainedMarks;
+        private Boolean marksLocked;
 
         public ReviewSubmissionRequest() {}
 
@@ -20,6 +22,12 @@ public class SubmissionDto {
 
         public String getFeedback() { return feedback; }
         public void setFeedback(String feedback) { this.feedback = feedback; }
+
+        public Double getObtainedMarks() { return obtainedMarks; }
+        public void setObtainedMarks(Double obtainedMarks) { this.obtainedMarks = obtainedMarks; }
+
+        public Boolean getMarksLocked() { return marksLocked; }
+        public void setMarksLocked(Boolean marksLocked) { this.marksLocked = marksLocked; }
     }
 
     public static class SubmissionResponse {
@@ -39,6 +47,8 @@ public class SubmissionDto {
         private Double finalPoints;
         private String instructorFeedback;
         private LocalDateTime reviewedAt;
+        private Double obtainedMarks;
+        private Boolean marksLocked;
 
         public SubmissionResponse() {}
 
@@ -89,6 +99,12 @@ public class SubmissionDto {
 
         public LocalDateTime getReviewedAt() { return reviewedAt; }
         public void setReviewedAt(LocalDateTime reviewedAt) { this.reviewedAt = reviewedAt; }
+
+        public Double getObtainedMarks() { return obtainedMarks; }
+        public void setObtainedMarks(Double obtainedMarks) { this.obtainedMarks = obtainedMarks; }
+
+        public Boolean getMarksLocked() { return marksLocked; }
+        public void setMarksLocked(Boolean marksLocked) { this.marksLocked = marksLocked; }
     }
 
     public static class MilestoneRosterResponse {
@@ -106,6 +122,8 @@ public class SubmissionDto {
         private Integer qualityRating;
         private Double finalPoints;
         private String instructorFeedback;
+        private Double obtainedMarks;
+        private Boolean marksLocked;
 
         public MilestoneRosterResponse() {}
 
@@ -150,5 +168,11 @@ public class SubmissionDto {
 
         public String getInstructorFeedback() { return instructorFeedback; }
         public void setInstructorFeedback(String instructorFeedback) { this.instructorFeedback = instructorFeedback; }
+
+        public Double getObtainedMarks() { return obtainedMarks; }
+        public void setObtainedMarks(Double obtainedMarks) { this.obtainedMarks = obtainedMarks; }
+
+        public Boolean getMarksLocked() { return marksLocked; }
+        public void setMarksLocked(Boolean marksLocked) { this.marksLocked = marksLocked; }
     }
 }

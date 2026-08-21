@@ -34,13 +34,14 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
                   {{ item.isMandatory ? 'Mandatory' : 'Optional' }}
                 </span>
               </div>
-              <div class="gc-form-field">
+              <!-- FILE UPLOAD FIELD -->
+              <div class="gc-form-field" *ngIf="item.acceptsFile !== false">
                 <label>Upload File</label>
                 <div class="gc-file-upload-wrapper">
                   <input type="file" id="fileInput_{{i}}" class="gc-file-input-hidden" (change)="onFileSelected($event, i)">
-                  <label for="fileInput_{{i}}" class="gc-file-upload-trigger" [class.has-file]="filesMap[i]">
-                    <i class="fa-solid" [class.fa-cloud-arrow-up]="!filesMap[i]" [class.fa-circle-check]="filesMap[i]"></i>
-                    <span>{{ filesMap[i] ? filesMap[i].name : 'Choose file or drag here' }}</span>
+                  <label for="fileInput_{{i}}" class="gc-file-upload-trigger" [class.has-file]="filesMap[i] || existingFilesMap[i]">
+                    <i class="fa-solid" [class.fa-cloud-arrow-up]="!filesMap[i] && !existingFilesMap[i]" [class.fa-circle-check]="filesMap[i] || existingFilesMap[i]"></i>
+                    <span>{{ filesMap[i] ? filesMap[i].name : (existingFilesMap[i] ? 'Uploaded: ' + existingFilesMap[i] : 'Choose file or drag here') }}</span>
                   </label>
                 </div>
                 <small style="display:block; margin-top:6px; color: var(--gc-text-sub);">
@@ -48,9 +49,11 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
                   <span *ngIf="allowedFileFormatsFor(item)"> | Allowed: {{ allowedFileFormatsFor(item) }}</span>
                 </small>
               </div>
-              <div class="gc-form-field" style="margin-bottom:0;">
+
+              <!-- LINK SUBMISSION FIELD -->
+              <div class="gc-form-field" style="margin-bottom:0;" *ngIf="item.acceptsLink !== false">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <label style="margin: 0;">OR Repository / Video Link</label>
+                  <label style="margin: 0;">Repository / Video Link</label>
                   <div class="gc-link-meta-right">
                     <span *ngIf="linkErrorsMap[i]" class="gc-inline-link-error">{{ linkErrorsMap[i] }}</span>
                     <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
@@ -198,6 +201,7 @@ export class UploadModalComponent implements OnInit {
 
   deliverablesList: DeliverableItem[] = [];
   filesMap: { [index: number]: File } = {};
+  existingFilesMap: { [index: number]: string } = {};
   linksMap: { [index: number]: string } = {};
   linkErrorsMap: { [index: number]: string } = {};
   comments = '';
@@ -209,6 +213,12 @@ export class UploadModalComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  private getFileNameFromUrl(url: string): string {
+    if (!url) return '';
+    const parts = url.split('/');
+    return parts[parts.length - 1];
+  }
+
   ngOnInit() {
     if (this.milestone && this.milestone.requiredDeliverables) {
       try {
@@ -219,6 +229,23 @@ export class UploadModalComponent implements OnInit {
       }
     } else {
       this.deliverablesList = [{ title: 'Main Project Deliverable File', isMandatory: true }];
+    }
+
+    if (this.milestone && this.milestone.userSubmission) {
+      const sub = this.milestone.userSubmission;
+      if (sub.comments) {
+        this.comments = sub.comments;
+      }
+      if (sub.submissionLink) {
+        let linkIndex = this.deliverablesList.findIndex(d => d.acceptsLink !== false && (this.allowedLinkFormatsFor(d) || !this.allowedFileFormatsFor(d)));
+        if (linkIndex === -1) linkIndex = 0;
+        this.linksMap[linkIndex] = sub.submissionLink;
+      }
+      if (sub.fileUrl) {
+        let fileIndex = this.deliverablesList.findIndex(d => d.acceptsFile !== false && (this.allowedFileFormatsFor(d) || !this.allowedLinkFormatsFor(d)));
+        if (fileIndex === -1) fileIndex = 0;
+        this.existingFilesMap[fileIndex] = this.getFileNameFromUrl(sub.fileUrl);
+      }
     }
   }
 
@@ -300,10 +327,23 @@ export class UploadModalComponent implements OnInit {
 
     const limits = this.viewStateService.validationLimits();
 
-    const hasFile = Object.keys(this.filesMap).length > 0;
+    const hasFile = Object.keys(this.filesMap).length > 0 || Object.keys(this.existingFilesMap).length > 0;
     const hasLink = Object.values(this.linksMap).some(
       link => link && link.trim().length > 0
     );
+
+    // Validate that all mandatory deliverables are provided (either as a file or a link)
+    for (let i = 0; i < this.deliverablesList.length; i++) {
+      const item = this.deliverablesList[i];
+      if (item.isMandatory) {
+        const hasFileOrExisting = !!this.filesMap[i] || !!this.existingFilesMap[i];
+        const hasLinkVal = !!(this.linksMap[i] && this.linksMap[i].trim().length > 0);
+        if (!hasFileOrExisting && !hasLinkVal) {
+          alert(`Please provide a file or link for the mandatory deliverable: "${item.title}".`);
+          return;
+        }
+      }
+    }
 
     if (!hasFile && !hasLink) {
       alert('Please upload at least one file or provide one submission link.');
@@ -315,10 +355,8 @@ export class UploadModalComponent implements OnInit {
       if (!this.validateLinkForIndex(index)) return;
     }
 
-    const firstLinkEntry = Object.entries(this.linksMap).find(
-      ([, link]) => link && link.trim().length > 0
-    );
-    const firstLink = firstLinkEntry?.[1]?.trim();
+    const firstLinkEntry = Object.entries(this.linksMap)[0];
+    const firstLink = firstLinkEntry ? firstLinkEntry[1] : undefined;
 
     if (this.comments && this.comments.trim().length > limits.submissionCommentsMax) {
       alert(`Private comments must not exceed ${limits.submissionCommentsMax} characters.`);
@@ -337,8 +375,8 @@ export class UploadModalComponent implements OnInit {
     }
 
     // Upload first link
-    if (firstLink) {
-      formData.append('submissionLink', firstLink);
+    if (firstLink !== undefined) {
+      formData.append('submissionLink', firstLink.trim());
     }
 
     const firstIndex = firstFileEntry

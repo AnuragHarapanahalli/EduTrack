@@ -8,6 +8,10 @@ export interface DeliverableItem {
 
   allowedLinkPatterns?: string;
 
+  acceptsFile?: boolean;
+
+  acceptsLink?: boolean;
+
 }
 
 
@@ -28,6 +32,18 @@ export interface UserSubmission {
   marks?: number;
 
   instructorFeedback?: string;
+
+  obtainedMarks?: number;
+
+  marksLocked?: boolean;
+
+  finalPoints?: number;
+
+  fileUrl?: string;
+
+  submissionLink?: string;
+
+  comments?: string;
 
 }
 
@@ -53,6 +69,8 @@ export interface Milestone {
 
 
   basePoints: number;
+
+  maxMarks?: number;
 
 
   requiredDeliverables?: string;
@@ -101,6 +119,8 @@ export interface CreateMilestoneRequest {
 
 
   basePoints:number;
+
+  maxMarks?:number;
 
 
   requiredDeliverables:string;

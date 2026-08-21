@@ -55,15 +55,10 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
                 </div>
               </div>
               <div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <label style="margin: 0;">Base Points *</label>
-                  <span style="font-size: 0.72rem; color: var(--gc-text-sub);">
-                    Min {{ viewStateService.validationLimits().milestonePointsMin }} - Max {{ viewStateService.validationLimits().milestonePointsMax }}
-                  </span>
-                </div>
+                <label>Max Marks *</label>
                 <div class="gc-input-box">
-                  <i class="fa-solid fa-star"></i>
-                  <input type="number" [(ngModel)]="basePoints" name="basePoints" [min]="viewStateService.validationLimits().milestonePointsMin" [max]="viewStateService.validationLimits().milestonePointsMax" step="5" required>
+                  <i class="fa-solid fa-square-poll-vertical"></i>
+                  <input type="number" [(ngModel)]="maxMarks" name="maxMarks" required min="1">
                 </div>
               </div>
             </div>
@@ -77,29 +72,43 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
                 </button>
               </div>
 
-              <div style="max-height: 140px; overflow-y: auto; padding-right: 5px;">
+              <div style="max-height: 240px; overflow-y: auto; padding-right: 5px;">
                 <div *ngFor="let item of deliverables; let i = index" class="gc-deliverable-row">
-                  <div class="gc-deliverable-header-row">
-                    <input type="text" [(ngModel)]="item.title" [name]="'del_title_' + i" placeholder="e.g. SRS PDF Document" required>
-                    <label class="gc-check-label">
-                      <input type="checkbox" [(ngModel)]="item.isMandatory" [name]="'del_mand_' + i"> Mandatory
+                  <input type="text" [(ngModel)]="item.title" [name]="'del_title_' + i" placeholder="e.g. SRS PDF Document" required style="font-size: 0.82rem;">
+                  
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label class="gc-check-label" style="font-size: 0.72rem;">
+                      <input type="checkbox" [(ngModel)]="item.acceptsFile" [name]="'del_acc_file_' + i"> File Upload
                     </label>
-                    <button type="button" class="gc-btn-delete-row" (click)="removeDeliverableRow(i)">
-                      <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                  </div>
-                  <div class="gc-deliverable-format-row">
                     <input
+                      *ngIf="item.acceptsFile"
                       type="text"
                       [(ngModel)]="item.allowedFileExtensions"
                       [name]="'del_file_formats_' + i"
-                      placeholder="Allowed file formats (e.g. pdf, docx, zip)">
+                      placeholder="e.g. pdf, zip"
+                      style="font-size: 0.72rem; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--gc-border);">
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label class="gc-check-label" style="font-size: 0.72rem;">
+                      <input type="checkbox" [(ngModel)]="item.acceptsLink" [name]="'del_acc_link_' + i"> Link Submission
+                    </label>
                     <input
+                      *ngIf="item.acceptsLink"
                       type="text"
                       [(ngModel)]="item.allowedLinkPatterns"
                       [name]="'del_link_formats_' + i"
-                      placeholder="Allowed link formats (e.g. github.com, drive.google.com)">
+                      placeholder="e.g. github.com"
+                      style="font-size: 0.72rem; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--gc-border);">
                   </div>
+
+                  <label class="gc-check-label" style="margin: 0 5px; font-size: 0.8rem;">
+                    <input type="checkbox" [(ngModel)]="item.isMandatory" [name]="'del_mand_' + i"> Mandatory
+                  </label>
+                  
+                  <button type="button" class="gc-btn-delete-row" (click)="removeDeliverableRow(i)" style="margin-left: auto;">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -131,7 +140,8 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
       z-index: 999;
     }
     .gc-modern-modal {
-      width: 550px;
+      width: 820px;
+      max-width: 95%;
       background: var(--gc-card);
       border-radius: 24px;
       overflow: hidden;
@@ -235,26 +245,15 @@ import { Milestone, CreateMilestoneRequest, DeliverableItem } from '../../models
       box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
     }
     .gc-deliverable-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.55rem;
+      display: grid;
+      grid-template-columns: 1.5fr 1.2fr 1.2fr auto auto;
+      align-items: center;
+      gap: 0.75rem;
       background: var(--gc-background);
       border: 1px solid var(--gc-border);
-      padding: 0.4rem 0.65rem;
-      border-radius: 10px;
-      margin-bottom: 0.5rem;
-    }
-    .gc-deliverable-header-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      width: 100%;
-    }
-    .gc-deliverable-format-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border-radius: 14px;
+      margin-bottom: 0.65rem;
     }
     .gc-deliverable-row input[type="text"] {
       flex: 1;
@@ -347,9 +346,10 @@ export class CreateMilestoneModalComponent implements OnInit {
   description = '';
   deadline = '';
   basePoints = 100;
+  maxMarks = 100;
   deliverables: DeliverableItem[] = [
-    { title: 'SRS Report / PDF', isMandatory: true, allowedFileExtensions: 'pdf' },
-    { title: 'GitHub Repository URL', isMandatory: true, allowedLinkPatterns: 'github.com' }
+    { title: 'SRS Report / PDF', isMandatory: true, acceptsFile: true, acceptsLink: false, allowedFileExtensions: 'pdf' },
+    { title: 'GitHub Repository URL', isMandatory: true, acceptsFile: false, acceptsLink: true, allowedLinkPatterns: 'github.com' }
   ];
 
   errorMessage = '';
@@ -368,12 +368,19 @@ export class CreateMilestoneModalComponent implements OnInit {
         this.deadline = this.milestoneToEdit.deadline.substring(0, 16);
       }
       this.basePoints = this.milestoneToEdit.basePoints || 100;
+      this.maxMarks = this.milestoneToEdit.maxMarks || 100;
       if (this.milestoneToEdit.requiredDeliverables) {
         try {
           const parsed = JSON.parse(this.milestoneToEdit.requiredDeliverables);
-          if (Array.isArray(parsed)) this.deliverables = parsed;
+          if (Array.isArray(parsed)) {
+            this.deliverables = parsed.map(d => ({
+              ...d,
+              acceptsFile: d.acceptsFile !== undefined ? d.acceptsFile : (!!d.allowedFileExtensions || !d.allowedLinkPatterns),
+              acceptsLink: d.acceptsLink !== undefined ? d.acceptsLink : (!!d.allowedLinkPatterns || !d.allowedFileExtensions)
+            }));
+          }
         } catch (e) {
-          this.deliverables = [{ title: this.milestoneToEdit.requiredDeliverables, isMandatory: true }];
+          this.deliverables = [{ title: this.milestoneToEdit.requiredDeliverables, isMandatory: true, acceptsFile: true, acceptsLink: true }];
         }
       }
     }
@@ -388,6 +395,8 @@ export class CreateMilestoneModalComponent implements OnInit {
     this.deliverables.push({
       title: '',
       isMandatory: true,
+      acceptsFile: true,
+      acceptsLink: true,
       allowedFileExtensions: '',
       allowedLinkPatterns: ''
     });
@@ -416,9 +425,11 @@ export class CreateMilestoneModalComponent implements OnInit {
       return;
     }
 
-    if (this.basePoints < limits.milestonePointsMin || this.basePoints > limits.milestonePointsMax) {
-      this.errorMessage = `Base Points must be between ${limits.milestonePointsMin} and ${limits.milestonePointsMax}.`;
-      return;
+    for (const d of this.deliverables) {
+      if (!d.acceptsFile && !d.acceptsLink) {
+        this.errorMessage = `Deliverable "${d.title || 'Untitled'}" must accept at least a file or a link.`;
+        return;
+      }
     }
 
     const req: CreateMilestoneRequest = {
@@ -426,7 +437,8 @@ export class CreateMilestoneModalComponent implements OnInit {
       title: this.title.trim(),
       description: this.description.trim(),
       deadline: this.deadline,
-      basePoints: this.basePoints,
+      basePoints: 100.0,
+      maxMarks: this.maxMarks,
       requiredDeliverables: JSON.stringify(
         this.deliverables.map(item => ({
           ...item,

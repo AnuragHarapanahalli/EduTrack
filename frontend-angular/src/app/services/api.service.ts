@@ -139,6 +139,14 @@ export class ApiService {
   }
 
 
+  exportSubjectMarksCsv(subjectId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/subjects/${subjectId}/marks/export`, {
+      ...this.options,
+      responseType: 'blob'
+    });
+  }
+
+
   getEnrolledStudents(subjectId: number): Observable<User[]> {
     return this.http.get<User[]>(
       `${this.baseUrl}/subjects/${subjectId}/students`,
@@ -201,6 +209,13 @@ export class ApiService {
     );
   }
 
+  lockAllSubmissions(milestoneId: number): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/submissions/milestone/${milestoneId}/lock-all`,
+      {},
+      this.options
+    );
+  }
 
   uploadSubmission(formData: FormData): Observable<Submission> {
     return this.http.post<Submission>(

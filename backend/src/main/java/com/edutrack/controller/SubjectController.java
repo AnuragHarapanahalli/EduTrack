@@ -59,4 +59,13 @@ public class SubjectController {
     public ResponseEntity<List<com.edutrack.dto.AuthDto.UserDto>> getStudentsBySubject(@PathVariable Long id) {
         return ResponseEntity.ok(subjectService.getStudentsBySubject(id));
     }
+
+    @GetMapping("/{id}/marks/export")
+    public ResponseEntity<byte[]> exportSubjectMarksCsv(@PathVariable Long id) {
+        byte[] csvBytes = subjectService.exportSubjectMarksCsv(id);
+        return org.springframework.http.ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"subject-" + id + "-marks.csv\"")
+                .contentType(org.springframework.http.MediaType.parseMediaType("text/csv"))
+                .body(csvBytes);
+    }
 }

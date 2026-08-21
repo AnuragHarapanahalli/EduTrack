@@ -36,6 +36,9 @@ public class Submission {
     private Double timelinessMultiplier; // 1.2, 1.0, or 0.5
     private Double finalPoints; // Computed automatically upon approval
 
+    private Double obtainedMarks; // Marks awarded by instructor
+    private Boolean marksLocked = false; // Whether marks are locked/published and visible to student
+
     @Column(length = 1000)
     private String instructorFeedback;
 
@@ -45,6 +48,7 @@ public class Submission {
         this.submittedAt = LocalDateTime.now();
         this.status = SubmissionStatus.SUBMITTED;
         this.finalPoints = 0.0;
+        this.marksLocked = false;
     }
 
     public Long getId() { return id; }
@@ -85,4 +89,10 @@ public class Submission {
 
     public LocalDateTime getReviewedAt() { return reviewedAt; }
     public void setReviewedAt(LocalDateTime reviewedAt) { this.reviewedAt = reviewedAt; }
+
+    public Double getObtainedMarks() { return obtainedMarks; }
+    public void setObtainedMarks(Double obtainedMarks) { this.obtainedMarks = obtainedMarks; }
+
+    public Boolean getMarksLocked() { return marksLocked; }
+    public void setMarksLocked(Boolean marksLocked) { this.marksLocked = marksLocked; }
 }

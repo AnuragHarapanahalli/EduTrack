@@ -17,6 +17,8 @@ export interface Submission {
   finalPoints?: number;
   instructorFeedback?: string;
   reviewedAt?: string;
+  obtainedMarks?: number;
+  marksLocked?: boolean;
 }
 
 export interface MilestoneRosterEntry {
@@ -34,10 +36,14 @@ export interface MilestoneRosterEntry {
   qualityRating?: number;
   finalPoints?: number;
   instructorFeedback?: string;
+  obtainedMarks?: number;
+  marksLocked?: boolean;
 }
 
 export interface ReviewSubmissionRequest {
   status: SubmissionStatus;
-  qualityRating: number;
+  qualityRating?: number;
   feedback?: string;
+  obtainedMarks?: number;
+  marksLocked?: boolean;
 }

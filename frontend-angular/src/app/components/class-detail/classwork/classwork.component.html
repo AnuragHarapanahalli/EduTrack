@@ -213,8 +213,8 @@
                             <span
                             class="gc-badge"
                             [class.gc-badge-danger]="m.isLocked"
-                            [class.gc-badge-success]="m.userSubmission?.status==='APPROVED'"
-                            [class.gc-badge-warning]="m.userSubmission?.status==='SUBMITTED'"
+                            [class.gc-badge-success]="m.userSubmission?.status==='APPROVED' && m.userSubmission?.marksLocked"
+                            [class.gc-badge-warning]="m.userSubmission?.status==='SUBMITTED' || (m.userSubmission?.status==='APPROVED' && !m.userSubmission?.marksLocked)"
                             [class.gc-badge-orange]="m.userSubmission?.status==='NEEDS_REVISION'">
 
 
@@ -223,7 +223,7 @@
 
 
                                 {{
-                                m.userSubmission?.status === 'SUBMITTED' ? 'Under Review' :
+                                (m.userSubmission?.status === 'APPROVED' && !m.userSubmission?.marksLocked) || m.userSubmission?.status === 'SUBMITTED' ? 'Under Review' :
                                 (m.userSubmission?.status === 'NEEDS_REVISION' ? 'Needs Revision' :
                                 (m.userSubmission?.status || (m.isLocked?'Locked':'Active')))
                                 }}
@@ -233,10 +233,9 @@
 
 
 
-                            <span class="points">
-
-                                {{m.basePoints}} pts
-
+                            <span class="points" style="display: inline-flex; align-items: center; gap: 8px;">
+                                <span style="background: var(--gc-border); padding: 2px 6px; border-radius: 6px; font-size: 0.72rem; color: var(--gc-text-sub); font-weight: 500;">Max Marks: {{m.maxMarks || 100}}</span>
+                                <span>{{m.basePoints}} pts</span>
                             </span>
 
 
@@ -262,7 +261,13 @@
                             Uploaded: {{ m.userSubmission?.submittedAt | date:'medium' }}
                         </div>
 
-                        <div *ngIf="m.userSubmission?.instructorFeedback" class="gc-feedback-badge">
+                        <div *ngIf="m.userSubmission?.status==='APPROVED' && m.userSubmission?.marksLocked" style="margin-top: 8px; padding: 6px 12px; background: rgba(16, 185, 129, 0.08); color: var(--gc-success, #10b981); border-radius: 8px; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Score: {{ m.userSubmission?.obtainedMarks != null ? m.userSubmission?.obtainedMarks : 'N/A' }} / {{ m.maxMarks || 100 }}
+                            <span style="color: var(--gc-text-sub); font-weight: normal; font-size: 0.78rem; margin-left: 4px;">({{ m.userSubmission?.finalPoints }} pts earned)</span>
+                        </div>
+
+                        <div *ngIf="m.userSubmission?.instructorFeedback && m.userSubmission?.marksLocked" class="gc-feedback-badge">
                             <i class="fa-solid fa-comment-dots"></i>
                             <strong>Teacher Comment:</strong> "{{ m.userSubmission?.instructorFeedback }}"
                         </div>
@@ -386,16 +391,25 @@
 ========================================================== -->
 
 
-<div *ngIf="authService.currentUser()?.role==='INSTRUCTOR'">
+<div *ngIf="authService.currentUser()?.role==='INSTRUCTOR' || authService.currentUser()?.role==='ADMIN'">
 
 
-    <div class="gc-classwork-toolbar">
+    <div class="gc-classwork-toolbar" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
         <button
         type="button"
         class="gc-btn-create-milestone"
         (click)="triggerCreateMilestone()">
             <i class="fa-solid fa-plus"></i>
             Create Milestone
+        </button>
+
+        <button
+        type="button"
+        class="gc-btn-outline"
+        (click)="downloadMarksCsv()"
+        style="padding: 10px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; border: 1px solid var(--gc-border); background: var(--gc-card); color: var(--gc-text-main); height: 42px;">
+            <i class="fa-solid fa-file-csv" style="color: #10b981;"></i>
+            Export Marks (CSV)
         </button>
 
         <span class="gc-badge">
@@ -424,9 +438,9 @@
                 </div>
 
                 <div class="gc-assignment-right">
-                    <div class="gc-point-badge">
-                        <i class="fa-solid fa-star"></i>
-                        {{m.basePoints}} pts
+                    <div class="gc-point-badge" style="display: inline-flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.72rem; color: var(--gc-text-sub); border: 1px solid var(--gc-border); padding: 2px 6px; border-radius: 6px;">Max Marks: {{m.maxMarks || 100}}</span>
+                        <span><i class="fa-solid fa-star" style="margin-right: 4px;"></i>{{m.basePoints}} pts</span>
                     </div>
 
                     <button

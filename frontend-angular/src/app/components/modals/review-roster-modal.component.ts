@@ -52,10 +52,20 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                   <option value="NEEDS_REVISION">NEEDS REVISION (0 Points until revised)</option>
                 </select>
               </div>
-              <div class="gc-form-field">
-                <label>Quality Rating (1 to 5 Stars)</label>
-                <select [(ngModel)]="gradeQuality" name="gradeQuality" [disabled]="gradeStatus === 'NEEDS_REVISION'" required>
-                  <option *ngIf="gradeStatus === 'NEEDS_REVISION'" [ngValue]="null">Not Applicable</option>
+
+              <!-- Obtained Marks -->
+              <div class="gc-form-field" *ngIf="gradeStatus === 'APPROVED'">
+                <label>Obtained Marks (out of {{ milestone?.maxMarks || 100 }})</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <input type="number" [(ngModel)]="obtainedMarks" name="obtainedMarks" min="0" [max]="milestone?.maxMarks || 100" step="0.5" required style="width: 100px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--gc-border); background: var(--gc-background); color: var(--gc-text-main);">
+                  <span style="font-size: 0.85rem; color: var(--gc-text-sub);">/ {{ milestone?.maxMarks || 100 }}</span>
+                </div>
+              </div>
+
+              <!-- Fallback Quality Rating -->
+              <div class="gc-form-field" *ngIf="gradeStatus === 'APPROVED' && obtainedMarks == null">
+                <label>Or Quality Rating (1 to 5 Stars)</label>
+                <select [(ngModel)]="gradeQuality" name="gradeQuality" required>
                   <option [ngValue]="5">⭐⭐⭐⭐⭐ 5/5 - Exceptional</option>
                   <option [ngValue]="4">⭐⭐⭐⭐ 4/5 - Good Quality</option>
                   <option [ngValue]="3">⭐⭐⭐ 3/5 - Average</option>
@@ -63,15 +73,29 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                   <option [ngValue]="1">⭐ 1/5 - Poor</option>
                 </select>
               </div>
+
               <div class="gc-form-field">
                 <label>Private feedback for student</label>
                 <textarea [(ngModel)]="gradeFeedback" name="gradeFeedback" rows="2" placeholder="Constructive feedback..."></textarea>
               </div>
+
+              <!-- Lock Marks Checkbox -->
+              <div class="gc-form-field" style="display: flex; align-items: center; gap: 8px; margin: 12px 0;">
+                <input type="checkbox" [(ngModel)]="marksLocked" name="marksLocked" id="marksLocked" style="width: 18px; height: 18px; cursor: pointer;">
+                <label for="marksLocked" style="margin: 0; font-weight: 500; cursor: pointer; font-size: 0.85rem;">Lock Marks (Make grades visible to student and calculate into leaderboard)</label>
+              </div>
+
               <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
                 <button type="button" class="gc-btn gc-btn-flat" (click)="cancelGrading()">Cancel</button>
                 <button type="submit" class="gc-btn gc-btn-primary">Return Grade</button>
               </div>
             </form>
+          </div>
+
+          <div *ngIf="!activeGradingEntry" style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+            <button type="button" class="gc-btn" (click)="lockAndPublishAll()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; background: #10b981; color: white; border: none; font-size: 0.82rem;">
+              <i class="fa-solid fa-lock"></i> Lock & Publish All Grades
+            </button>
           </div>
 
           <div *ngIf="!activeGradingEntry" class="gc-table-responsive">
@@ -82,6 +106,7 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                   <th>Status</th>
                   <th>Submitted At</th>
                   <th>Timeliness</th>
+                  <th>Marks</th>
                   <th>Work Links</th>
                   <th>Action</th>
                 </tr>
@@ -113,6 +138,15 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                   </td>
                   <td>{{ item.submittedAt ? (item.submittedAt | date:'short') : '&mdash;' }}</td>
                   <td><span class="gc-badge gc-badge-info">{{ item.timelinessLabel }}</span></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 4px;" *ngIf="item.status === 'APPROVED'">
+                      <strong>{{ item.obtainedMarks != null ? item.obtainedMarks : 'N/A' }}</strong>
+                      <span style="color: var(--gc-text-sub); font-size: 0.78rem;">/ {{ milestone?.maxMarks || 100 }}</span>
+                      <i *ngIf="item.marksLocked" class="fa-solid fa-lock" style="color: var(--gc-success); margin-left: 4px;" title="Marks Locked & Published"></i>
+                      <i *ngIf="!item.marksLocked" class="fa-solid fa-lock-open" style="color: var(--gc-warning); margin-left: 4px;" title="Draft / Unlocked"></i>
+                    </div>
+                    <span *ngIf="item.status !== 'APPROVED'" style="color: var(--gc-text-light); font-size: 0.8rem;">&mdash;</span>
+                  </td>
                   <td>
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                       <a *ngIf="item.fileUrl" [href]="serverHost + item.fileUrl" target="_blank" class="gc-btn gc-btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem; text-align: center;">
@@ -156,6 +190,8 @@ export class ReviewRosterModalComponent implements OnInit {
   gradeStatus: SubmissionStatus = 'APPROVED';
   gradeQuality: number | null = 5;
   gradeFeedback = '';
+  obtainedMarks: number | null = null;
+  marksLocked = false;
 
   constructor(
     private apiService: ApiService,
@@ -190,6 +226,8 @@ export class ReviewRosterModalComponent implements OnInit {
     this.gradeStatus = item.status === 'NEEDS_REVISION' ? 'NEEDS_REVISION' : 'APPROVED';
     this.gradeQuality = this.gradeStatus === 'NEEDS_REVISION' ? null : (item.qualityRating || 5);
     this.gradeFeedback = item.instructorFeedback || '';
+    this.obtainedMarks = (item.obtainedMarks !== undefined && item.obtainedMarks !== null) ? item.obtainedMarks : (this.milestone.maxMarks || 100);
+    this.marksLocked = item.marksLocked || false;
     this.cdr.detectChanges();
   }
 
@@ -209,10 +247,13 @@ export class ReviewRosterModalComponent implements OnInit {
   submitGrade() {
     if (!this.activeGradingEntry || !this.activeGradingEntry.submissionId) return;
 
+    const finalObtainedMarks = (this.gradeStatus === 'APPROVED' && this.obtainedMarks !== null) ? this.obtainedMarks : undefined;
     this.apiService.reviewSubmission(this.activeGradingEntry.submissionId, {
       status: this.gradeStatus,
       qualityRating: this.gradeQuality as any,
-      feedback: this.gradeFeedback
+      feedback: this.gradeFeedback,
+      obtainedMarks: finalObtainedMarks,
+      marksLocked: this.marksLocked
     }).subscribe({
       next: () => {
         this.activeGradingEntry = null;
@@ -222,6 +263,27 @@ export class ReviewRosterModalComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error submitting grade:', err);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  lockAndPublishAll() {
+    if (!this.milestone) return;
+
+    if (!confirm('Are you sure you want to lock and publish all grades for this milestone? This will make all grades visible to students and calculate them into the leaderboard.')) {
+      return;
+    }
+
+    this.apiService.lockAllSubmissions(this.milestone.id).subscribe({
+      next: () => {
+        this.loadRoster();
+        this.gradeReturned.emit();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error locking submissions:', err);
+        alert('Failed to lock and publish grades. Please try again.');
         this.cdr.detectChanges();
       }
     });
