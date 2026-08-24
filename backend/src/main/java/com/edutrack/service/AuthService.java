@@ -66,10 +66,10 @@ public class AuthService {
         }
 
         User user = userRepository.findByEmail(request.getEmail().trim())
-                .orElseThrow(() -> new RuntimeException("No account found with the provided email address."));
+                .orElseThrow(() -> new IllegalArgumentException("No account found with the provided email address."));
 
         if (!user.isActive()) {
-            throw new RuntimeException("Account has been deactivated. Please contact an administrator.");
+            throw new IllegalArgumentException("Account has been deactivated. Please contact an administrator.");
         }
 
         if (request.getNewPassword() == null || request.getNewPassword().length() < validationConfig.getUserPasswordMin() || request.getNewPassword().length() > validationConfig.getUserPasswordMax()) {
