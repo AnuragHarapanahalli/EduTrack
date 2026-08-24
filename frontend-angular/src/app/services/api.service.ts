@@ -64,6 +64,13 @@ export class ApiService {
     );
   }
 
+  forgotPassword(email: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/auth/forgot-password`,
+      { email, newPassword }
+    );
+  }
+
 
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(

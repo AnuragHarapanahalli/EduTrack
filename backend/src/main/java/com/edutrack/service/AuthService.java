@@ -60,6 +60,27 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    public void forgotPassword(AuthDto.ForgotPasswordRequest request) {
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email address is required.");
+        }
+
+        User user = userRepository.findByEmail(request.getEmail().trim())
+                .orElseThrow(() -> new RuntimeException("No account found with the provided email address."));
+
+        if (!user.isActive()) {
+            throw new RuntimeException("Account has been deactivated. Please contact an administrator.");
+        }
+
+        if (request.getNewPassword() == null || request.getNewPassword().length() < validationConfig.getUserPasswordMin() || request.getNewPassword().length() > validationConfig.getUserPasswordMax()) {
+            throw new IllegalArgumentException("Password must be between " + validationConfig.getUserPasswordMin() + " and " + validationConfig.getUserPasswordMax() + " characters.");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setNeedsPasswordReset(false);
+        userRepository.save(user);
+    }
+
     public AuthDto.UserDto toUserDto(User user) {
         return new AuthDto.UserDto(
                 user.getId(),

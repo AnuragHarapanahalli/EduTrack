@@ -27,6 +27,12 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(@RequestBody AuthDto.ForgotPasswordRequest request) {
+        authService.forgotPassword(request);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/users/{id}")
     public ResponseEntity<AuthDto.UserDto> getUserProfile(@PathVariable Long id) {
         return ResponseEntity.ok(authService.getUserById(id));

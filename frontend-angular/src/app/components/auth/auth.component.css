@@ -508,13 +508,109 @@
   color: #e2e8f0;
 }
 
-:host-context(.dark-theme) .gc-role-btn.active {
-  border-color: #60a5fa;
-  background: rgba(96, 165, 250, 0.15);
-  color: #60a5fa;
-}
-
 .gc-demo-card.active {
   border-color: #2563eb !important;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3) !important;
+}
+
+/* FORGOT PASSWORD STYLES */
+.gc-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.gc-label-row label {
+  margin-bottom: 0;
+}
+
+.gc-forgot-btn {
+  background: none;
+  border: none;
+  color: #3a86ff;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.gc-forgot-btn:hover {
+  color: #00509d;
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.gc-forgot-btn i {
+  font-size: 12px;
+}
+
+.gc-btn-secondary {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  background: transparent;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  transition: all 0.2s ease;
+}
+
+.gc-btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.gc-btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.gc-auth-success {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  font-size: 14px;
+}
+
+:host-context(.dark-theme) .gc-forgot-btn {
+  color: #60a5fa;
+}
+
+:host-context(.dark-theme) .gc-forgot-btn:hover {
+  color: #93c5fd;
+}
+
+:host-context(.dark-theme) .gc-btn-secondary {
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+:host-context(.dark-theme) .gc-btn-secondary:hover {
+  background: #1e293b;
+  border-color: #475569;
+  color: #fff;
+}
+
+:host-context(.dark-theme) .gc-auth-success {
+  background: rgba(5, 150, 105, 0.15) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(5, 150, 105, 0.3) !important;
 }
