@@ -2,70 +2,103 @@
    APP LAYOUT
 =========================== */
 
-.gc-app-wrapper{
-    min-height:100vh;
+.gc-app-wrapper {
+    min-height: 100vh;
     background: var(--gc-background, #F8FAFC);
     color: var(--gc-text-main, #0F172A);
     transition: background .25s ease, color .25s ease;
 }
+
 
 /* ===========================
    MAIN BODY
 =========================== */
 
-.gc-main-body{
-
-    margin-top:72px;
-
-    min-height:calc(100vh - 72px);
-
-    transition: background .25s ease, color .25s ease;
-
+.gc-main-body {
+    margin-top: 68px;
+    min-height: calc(100vh - 68px);
     padding: 2.5rem;
-
     background: var(--gc-background, #F8FAFC);
     color: var(--gc-text-main, #0F172A);
-
+    transition: background .25s ease, color .25s ease;
+    box-sizing: border-box;
 }
 
-/* Login Page */
 
-.gc-main-body.auth-page{
+/* ===========================
+   LOGIN PAGE
+=========================== */
 
-    margin-top:0;
-
-    min-height:100vh;
-
+.gc-main-body.auth-page {
+    margin-top: 0;
+    min-height: 100vh;
     padding: 0;
+}
+
+
+/* ===========================
+   DESKTOP
+=========================== */
+
+@media (min-width: 901px) {
+
+    .gc-main-body {
+        margin-left: 0;
+    }
 
 }
 
-/* Desktop */
 
-@media(min-width:901px){
+/* ===========================
+   TABLET
+=========================== */
 
-.gc-main-body{
+@media (max-width: 900px) {
 
-    margin-left:0;
+    .gc-main-body {
+        margin-top: 68px;
+        padding: 1.5rem;
+        min-height: calc(100vh - 68px);
+    }
 
-}
-
-}
-
-/* Mobile */
-
-@media(max-width:900px){
-
-.gc-main-body{
-
-    margin-top:72px;
+    .gc-main-body.auth-page {
+        margin-top: 0;
+        padding: 0;
+    }
 
 }
 
-.gc-main-body.auth-page{
 
-    margin-top:0;
+/* ===========================
+   MOBILE
+=========================== */
+
+@media (max-width: 600px) {
+
+    .gc-main-body {
+        margin-top: 64px;
+        min-height: calc(100vh - 64px);
+        padding: 1rem;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .gc-main-body.auth-page {
+        margin-top: 0;
+        padding: 0;
+    }
 
 }
+
+
+/* ===========================
+   VERY SMALL PHONES
+=========================== */
+
+@media (max-width: 380px) {
+
+    .gc-main-body {
+        padding: 0.75rem;
+    }
 
 }

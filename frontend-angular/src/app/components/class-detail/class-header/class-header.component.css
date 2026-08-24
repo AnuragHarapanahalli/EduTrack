@@ -1,471 +1,480 @@
 :host {
-    display: block;
-    background: var(--gc-background, #f8fafc);
+  display: block;
+  background: var(--gc-background, #f8fafc);
 }
 
 /* =====================================================
    HEADER WRAPPER
 ===================================================== */
 
-.gc-class-header{
-
-    margin-bottom:2rem;
-
+.gc-class-header {
+  width: 100%;
+  margin-bottom: 2rem;
+  box-sizing: border-box;
 }
-
-
 
 /* =====================================================
    HERO BANNER
 ===================================================== */
 
+.gc-class-banner {
+  position: relative;
 
-.gc-class-banner{
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 
-    position:relative;
+  padding: 2rem 2.5rem;
 
-    padding:2.5rem 2.8rem;
+  border-radius: 28px;
 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-    border-radius:28px;
+  gap: 2rem;
 
+  color: white;
 
-    display:flex;
+  background: linear-gradient(
+    135deg,
+    #1d4ed8,
+    #4338ca
+  );
 
-    justify-content:space-between;
+  box-shadow:
+    0 20px 45px rgba(37, 99, 235, 0.25);
 
-    align-items:center;
-
-
-    color:white;
-
-
-    background:
-
-    linear-gradient(
-        135deg,
-        #1d4ed8,
-        #4338ca
-    );
-
-
-    box-shadow:
-
-    0 20px 45px rgba(37,99,235,.25);
-
-
-    overflow:hidden;
-
+  overflow: hidden;
 }
-
-
 
 /* Decorative glow */
 
-.gc-class-banner::after{
+.gc-class-banner::after {
+  content: "";
 
-    content:"";
+  position: absolute;
 
-    position:absolute;
+  width: 250px;
+  height: 250px;
 
-    width:250px;
+  right: -80px;
+  top: -90px;
 
-    height:250px;
+  border-radius: 50%;
 
-    right:-80px;
+  background: rgba(255, 255, 255, 0.12);
 
-    top:-90px;
-
-
-    border-radius:50%;
-
-
-    background:
-
-    rgba(255,255,255,.12);
-
+  pointer-events: none;
 }
-
-
 
 /* =====================================================
    CLASS INFO
 ===================================================== */
 
+.gc-class-info {
+  display: flex;
+  align-items: center;
 
-.gc-class-info{
+  gap: 1.25rem;
 
-    display:flex;
+  position: relative;
+  z-index: 1;
 
-    align-items:center;
-
-    gap:1.5rem;
-
-    position:relative;
-
-    z-index:1;
-
+  /*
+   IMPORTANT:
+   Allows the text section to shrink instead of
+   pushing outside the banner.
+  */
+  min-width: 0;
+  flex: 1;
 }
 
+/* =====================================================
+   AVATAR
+===================================================== */
 
+.gc-class-avatar {
+  width: 78px;
+  height: 78px;
 
-.gc-class-avatar{
+  min-width: 78px;
+  flex-shrink: 0;
 
-    width:88px;
+  border-radius: 22px;
 
-    height:88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
+  font-size: 1.8rem;
+  font-weight: 800;
 
-    border-radius:24px;
+  background: rgba(255, 255, 255, 0.18);
 
+  border: 1px solid rgba(255, 255, 255, 0.25);
 
-    display:flex;
+  backdrop-filter: blur(10px);
 
-    align-items:center;
-
-    justify-content:center;
-
-
-    font-size:2rem;
-
-    font-weight:800;
-
-
-    background:
-
-    rgba(255,255,255,.18);
-
-
-    border:
-
-    1px solid rgba(255,255,255,.25);
-
-
-    backdrop-filter:blur(10px);
-
-
-    box-shadow:
-
-    inset 0 0 20px rgba(255,255,255,.15);
-
+  box-shadow:
+    inset 0 0 20px rgba(255, 255, 255, 0.15);
 }
 
+/* =====================================================
+   TEXT CONTAINER
+===================================================== */
 
+.gc-class-text {
+  min-width: 0;
+  flex: 1;
 
-.gc-class-info h1{
+  max-width: 100%;
 
-    margin:0;
-
-
-    font-size:2.1rem;
-
-
-    font-weight:800;
-
-
-    letter-spacing:-.04em;
-
+  overflow: hidden;
 }
 
+/* =====================================================
+   CLASS TITLE
+===================================================== */
 
+.gc-class-title {
+  margin: 0;
 
-.gc-class-info p{
+  /*
+   Critical fix:
+   text is allowed to wrap inside the banner.
+  */
+  width: 100%;
+  max-width: 100%;
 
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
-    margin:.5rem 0;
+  line-height: 1.15;
 
+  font-size: clamp(1.35rem, 3vw, 2.1rem);
 
-    font-size:.95rem;
+  font-weight: 800;
 
+  letter-spacing: -0.035em;
 
-    opacity:.9;
-
+  color: #ffffff;
 }
 
+/* =====================================================
+   CLASS CODE
+===================================================== */
 
+.gc-class-code {
+  margin: 0.45rem 0 0;
 
-.gc-class-info p span{
+  width: 100%;
+  max-width: 100%;
 
-    margin:0 .4rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
+  font-size: 0.95rem;
+
+  line-height: 1.4;
+
+  font-weight: 600;
+
+  color: rgba(255, 255, 255, 0.9);
 }
 
+/* =====================================================
+   INSTRUCTOR
+===================================================== */
 
+.gc-class-instructor {
+  display: block;
 
-.gc-class-info small{
+  margin-top: 0.55rem;
 
-    opacity:.85;
+  max-width: 100%;
 
-    font-size:.9rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
+  font-size: 0.9rem;
+
+  line-height: 1.4;
+
+  color: rgba(255, 255, 255, 0.85);
 }
 
-
+.gc-class-instructor i {
+  margin-right: 0.35rem;
+}
 
 /* =====================================================
    ROLE BADGE
 ===================================================== */
 
+.gc-role-badge {
+  position: relative;
+  z-index: 1;
 
-.gc-role-badge{
+  flex-shrink: 0;
 
+  padding: 0.55rem 1.1rem;
 
-    position:relative;
+  border-radius: 999px;
 
-    z-index:1;
+  background: rgba(255, 255, 255, 0.18);
 
+  border: 1px solid rgba(255, 255, 255, 0.25);
 
-    padding:.55rem 1.2rem;
+  font-size: 0.8rem;
 
+  font-weight: 700;
 
-    border-radius:999px;
+  letter-spacing: 0.04em;
 
-
-    background:
-
-    rgba(255,255,255,.18);
-
-
-    border:
-
-    1px solid rgba(255,255,255,.25);
-
-
-    font-size:.85rem;
-
-
-    font-weight:700;
-
-
-    letter-spacing:.05em;
-
-
+  white-space: nowrap;
 }
-
-
 
 /* =====================================================
    TABS
 ===================================================== */
 
+.gc-class-tabs {
+  margin-top: -18px;
 
-.gc-class-tabs{
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
 
+  padding: 0.7rem;
 
-    margin-top:-18px;
+  display: flex;
 
+  gap: 0.5rem;
 
-    margin-left:1.5rem;
+  background: var(--gc-card);
 
-    margin-right:1.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
 
+  border-radius: 20px;
 
-    padding:.7rem;
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.08);
 
+  position: relative;
 
-    display:flex;
+  z-index: 2;
 
-
-    gap:.5rem;
-
-
-    background:
-
-    var(--gc-card);
-
-
-    border:
-
-    1px solid rgba(148,163,184,.2);
-
-
-    border-radius:20px;
-
-
-    box-shadow:
-
-    0 12px 30px rgba(15,23,42,.08);
-
-
-    position:relative;
-
-    z-index:2;
-
+  overflow-x: auto;
 }
 
+.gc-class-tabs button {
+  position: relative;
 
+  border: none;
 
-.gc-class-tabs button{
+  background: transparent;
 
+  padding: 0.8rem 1.4rem;
 
-    position:relative;
+  border-radius: 14px;
 
+  cursor: pointer;
 
-    border:none;
+  display: flex;
 
+  align-items: center;
 
-    background:transparent;
+  gap: 0.55rem;
 
+  color: var(--gc-text-sub);
 
-    padding:.8rem 1.4rem;
+  font-weight: 650;
 
+  font-size: 0.9rem;
 
-    border-radius:14px;
+  transition: 0.25s ease;
 
+  white-space: nowrap;
 
-    cursor:pointer;
-
-
-    display:flex;
-
-
-    align-items:center;
-
-
-    gap:.55rem;
-
-
-    color:
-
-    var(--gc-text-sub);
-
-
-    font-weight:650;
-
-
-    font-size:.9rem;
-
-
-    transition:.25s ease;
-
-
+  flex-shrink: 0;
 }
 
+.gc-class-tabs button:hover {
+  background: rgba(59, 130, 246, 0.08);
 
-
-.gc-class-tabs button:hover{
-
-
-    background:
-
-    rgba(59,130,246,.08);
-
-
-    color:
-
-    var(--gc-primary);
-
+  color: var(--gc-primary);
 }
 
+.gc-class-tabs button.active {
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #4f46e5
+  );
 
+  color: white;
 
-.gc-class-tabs button.active{
-
-
-    background:
-
-    linear-gradient(
-        135deg,
-        #2563eb,
-        #4f46e5
-    );
-
-
-    color:white;
-
-
-    box-shadow:
-
-    0 8px 20px rgba(37,99,235,.25);
-
-
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.25);
 }
-
-
 
 /* =====================================================
    RESPONSIVE
 ===================================================== */
 
+@media (max-width: 900px) {
 
-@media(max-width:800px){
+  .gc-class-banner {
+    padding: 1.75rem 1.5rem;
 
+    gap: 1.25rem;
+  }
 
-.gc-class-banner{
+  .gc-class-info {
+    gap: 1rem;
+  }
 
+  .gc-class-avatar {
+    width: 65px;
+    height: 65px;
 
-    padding:1.8rem;
+    min-width: 65px;
 
+    font-size: 1.5rem;
+  }
 
-    flex-direction:column;
-
-
-    align-items:flex-start;
-
-
-    gap:1.5rem;
-
-
-}
-
-
-
-.gc-class-info{
-
-
-    gap:1rem;
+  .gc-class-title {
+    font-size: 1.5rem;
+  }
 
 }
 
+/* =====================================================
+   SMALL SCREEN
+===================================================== */
 
+@media (max-width: 650px) {
 
-.gc-class-avatar{
+  .gc-class-banner {
+    flex-direction: column;
 
+    align-items: flex-start;
 
-    width:65px;
+    padding: 1.5rem;
+  }
 
-    height:65px;
+  .gc-class-info {
+    width: 100%;
+  }
 
-    font-size:1.5rem;
+  .gc-class-text {
+    width: 100%;
+  }
 
-}
+  .gc-role-badge {
+    align-self: flex-start;
+  }
 
+  .gc-class-tabs {
+    margin-left: 0;
+    margin-right: 0;
+  }
 
-
-.gc-class-info h1{
-
-
-    font-size:1.5rem;
-
-}
-
-
-
-.gc-class-tabs{
-
-
-    margin-left:0;
-
-    margin-right:0;
-
-
-    overflow-x:auto;
-
-
-}
-
-
-
-.gc-class-tabs button{
-
-
-    white-space:nowrap;
-
-
-    padding:.7rem 1rem;
-
+  .gc-class-tabs button {
+    padding: 0.7rem 1rem;
+  }
 
 }
 
+/* =====================================================
+   VERY SMALL SCREEN
+===================================================== */
 
+@media (max-width: 430px) {
+
+  .gc-class-info {
+    align-items: flex-start;
+  }
+
+  .gc-class-avatar {
+    width: 55px;
+    height: 55px;
+
+    min-width: 55px;
+
+    border-radius: 16px;
+
+    font-size: 1.2rem;
+  }
+
+  .gc-class-title {
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .gc-class-code {
+    font-size: 0.85rem;
+  }
+
+  .gc-class-instructor {
+    font-size: 0.8rem;
+  }
+
+}
+
+/* =====================================================
+   DARK THEME
+===================================================== */
+
+:host-context(.dark-theme) {
+  background: #0f172a !important;
+}
+
+:host-context(.dark-theme) .gc-class-header {
+  background: #0f172a;
+}
+
+:host-context(.dark-theme) .gc-class-banner {
+  background: linear-gradient(
+    135deg,
+    #1e1b4b,
+    #0f172a
+  );
+
+  border: 1px solid #3730a3;
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.4);
+}
+
+:host-context(.dark-theme) .gc-class-tabs {
+  background: #1e293b;
+
+  border-color: #334155;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+:host-context(.dark-theme) .gc-class-tabs button {
+  color: #94a3b8;
+}
+
+:host-context(.dark-theme) .gc-class-tabs button:hover {
+  background: rgba(99, 102, 241, 0.15);
+
+  color: #a5b4fc;
+}
+
+:host-context(.dark-theme) .gc-class-tabs button.active {
+  background: linear-gradient(
+    135deg,
+    #4f46e5,
+    #6366f1
+  );
+
+  color: #ffffff;
 }

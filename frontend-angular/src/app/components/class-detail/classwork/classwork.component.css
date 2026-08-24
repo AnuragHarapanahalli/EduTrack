@@ -1,163 +1,93 @@
 /* ==========================================================
    CLASSWORK PROFESSIONAL THEME
-   (Only Class Detail UI)
 ========================================================== */
 
-
-/* ===============================
-   LOCAL COLOR SYSTEM
-================================ */
-
 :host {
-
-    display:block;
-
+    display: block;
     background: var(--gc-background, #f8fafc);
-
 }
-
 
 .gc-classwork-container {
-
-    --class-primary:#6366f1;
-    --class-primary-dark:#4f46e5;
-
+    --class-primary: #6366f1;
+    --class-primary-dark: #4f46e5;
     --class-bg: var(--gc-background, #f8fafc);
+    --class-card: #ffffff;
+    --class-text: #0f172a;
+    --class-subtext: #64748b;
+    --class-border: #e2e8f0;
 
-    --class-card:#ffffff;
-
-    --class-text:#0f172a;
-
-    --class-subtext:#64748b;
-
-    --class-border:#e2e8f0;
-
-    max-width:1200px;
-
-    margin:auto;
-
-    padding:2rem;
-
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem;
 }
-
 
 
 /* ==========================================================
-   BADGES OVERRIDE
+   BADGES
 ========================================================== */
 
-
 .gc-classwork-container .gc-badge-info {
-
-    background:#e0e7ff !important;
-
-    color:#4338ca !important;
-
+    background: #e0e7ff !important;
+    color: #4338ca !important;
 }
-
-
 
 .gc-classwork-container .gc-badge-success {
-
-    background:#dcfce7 !important;
-
-    color:#15803d !important;
-
+    background: #dcfce7 !important;
+    color: #15803d !important;
 }
-
-
 
 .gc-classwork-container .gc-badge-danger {
-
-    background:#fee2e2 !important;
-
-    color:#b91c1c !important;
-
+    background: #fee2e2 !important;
+    color: #b91c1c !important;
 }
 
-
-
 .gc-classwork-container .gc-badge-warning {
-
-    background:#fef3c7 !important;
-
-    color:#92400e !important;
-
+    background: #fef3c7 !important;
+    color: #92400e !important;
 }
 
 .gc-classwork-container .gc-badge-orange {
-    background:#ffedd5 !important;
-    color:#c2410c !important;
+    background: #ffedd5 !important;
+    color: #c2410c !important;
 }
-
 
 
 /* ==========================================================
    EMPTY STATE
 ========================================================== */
 
-
 .gc-empty-classwork {
-
-    padding:5rem 2rem;
-
-    text-align:center;
-
-    color:#64748b;
-
+    padding: 5rem 2rem;
+    text-align: center;
+    color: #64748b;
 }
-
 
 .gc-empty-icon {
-
-    font-size:4rem;
-
-    color:#6366f1;
-
-    margin-bottom:1rem;
-
+    font-size: 4rem;
+    color: #6366f1;
+    margin-bottom: 1rem;
 }
-
 
 
 /* ==========================================================
    STUDENT HERO
 ========================================================== */
 
-
 .netflix-hero-card {
+    padding: 2.5rem;
+    border-radius: 30px;
+    margin-bottom: 3rem;
 
-
-    padding:2.5rem;
-
-
-    border-radius:30px;
-
-
-    margin-bottom:3rem;
-
-
-    background:
-
-    linear-gradient(
-
+    background: linear-gradient(
         135deg,
-
         #eef2ff,
-
         #dbeafe
-
     );
 
-
-    border:1px solid #c7d2fe;
-
+    border: 1px solid #c7d2fe;
 
     box-shadow:
-
-    0 20px 50px rgba(99,102,241,.15);
-
-
+        0 20px 50px rgba(99, 102, 241, 0.15);
 }
 
 .hero-top {
@@ -178,93 +108,43 @@
 }
 
 .netflix-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
 
-    display:inline-flex;
+    background: #ffffff;
+    color: #4338ca;
 
-
-    align-items:center;
-
-
-    gap:.5rem;
-
-
-    padding:.45rem 1rem;
-
-
-    border-radius:999px;
-
-
-    background:#ffffff;
-
-
-    color:#4338ca;
-
-
-    font-weight:700;
-
-
-    font-size:.85rem;
-
-
+    font-weight: 700;
+    font-size: 0.85rem;
 }
-
-
 
 .netflix-countdown-badge {
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
 
+    background: white;
+    color: #475569;
 
-    padding:.6rem 1.1rem;
+    font-weight: 700;
 
-
-    border-radius:999px;
-
-
-    background:white;
-
-
-    color:#475569;
-
-
-    font-weight:700;
-
-
-    border:1px solid #e2e8f0;
-
-
+    border: 1px solid #e2e8f0;
 }
-
-
 
 .netflix-hero-title {
-
-
-    margin:1.5rem 0 .8rem;
-
-
-    font-size:2.3rem;
-
-
-    font-weight:800;
-
-
-    color:#0f172a;
-
-
+    margin: 1.5rem 0 0.8rem;
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: #0f172a;
 }
 
-
-
 .netflix-hero-desc {
-
-
-    color:#475569;
-
-
-    line-height:1.8;
-
+    color: #475569;
+    line-height: 1.8;
     margin-bottom: 1.75rem;
-
 }
 
 .hero-bottom {
@@ -272,72 +152,50 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
+
     gap: 1.25rem;
+
     border-top: 1px solid rgba(99, 102, 241, 0.15);
+
     padding-top: 1.5rem;
     margin-top: 1.5rem;
 }
 
+.hero-feedback {
+    margin-top: 15px;
+    width: 100%;
+}
 
 
 /* ==========================================================
    SUBJECT ROW
 ========================================================== */
 
-
 .netflix-row-container {
-
-
-    margin-bottom:4rem;
-
-
+    margin-bottom: 4rem;
 }
-
-
 
 .netflix-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-
-    display:flex;
-
-
-    justify-content:space-between;
-
-
-    align-items:center;
-
-
-    margin-bottom:1.5rem;
-
-
+    margin-bottom: 1.5rem;
 }
 
-
-
 .netflix-row-title {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
 
+    color: #0f172a;
 
-    display:flex;
+    font-size: 1.5rem;
+    font-weight: 800;
 
-
-    align-items:center;
-
-
-    gap:.7rem;
-
-
-    color:#0f172a;
-
-
-    font-size:1.5rem;
-
-
-    font-weight:800;
-
-    cursor:pointer;
+    cursor: pointer;
 
     transition: all 0.2s ease;
-
 }
 
 .netflix-row-title:hover {
@@ -345,203 +203,89 @@
     transform: translateX(4px);
 }
 
-
-
 .netflix-row-code {
+    padding: 0.4rem 0.9rem;
 
+    border-radius: 999px;
 
-    padding:.4rem .9rem;
+    background: #f1f5f9;
+    color: #64748b;
 
-
-    border-radius:999px;
-
-
-    background:#f1f5f9;
-
-
-    color:#64748b;
-
-
-    font-weight:600;
-
-
+    font-weight: 600;
 }
-
 
 
 /* ==========================================================
    MILESTONE HORIZONTAL ROW
 ========================================================== */
 
-
 .netflix-cards-scroll-row {
+    display: flex;
+    align-items: stretch;
+    gap: 1.2rem;
 
+    overflow-x: auto;
 
-    display:flex;
-
-
-    align-items:stretch;
-
-
-    gap:1.2rem;
-
-
-    overflow-x:auto;
-
-
-    padding:1rem .5rem 1.5rem;
-
-
+    padding: 1rem 0.5rem 1.5rem;
 }
-
-
 
 .netflix-cards-scroll-row::-webkit-scrollbar {
-
-
-    height:8px;
-
-
+    height: 8px;
 }
-
 
 .netflix-cards-scroll-row::-webkit-scrollbar-thumb {
-
-
-    background:#cbd5e1;
-
-
-    border-radius:20px;
-
-
+    background: #cbd5e1;
+    border-radius: 20px;
 }
-
 
 
 /* ==========================================================
    MILESTONE CARD
 ========================================================== */
 
-
 .netflix-milestone-card {
+    width: 340px;
+    min-width: 340px;
 
+    min-height: 390px;
 
-    width:340px;
+    padding: 1.7rem;
 
+    background: white;
 
-    min-width:340px;
+    border-radius: 26px;
 
+    border: 1px solid #e2e8f0;
 
-    min-height:380px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
-    height:auto;
+    cursor: pointer;
 
-
-    padding:1.7rem;
-
-
-    background:white;
-
-
-    border-radius:26px;
-
-
-    border:1px solid #e2e8f0;
-
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:space-between;
-
-    cursor:pointer;
-
-    transition:.25s ease;
-
-    box-shadow: 0 10px 30px rgba(15,23,42,.08);
-
-}
-
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
-}
-
-.netflix-milestone-card h3 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-top: 0;
-  margin-bottom: 0.65rem;
-  color: var(--class-text);
-  line-height: 1.35;
-}
-
-.netflix-milestone-card p {
-  font-size: 0.85rem;
-  color: var(--class-subtext);
-  line-height: 1.5;
-  margin-bottom: 1.25rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.netflix-milestone-card .deadline {
-  margin-bottom: 0.75rem;
-  font-size: 0.8rem;
-  color: var(--class-subtext);
-}
-
-.netflix-milestone-card .deliverable-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-bottom: 1.25rem;
-}
-
-
-
-
-.netflix-milestone-card:hover {
-
-
-    transform:translateY(-8px);
-
+    transition: 0.25s ease;
 
     box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.08);
 
-
-    0 25px 50px rgba(15,23,42,.12);
-
-
+    box-sizing: border-box;
 }
 
+.netflix-milestone-card:hover {
+    transform: translateY(-8px);
 
+    box-shadow:
+        0 25px 50px rgba(15, 23, 42, 0.12);
+}
 
 .netflix-milestone-card.active {
-
-
-    border:2px solid #6366f1;
-
-
-    background:#fafaff;
-
-
+    border: 2px solid #6366f1;
+    background: #fafaff;
 }
-
-
 
 .netflix-milestone-card.completed {
     border: 2px solid #22c55e;
     background: rgba(34, 197, 94, 0.04);
-}
-
-.netflix-hero-card.completed {
-    border: 2px solid #22c55e;
 }
 
 .netflix-milestone-card.under-review {
@@ -554,523 +298,815 @@
     background: #fff7ed;
 }
 
-
-
 .netflix-milestone-card.locked {
-
-
-    opacity:.55;
-
-
-    cursor:not-allowed;
-
-
+    opacity: 0.55;
+    cursor: not-allowed;
 }
-
 
 
 /* ==========================================================
-   PATH ARROW
+   CARD TOP
 ========================================================== */
 
+.card-top {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 
-.netflix-pathway-arrow {
-
-
-    min-width:50px;
-
-
-    text-align:center;
-
-
-    color:#94a3b8;
-
-
-    font-size:1.7rem;
-
-
-    align-self:center;
-
-
+    margin-bottom: 1.15rem;
 }
-
 
 
 /* ==========================================================
-   BUTTONS (PREMIUM STYLING)
+   MILESTONE TITLE
 ========================================================== */
 
-/* TURN IN WORK / RESUBMIT WORK BUTTON */
-.gc-btn-turn-in {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px 22px;
-  border-radius: 14px;
-  border: none;
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
-  color: #ffffff !important;
-  font-size: 0.92rem;
-  font-weight: 650;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+.milestone-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+
+    margin-top: 0;
+    margin-bottom: 0.65rem;
+
+    color: var(--class-text);
+
+    line-height: 1.4;
 }
 
-.gc-btn-turn-in:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #1d4ed8, #4338ca);
-  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.45);
-}
+.milestone-description {
+    font-size: 0.85rem;
 
-.gc-btn-turn-in:active {
-  transform: translateY(0);
-}
+    color: var(--class-subtext);
 
-.gc-btn-turn-in.gc-btn-block {
-  width: 100%;
-}
+    line-height: 1.55;
 
-/* EDIT BUTTON */
-.gc-btn-action-edit {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(37, 99, 235, 0.25);
-  background: rgba(37, 99, 235, 0.08);
-  color: #2563eb !important;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
+    margin-bottom: 0;
 }
-
-.gc-btn-action-edit:hover {
-  background: #2563eb;
-  color: #ffffff !important;
-  border-color: #2563eb;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
-}
-
-.dark-theme .gc-btn-action-edit {
-  background: rgba(96, 165, 250, 0.12);
-  color: #60a5fa !important;
-  border-color: rgba(96, 165, 250, 0.3);
-}
-
-.dark-theme .gc-btn-action-edit:hover {
-  background: #3b82f6;
-  color: #ffffff !important;
-}
-
-/* DELETE BUTTON */
-.gc-btn-action-delete {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(239, 68, 68, 0.25);
-  background: rgba(239, 68, 68, 0.08);
-  color: #ef4444 !important;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.gc-btn-action-delete:hover {
-  background: #dc2626;
-  color: #ffffff !important;
-  border-color: #dc2626;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
-}
-
-.dark-theme .gc-btn-action-delete {
-  background: rgba(248, 113, 113, 0.12);
-  color: #f87171 !important;
-  border-color: rgba(248, 113, 113, 0.3);
-}
-
-.dark-theme .gc-btn-action-delete:hover {
-  background: #ef4444;
-  color: #ffffff !important;
-}
-
-/* VIEW ROSTER BUTTON */
-.gc-btn-view-roster {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  width: 100%;
-  padding: 13px 20px;
-  border-radius: 14px;
-  border: none;
-  background: linear-gradient(135deg, #0f766e, #14b8a6);
-  color: #ffffff !important;
-  font-size: 0.9rem;
-  font-weight: 650;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.3);
-  transition: all 0.25s ease;
-}
-
-.gc-btn-view-roster:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #0d9488, #2dd4bf);
-  box-shadow: 0 12px 24px rgba(15, 118, 110, 0.45);
-}
-
-/* CREATE MILESTONE BUTTON */
-.gc-btn-create-milestone {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 13px 24px;
-  border-radius: 16px;
-  border: none;
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
-  color: #ffffff !important;
-  font-size: 0.92rem;
-  font-weight: 650;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
-  transition: all 0.25s ease;
-}
-
-.gc-btn-create-milestone:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.45);
-}
-
-.gc-btn-primary {
-    background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
-    border: none;
-    color: white;
-}
-
-.gc-btn-primary:hover {
-    background: linear-gradient(135deg, #1d4ed8, #4338ca) !important;
-}
-
 
 
 /* ==========================================================
-   TEACHER TOOLBAR
+   MARKS ROW
 ========================================================== */
 
+.gc-marks-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
-.gc-classwork-toolbar {
-
-
-    display:flex;
-
-
-    justify-content:space-between;
-
-
-    align-items:center;
-
-
-    margin-bottom:2rem;
-
-
+    margin: 1rem 0;
 }
 
+.gc-max-marks {
+    padding: 5px 10px;
+
+    border-radius: 8px;
+
+    background: var(--gc-border, #e2e8f0);
+
+    color: var(--gc-text-sub, #64748b);
+
+    font-size: 0.75rem;
+
+    font-weight: 600;
+}
+
+.gc-points {
+    font-size: 0.85rem;
+
+    font-weight: 700;
+
+    color: var(--class-primary);
+}
 
 
 /* ==========================================================
-   TEACHER CARDS
+   SCORE
 ========================================================== */
 
+.gc-score-badge {
+    margin-top: 10px;
 
-.gc-assignments-list {
+    padding: 8px 12px;
 
+    background: rgba(16, 185, 129, 0.08);
 
-    display:flex;
+    color: #059669;
 
+    border-radius: 8px;
 
-    flex-direction:column;
+    font-size: 0.82rem;
 
+    font-weight: 600;
 
-    gap:1.3rem;
+    display: inline-flex;
 
+    align-items: center;
 
+    gap: 6px;
+
+    flex-wrap: wrap;
+}
+
+.gc-score-badge .earned-points {
+    color: var(--gc-text-sub, #64748b);
+
+    font-weight: 400;
+
+    font-size: 0.78rem;
 }
 
 
+/* ==========================================================
+   FEEDBACK
+========================================================== */
 
-.gc-assignment-card {
+.gc-feedback-badge {
+    margin-top: 10px;
 
+    padding: 9px 12px;
 
-    background:white;
+    background: rgba(37, 99, 235, 0.08);
 
+    border-left: 3px solid #2563eb;
 
-    border-radius:24px;
+    border-radius: 6px;
 
+    font-size: 0.82rem;
 
-    border:1px solid #e2e8f0;
+    color: var(--gc-text-main);
 
+    line-height: 1.4;
 
-    overflow:hidden;
+    word-break: break-word;
 
+    display: block;
+}
 
-    box-shadow:
+.netflix-milestone-card.needs-revision .gc-feedback-badge {
+    background: rgba(249, 115, 22, 0.08);
+    border-left-color: #f97316;
+}
 
-
-    0 10px 30px rgba(15,23,42,.06);
-
-
+.netflix-milestone-card.completed .gc-feedback-badge {
+    background: rgba(34, 197, 94, 0.08);
+    border-left-color: #22c55e;
 }
 
 
+/* ==========================================================
+   SUBMISSION DATE
+========================================================== */
 
-.gc-assignment-header-row {
+.submission-date {
+    font-size: 0.8rem;
 
+    margin-top: 10px;
 
-    padding:1.6rem 1.8rem;
+    color: #b45309;
 
+    display: flex;
 
-    display:flex;
+    align-items: center;
 
+    gap: 6px;
 
-    justify-content:space-between;
-
-
-    align-items:center;
-
-
-}
-
-.gc-assignment-left {
-    display:flex;
-    align-items:center;
-    gap:1.25rem;
-}
-
-.gc-assignment-right {
-    display:flex;
-    align-items:center;
-    gap:1rem;
+    font-weight: 500;
 }
 
 
+/* ==========================================================
+   HERO SUBMISSION STATUS
+========================================================== */
 
-.gc-assignment-icon-pod {
+.submission-status-wrapper {
+    margin-top: 0.75rem;
 
+    display: flex;
 
-    width:50px;
+    flex-direction: column;
 
+    align-items: flex-end;
 
-    height:50px;
-
-
-    border-radius:16px;
-
-
-    background:#eef2ff;
-
-
-    color:#6366f1;
-
-
-    display:flex;
-
-
-    align-items:center;
-
-
-    justify-content:center;
-
-
+    gap: 4px;
 }
 
 
+/* ==========================================================
+   DEADLINE
+========================================================== */
 
-.gc-assignment-title {
+.netflix-milestone-card .deadline {
+    margin-bottom: 0.75rem;
 
+    font-size: 0.8rem;
 
-    color:#0f172a;
-
-
-    font-weight:800;
-
-
+    color: var(--class-subtext);
 }
-
-
-
-.gc-assignment-due {
-
-
-    color:#64748b;
-
-
-}
-
-
-
-.gc-assignment-body {
-
-
-    display:grid;
-
-
-    grid-template-columns:1fr 300px;
-
-
-    gap:2rem;
-
-
-    padding:2rem;
-
-
-    background: var(--gc-card-sub, #f8fafc);
-
-
-    border-top:1px solid #e2e8f0;
-
-
-}
-
 
 
 /* ==========================================================
    DELIVERABLES
 ========================================================== */
 
+.netflix-milestone-card .deliverable-list {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 0.4rem;
+
+    margin-bottom: 1.25rem;
+}
+
+.deliverable-more {
+    font-weight: bold;
+}
+
+
+/* ==========================================================
+   TURN IN BUTTON
+========================================================== */
+
+.gc-btn-turn-in {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 12px 22px;
+
+    border-radius: 14px;
+
+    border: none;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+    color: #ffffff !important;
+
+    font-size: 0.92rem;
+
+    font-weight: 650;
+
+    letter-spacing: -0.01em;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.3);
+
+    transition: all 0.25s ease;
+}
+
+.gc-btn-turn-in:hover {
+    transform: translateY(-2px);
+
+    background: linear-gradient(
+        135deg,
+        #1d4ed8,
+        #4338ca
+    );
+
+    box-shadow:
+        0 12px 26px rgba(37, 99, 235, 0.45);
+}
+
+.gc-btn-turn-in:active {
+    transform: translateY(0);
+}
+
+.gc-btn-turn-in.gc-btn-block {
+    width: 100%;
+}
+
+
+/* ==========================================================
+   LOCKED TEXT
+========================================================== */
+
+.locked-text {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    color: #94a3b8;
+
+    font-size: 0.8rem;
+
+    font-weight: 600;
+
+    padding: 10px 0;
+}
+
+
+/* ==========================================================
+   PATH ARROW
+========================================================== */
+
+.netflix-pathway-arrow {
+    min-width: 50px;
+
+    text-align: center;
+
+    color: #94a3b8;
+
+    font-size: 1.7rem;
+
+    align-self: center;
+}
+
+
+/* ==========================================================
+   CREATE / PRIMARY BUTTON
+========================================================== */
+
+.gc-btn-create-milestone {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 13px 24px;
+
+    border-radius: 16px;
+
+    border: none;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+    color: #ffffff !important;
+
+    font-size: 0.92rem;
+
+    font-weight: 650;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 24px rgba(37, 99, 235, 0.3);
+
+    transition: all 0.25s ease;
+}
+
+.gc-btn-create-milestone:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 14px 28px rgba(37, 99, 235, 0.45);
+}
+
+.gc-btn-primary {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    ) !important;
+
+    border: none;
+
+    color: white;
+}
+
+.gc-btn-primary:hover {
+    background: linear-gradient(
+        135deg,
+        #1d4ed8,
+        #4338ca
+    ) !important;
+}
+
+
+/* ==========================================================
+   TEACHER TOOLBAR
+========================================================== */
+
+.gc-classwork-toolbar {
+    display: flex;
+
+    justify-content: flex-start;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 2rem;
+}
+
+.gc-btn-outline {
+    padding: 10px 20px;
+
+    border-radius: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: 0.85rem;
+
+    border: 1px solid var(--gc-border);
+
+    background: var(--gc-card);
+
+    color: var(--gc-text-main);
+
+    height: 42px;
+}
+
+.gc-btn-outline i {
+    color: #10b981;
+}
+
+
+/* ==========================================================
+   TEACHER ASSIGNMENTS
+========================================================== */
+
+.gc-assignments-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1.3rem;
+}
+
+.gc-assignment-card {
+    background: white;
+
+    border-radius: 24px;
+
+    border: 1px solid #e2e8f0;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.gc-assignment-header-row {
+    padding: 1.6rem 1.8rem;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.gc-assignment-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 1.25rem;
+}
+
+.gc-assignment-right {
+    display: flex;
+
+    align-items: center;
+
+    gap: 1rem;
+}
+
+.gc-assignment-icon-pod {
+    width: 50px;
+
+    height: 50px;
+
+    border-radius: 16px;
+
+    background: #eef2ff;
+
+    color: #6366f1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.gc-assignment-title {
+    color: #0f172a;
+
+    font-weight: 800;
+}
+
+.gc-assignment-due {
+    color: #64748b;
+}
+
+.gc-assignment-body {
+    display: grid;
+
+    grid-template-columns: 1fr 300px;
+
+    gap: 2rem;
+
+    padding: 2rem;
+
+    background: var(--gc-card-sub, #f8fafc);
+
+    border-top: 1px solid #e2e8f0;
+}
+
+.gc-point-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.gc-teacher-max-marks {
+    font-size: 0.72rem;
+
+    color: var(--gc-text-sub);
+
+    border: 1px solid var(--gc-border);
+
+    padding: 2px 6px;
+
+    border-radius: 6px;
+}
+
+
+/* ==========================================================
+   EDIT BUTTON
+========================================================== */
+
+.gc-btn-action-edit {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 9px 16px;
+
+    border-radius: 12px;
+
+    border: 1px solid rgba(37, 99, 235, 0.25);
+
+    background: rgba(37, 99, 235, 0.08);
+
+    color: #2563eb !important;
+
+    font-size: 0.85rem;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+}
+
+.gc-btn-action-edit:hover {
+    background: #2563eb;
+
+    color: #ffffff !important;
+
+    border-color: #2563eb;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+
+/* ==========================================================
+   DELETE BUTTON
+========================================================== */
+
+.gc-btn-action-delete {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 9px 16px;
+
+    border-radius: 12px;
+
+    border: 1px solid rgba(239, 68, 68, 0.25);
+
+    background: rgba(239, 68, 68, 0.08);
+
+    color: #ef4444 !important;
+
+    font-size: 0.85rem;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+}
+
+.gc-btn-action-delete:hover {
+    background: #dc2626;
+
+    color: #ffffff !important;
+
+    border-color: #dc2626;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 16px rgba(220, 38, 38, 0.35);
+}
+
+
+/* ==========================================================
+   DELIVERABLES
+========================================================== */
 
 .gc-deliverable-chip {
+    background: white;
 
+    border: 1px solid #e2e8f0;
 
-    background:white;
+    padding: 0.6rem 1rem;
 
-
-    border:1px solid #e2e8f0;
-
-
-    padding:.6rem 1rem;
-
-
-    border-radius:14px;
-
-
+    border-radius: 14px;
 }
-
-
 
 .gc-deliverables-chips {
+    display: flex;
 
+    flex-wrap: wrap;
 
-    display:flex;
-
-
-    flex-wrap:wrap;
-
-
-    gap:.6rem;
-
-
+    gap: 0.6rem;
 }
-
 
 
 /* ==========================================================
    RIGHT PANEL
 ========================================================== */
 
-
 .gc-your-work-card {
+    background: white;
 
+    border-radius: 20px;
 
-    background:white;
+    border: 1px solid #e2e8f0;
 
-
-    border-radius:20px;
-
-
-    border:1px solid #e2e8f0;
-
-
-    padding:1.5rem;
-
-
+    padding: 1.5rem;
 }
 
+
+/* ==========================================================
+   VIEW ROSTER BUTTON
+========================================================== */
+
+.gc-btn-view-roster {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    width: 100%;
+
+    padding: 13px 20px;
+
+    border-radius: 14px;
+
+    border: none;
+
+    background: linear-gradient(
+        135deg,
+        #0f766e,
+        #14b8a6
+    );
+
+    color: #ffffff !important;
+
+    font-size: 0.9rem;
+
+    font-weight: 650;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(15, 118, 110, 0.3);
+
+    transition: all 0.25s ease;
+}
+
+.gc-btn-view-roster:hover {
+    transform: translateY(-2px);
+
+    background: linear-gradient(
+        135deg,
+        #0d9488,
+        #2dd4bf
+    );
+
+    box-shadow:
+        0 12px 24px rgba(15, 118, 110, 0.45);
+}
 
 
 /* ==========================================================
    RESPONSIVE
 ========================================================== */
 
-
-@media(max-width:900px){
-
+@media (max-width: 900px) {
 
     .gc-classwork-container {
-
-        padding:1rem;
-
+        padding: 1rem;
     }
-
 
     .gc-assignment-body {
-
-        grid-template-columns:1fr;
-
+        grid-template-columns: 1fr;
     }
-
 
     .netflix-milestone-card {
-
-        width:290px;
-
-        min-width:290px;
-
+        width: 290px;
+        min-width: 290px;
     }
 
-
+    .gc-assignment-right {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
 }
 
 
-
-@media(max-width:768px){
-
+@media (max-width: 768px) {
 
     .netflix-row-header {
+        flex-direction: column;
 
-        flex-direction:column;
+        align-items: flex-start;
 
-        align-items:flex-start;
-
-        gap:.8rem;
-
+        gap: 0.8rem;
     }
-
 
     .gc-classwork-toolbar {
+        flex-direction: column;
 
-        flex-direction:column;
+        align-items: flex-start;
 
-        align-items:flex-start;
-
-        gap:1rem;
-
+        gap: 1rem;
     }
 
+    .gc-assignment-header-row {
+        flex-direction: column;
 
+        align-items: flex-start;
+
+        gap: 1.2rem;
+    }
+
+    .gc-assignment-right {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+    .hero-bottom {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .submission-status-wrapper {
+        align-items: flex-start;
+    }
 }
 
 
 /* ==========================================================
-   DARK THEME OVERRIDES FOR CLASSWORK
+   DARK THEME
 ========================================================== */
 
 :host-context(.dark-theme) {
@@ -1080,17 +1116,34 @@
 :host-context(.dark-theme) .gc-classwork-container {
     --class-primary: #818cf8;
     --class-primary-dark: #6366f1;
+
     --class-bg: #0f172a;
+
     --class-card: #1e293b;
+
     --class-text: #f8fafc;
+
     --class-subtext: #94a3b8;
+
     --class-border: #334155;
 }
 
+
+/* ==========================================================
+   DARK HERO
+========================================================== */
+
 :host-context(.dark-theme) .netflix-hero-card {
-    background: linear-gradient(135deg, #1e1b4b, #0f172a);
+    background: linear-gradient(
+        135deg,
+        #1e1b4b,
+        #0f172a
+    );
+
     border-color: #3730a3;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.4);
 }
 
 :host-context(.dark-theme) .netflix-hero-card.completed {
@@ -1125,6 +1178,11 @@
     border-top-color: rgba(99, 102, 241, 0.3);
 }
 
+
+/* ==========================================================
+   DARK SUBJECT ROW
+========================================================== */
+
 :host-context(.dark-theme) .netflix-row-title {
     color: #f8fafc;
 }
@@ -1134,10 +1192,18 @@
     color: #94a3b8;
 }
 
+
+/* ==========================================================
+   DARK MILESTONE CARDS
+========================================================== */
+
 :host-context(.dark-theme) .netflix-milestone-card {
     background: #1e293b;
+
     border-color: #334155;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 :host-context(.dark-theme) .netflix-milestone-card h3 {
@@ -1156,26 +1222,95 @@
 
 :host-context(.dark-theme) .netflix-milestone-card.completed {
     border: 2px solid #22c55e !important;
+
     border-color: #22c55e !important;
+
     background: rgba(34, 197, 94, 0.15) !important;
 }
 
 :host-context(.dark-theme) .netflix-milestone-card.under-review {
     border-color: #f59e0b;
+
     background: rgba(245, 158, 11, 0.12);
 }
 
 :host-context(.dark-theme) .netflix-milestone-card.needs-revision {
     border-color: #f97316;
+
     background: rgba(249, 115, 22, 0.12);
 }
+
+
+/* ==========================================================
+   DARK MARKS
+========================================================== */
+
+:host-context(.dark-theme) .gc-max-marks {
+    background: #334155;
+
+    color: #cbd5e1;
+}
+
+:host-context(.dark-theme) .gc-points {
+    color: #a5b4fc;
+}
+
+:host-context(.dark-theme) .gc-score-badge {
+    background: rgba(34, 197, 94, 0.15);
+
+    color: #86efac;
+}
+
+:host-context(.dark-theme) .gc-score-badge .earned-points {
+    color: #94a3b8;
+}
+
+
+/* ==========================================================
+   DARK FEEDBACK
+========================================================== */
+
+:host-context(.dark-theme) .gc-feedback-badge {
+    background: rgba(99, 102, 241, 0.15);
+
+    border-left-color: #818cf8;
+
+    color: #e2e8f0;
+}
+
+:host-context(.dark-theme)
+.netflix-milestone-card.needs-revision
+.gc-feedback-badge {
+    background: rgba(249, 115, 22, 0.15);
+
+    border-left-color: #fb923c;
+}
+
+:host-context(.dark-theme)
+.netflix-milestone-card.completed
+.gc-feedback-badge {
+    background: rgba(34, 197, 94, 0.15);
+
+    border-left-color: #4ade80;
+}
+
+
+/* ==========================================================
+   DARK PATH
+========================================================== */
 
 :host-context(.dark-theme) .netflix-pathway-arrow {
     color: #475569;
 }
 
+
+/* ==========================================================
+   DARK TEACHER VIEW
+========================================================== */
+
 :host-context(.dark-theme) .gc-assignment-card {
     background: #1e293b;
+
     border-color: #334155;
 }
 
@@ -1189,90 +1324,115 @@
 
 :host-context(.dark-theme) .gc-assignment-icon-pod {
     background: rgba(99, 102, 241, 0.2);
+
     color: #a5b4fc;
 }
 
 :host-context(.dark-theme) .gc-assignment-body {
     background: #0f172a;
+
     border-top-color: #334155;
 }
 
 :host-context(.dark-theme) .gc-deliverable-chip {
     background: #1e293b;
+
     border-color: #334155;
+
     color: #cbd5e1;
 }
 
 :host-context(.dark-theme) .gc-your-work-card {
     background: #1e293b;
+
     border-color: #334155;
+
     color: #f8fafc;
 }
+
+
+/* ==========================================================
+   DARK BADGES
+========================================================== */
+
+:host-context(.dark-theme)
+.gc-classwork-container
+.gc-badge-info {
+    background: rgba(99, 102, 241, 0.2) !important;
+
+    color: #a5b4fc !important;
+}
+
+:host-context(.dark-theme)
+.gc-classwork-container
+.gc-badge-success {
+    background: rgba(34, 197, 94, 0.2) !important;
+
+    color: #86efac !important;
+}
+
+:host-context(.dark-theme)
+.gc-classwork-container
+.gc-badge-warning {
+    background: rgba(245, 158, 11, 0.2) !important;
+
+    color: #fde047 !important;
+}
+
+:host-context(.dark-theme)
+.gc-classwork-container
+.gc-badge-orange {
+    background: rgba(249, 115, 22, 0.2) !important;
+
+    color: #fdba74 !important;
+}
+
+:host-context(.dark-theme)
+.gc-classwork-container
+.gc-badge-danger {
+    background: rgba(239, 68, 68, 0.2) !important;
+
+    color: #fca5a5 !important;
+}
+
+
+/* ==========================================================
+   DARK EDIT / DELETE BUTTONS
+========================================================== */
+
+.dark-theme .gc-btn-action-edit {
+    background: rgba(96, 165, 250, 0.12);
+
+    color: #60a5fa !important;
+
+    border-color: rgba(96, 165, 250, 0.3);
+}
+
+.dark-theme .gc-btn-action-edit:hover {
+    background: #3b82f6;
+
+    color: #ffffff !important;
+}
+
+.dark-theme .gc-btn-action-delete {
+    background: rgba(248, 113, 113, 0.12);
+
+    color: #f87171 !important;
+
+    border-color: rgba(248, 113, 113, 0.3);
+}
+
+.dark-theme .gc-btn-action-delete:hover {
+    background: #ef4444;
+
+    color: #ffffff !important;
+}
+
+
+/* ==========================================================
+   DARK EMPTY STATE
+========================================================== */
 
 :host-context(.dark-theme) .gc-empty-classwork {
     color: #94a3b8;
 }
-
-:host-context(.dark-theme) .gc-classwork-container .gc-badge-info {
-    background: rgba(99, 102, 241, 0.2) !important;
-    color: #a5b4fc !important;
-}
-
-:host-context(.dark-theme) .gc-classwork-container .gc-badge-success {
-    background: rgba(34, 197, 94, 0.2) !important;
-    color: #86efac !important;
-}
-
-:host-context(.dark-theme) .gc-classwork-container .gc-badge-warning {
-    background: rgba(245, 158, 11, 0.2) !important;
-    color: #fde047 !important;
-}
-
-:host-context(.dark-theme) .gc-classwork-container .gc-badge-orange {
-    background: rgba(249, 115, 22, 0.2) !important;
-    color: #fdba74 !important;
-}
-
-:host-context(.dark-theme) .gc-classwork-container .gc-badge-danger {
-    background: rgba(239, 68, 68, 0.2) !important;
-    color: #fca5a5 !important;
-}
-
-.gc-feedback-badge {
-    margin-top: 8px;
-    padding: 8px 12px;
-    background: rgba(37, 99, 235, 0.08);
-    border-left: 3px solid #2563eb;
-    border-radius: 6px;
-    font-size: 0.82rem;
-    color: var(--gc-text-main);
-    line-height: 1.4;
-    word-break: break-word;
-    display: block;
-}
-
-.netflix-milestone-card.needs-revision .gc-feedback-badge {
-    background: rgba(249, 115, 22, 0.08);
-    border-left: 3px solid #f97316;
-}
-
-.netflix-milestone-card.completed .gc-feedback-badge {
-    background: rgba(34, 197, 94, 0.08);
-    border-left: 3px solid #22c55e;
-}
-
-:host-context(.dark-theme) .gc-feedback-badge {
-    background: rgba(99, 102, 241, 0.15);
-    border-left-color: #818cf8;
-    color: #e2e8f0;
-}
-
-:host-context(.dark-theme) .netflix-milestone-card.needs-revision .gc-feedback-badge {
-    background: rgba(249, 115, 22, 0.15);
-    border-left-color: #fb923c;
-}
-
-:host-context(.dark-theme) .netflix-milestone-card.completed .gc-feedback-badge {
-    background: rgba(34, 197, 94, 0.15);
-    border-left-color: #4ade80;
-}

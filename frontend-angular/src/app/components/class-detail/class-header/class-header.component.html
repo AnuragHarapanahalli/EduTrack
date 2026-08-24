@@ -1,127 +1,79 @@
 <div class="gc-class-header">
 
-
-  <!-- HERO -->
-
+  <!-- HERO BANNER -->
   <div class="gc-class-banner">
-
 
     <div class="gc-class-info">
 
-
       <div class="gc-class-avatar">
-
-        {{getInitials()}}
-
+        {{ getInitials() }}
       </div>
 
+      <div class="gc-class-text">
 
-
-      <div>
-
-        <h1>
-
-          {{subject?.name}}
-
+        <h1 class="gc-class-title">
+          {{ subject?.name }}
         </h1>
 
-
-        <p>
-
-          {{subject?.code}}
-
+        <p class="gc-class-code">
+          {{ subject?.code }}
         </p>
 
-
-        <small>
-
-          👨‍🏫
-          {{subject?.instructorName || 'Instructor'}}
-
+        <small class="gc-class-instructor">
+          <i class="fa-solid fa-chalkboard-user"></i>
+          {{ subject?.instructorName || 'Instructor' }}
         </small>
-
 
       </div>
 
-
     </div>
-
-
 
     <div class="gc-role-badge">
-
-      {{authService.currentUser()?.role}}
-
+      {{ authService.currentUser()?.role }}
     </div>
-
-
 
   </div>
 
-
-
   <!-- TABS -->
-
-
   <div class="gc-class-tabs">
-
 
     <button
       *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'"
-      [class.active]="viewStateService.currentTab()==='STREAM'"
+      [class.active]="viewStateService.currentTab() === 'STREAM'"
       (click)="changeTab('STREAM')">
 
       <i class="fa-solid fa-house"></i>
-
       Stream
 
     </button>
 
-
-
     <button
-      [class.active]="viewStateService.currentTab()==='CLASSWORK'"
+      [class.active]="viewStateService.currentTab() === 'CLASSWORK'"
       (click)="changeTab('CLASSWORK')">
 
-
       <i class="fa-solid fa-file-lines"></i>
-
       Classwork
 
-
     </button>
 
-
-
     <button
-      [class.active]="viewStateService.currentTab()==='PEOPLE'"
+      [class.active]="viewStateService.currentTab() === 'PEOPLE'"
       (click)="changeTab('PEOPLE')">
 
-
       <i class="fa-solid fa-users"></i>
-
       People
 
-
     </button>
-
-
 
     <button
-      [class.active]="viewStateService.currentTab()==='LEADERBOARD'"
+      [class.active]="viewStateService.currentTab() === 'LEADERBOARD'"
       (click)="changeTab('LEADERBOARD')">
 
-
       <i class="fa-solid fa-ranking-star"></i>
-
       Leaderboard
-
 
     </button>
 
-
-
   </div>
-
 
 </div>

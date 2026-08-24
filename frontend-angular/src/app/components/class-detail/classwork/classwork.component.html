@@ -1,502 +1,672 @@
 <div class="gc-classwork-container">
 
+    <!-- ==========================================================
+         STUDENT VIEW
+    ========================================================== -->
 
-<!-- ==========================================================
-     STUDENT VIEW
-========================================================== -->
+    <div *ngIf="authService.currentUser()?.role === 'STUDENT'">
 
-<div *ngIf="authService.currentUser()?.role === 'STUDENT'">
+        <!-- HERO CARD -->
+        <div
+            class="netflix-hero-card"
+            *ngIf="heroMilestone"
+            [class.completed]="heroMilestone.userSubmission?.status === 'APPROVED'">
 
+            <div class="hero-top">
 
-    <!-- HERO CARD -->
+                <div>
 
-    <div class="netflix-hero-card" *ngIf="heroMilestone" [class.completed]="heroMilestone.userSubmission?.status==='APPROVED'">
+                    <div class="netflix-hero-badge">
+                        <i class="fa-solid fa-clock"></i>
+                        Nearest Upcoming Milestone
+                    </div>
 
-
-        <div class="hero-top">
-
-
-            <div>
-
-
-                <div class="netflix-hero-badge">
-
-                    <i class="fa-solid fa-clock"></i>
-
-                    Nearest Upcoming Milestone
+                    <span class="hero-subject">
+                        {{heroSubject?.code}}
+                        •
+                        {{heroSubject?.name}}
+                    </span>
 
                 </div>
 
-
-                <span class="hero-subject">
-
-                    {{heroSubject?.code}}
-                    •
-                    {{heroSubject?.name}}
-
-                </span>
-
+                <div class="netflix-countdown-badge">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                    {{heroMilestone.daysRemainingText}}
+                </div>
 
             </div>
 
+            <h1 class="netflix-hero-title">
+                {{heroMilestone.title}}
+            </h1>
 
+            <p class="netflix-hero-desc">
+                {{heroMilestone.description}}
+            </p>
 
-            <div class="netflix-countdown-badge">
+            <div class="hero-bottom">
 
-                <i class="fa-solid fa-hourglass-half"></i>
+                <div class="deliverable-list">
 
-                {{heroMilestone.daysRemainingText}}
+                    <span
+                        *ngFor="let item of heroMilestone.deliverablesList"
+                        class="gc-badge"
+                        [class.gc-badge-danger]="item.isMandatory"
+                        [class.gc-badge-info]="!item.isMandatory">
+
+                        <i class="fa-solid fa-box"></i>
+                        {{item.title}}
+
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <button
+                        *ngIf="
+                            !heroMilestone.isLocked &&
+                            heroMilestone.userSubmission?.status !== 'APPROVED'
+                        "
+                        class="gc-btn-turn-in"
+                        (click)="triggerUpload(heroMilestone)">
+
+                        <i
+                            class="fa-solid"
+                            [ngClass]="
+                                heroMilestone.userSubmission
+                                    ? 'fa-rotate'
+                                    : 'fa-cloud-arrow-up'
+                            ">
+                        </i>
+
+                        {{
+                            heroMilestone.userSubmission
+                                ? 'Resubmit Work'
+                                : 'Turn In Work'
+                        }}
+
+                    </button>
+
+                    <span
+                        *ngIf="heroMilestone.userSubmission?.status === 'APPROVED'"
+                        class="gc-badge gc-badge-success">
+
+                        <i class="fa-solid fa-circle-check"></i>
+                        Completed
+
+                    </span>
+
+                    <div
+                        *ngIf="heroMilestone.userSubmission?.status === 'SUBMITTED'"
+                        class="submission-status-wrapper">
+
+                        <span class="gc-badge gc-badge-warning">
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            Under Review
+
+                        </span>
+
+                        <span class="submission-date">
+                            Uploaded:
+                            {{ heroMilestone.userSubmission?.submittedAt | date:'medium' }}
+                        </span>
+
+                    </div>
+
+                    <div
+                        *ngIf="heroMilestone.userSubmission?.status === 'NEEDS_REVISION'"
+                        class="submission-status-wrapper">
+
+                        <span class="gc-badge gc-badge-orange">
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            Needs Revision
+
+                        </span>
+
+                    </div>
+
+                </div>
 
             </div>
 
+            <div
+                *ngIf="heroMilestone.userSubmission?.instructorFeedback"
+                class="gc-feedback-badge hero-feedback">
+
+                <i class="fa-solid fa-comment-dots"></i>
+
+                <strong>Teacher Comment:</strong>
+
+                "{{heroMilestone.userSubmission?.instructorFeedback}}"
+
+            </div>
 
         </div>
 
 
+        <!-- ======================================================
+             SUBJECT ROWS
+        ======================================================= -->
 
-        <h1 class="netflix-hero-title">
+        <div
+            *ngFor="let row of studentSubjectRows"
+            class="netflix-row-container">
 
-            {{heroMilestone.title}}
+            <div class="netflix-row-header">
 
-        </h1>
+                <h2
+                    class="netflix-row-title"
+                    (click)="viewStateService.selectSubject(row.subject)"
+                    title="View Class details">
 
+                    <i class="fa-solid fa-layer-group"></i>
 
-        <p class="netflix-hero-desc">
+                    {{row.subject.name}}
 
-            {{heroMilestone.description}}
+                </h2>
 
-        </p>
-
-
-
-
-        <div class="hero-bottom">
-
-
-            <div class="deliverable-list">
-
-
-                <span
-                *ngFor="let item of heroMilestone.deliverablesList"
-                class="gc-badge"
-                [class.gc-badge-danger]="item.isMandatory"
-                [class.gc-badge-info]="!item.isMandatory">
-
-
-                    <i class="fa-solid fa-box"></i>
-
-                    {{item.title}}
-
-
+                <span class="netflix-row-code">
+                    {{row.subject.code}}
                 </span>
-
 
             </div>
 
 
+            <!-- MILESTONE CARDS -->
 
-            <div>
-                <button
-                *ngIf="!heroMilestone.isLocked &&
-                heroMilestone.userSubmission?.status !== 'APPROVED'"
-                class="gc-btn-turn-in"
-                (click)="triggerUpload(heroMilestone)">
-                    <i class="fa-solid" [ngClass]="heroMilestone.userSubmission ? 'fa-rotate' : 'fa-cloud-arrow-up'"></i>
-                    {{
-                    heroMilestone.userSubmission
-                    ? 'Resubmit Work'
-                    : 'Turn In Work'
-                    }}
-                </button>
+            <div class="netflix-cards-scroll-row">
 
-                <span
-                *ngIf="heroMilestone.userSubmission?.status==='APPROVED'"
-                class="gc-badge gc-badge-success">
-                    <i class="fa-solid fa-circle-check"></i>
-                    Completed
-                </span>
+                <ng-container
+                    *ngFor="let m of row.milestones; let last = last">
 
-                <div *ngIf="heroMilestone.userSubmission?.status==='SUBMITTED'" style="margin-top: 0.75rem; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                    <span class="gc-badge gc-badge-warning" style="background: #fef3c7; color: #b45309; font-weight: 700; padding: 6px 14px; border-radius: 20px;">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        Under Review
-                    </span>
-                    <span style="font-size: 0.8rem; color: #4b5563;">
-                        Uploaded: {{ heroMilestone.userSubmission?.submittedAt | date:'medium' }}
-                    </span>
-                </div>
+                    <div
+                        class="netflix-milestone-card"
+                        [class.locked]="m.isLocked"
+                        [class.completed]="m.userSubmission?.status === 'APPROVED'"
+                        [class.under-review]="m.userSubmission?.status === 'SUBMITTED'"
+                        [class.needs-revision]="m.userSubmission?.status === 'NEEDS_REVISION'"
+                        [class.active]="!m.isLocked"
+                        (click)="
+                            (!m.isLocked &&
+                            m.userSubmission?.status !== 'APPROVED')
+                            ? triggerUpload(m)
+                            : null
+                        ">
 
-                <div *ngIf="heroMilestone.userSubmission?.status==='NEEDS_REVISION'" style="margin-top: 0.75rem; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                    <span class="gc-badge gc-badge-orange">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        Needs Revision
-                    </span>
-                </div>
+                        <!-- ==================================================
+                             TOP / MAIN INFORMATION
+                        ================================================== -->
+
+                        <div class="milestone-main-content">
+
+                            <!-- STATUS -->
+                            <div class="card-top">
+
+                                <span
+                                    class="gc-badge"
+                                    [class.gc-badge-danger]="m.isLocked"
+                                    [class.gc-badge-success]="
+                                        m.userSubmission?.status === 'APPROVED' &&
+                                        m.userSubmission?.marksLocked
+                                    "
+                                    [class.gc-badge-warning]="
+                                        m.userSubmission?.status === 'SUBMITTED' ||
+                                        (
+                                            m.userSubmission?.status === 'APPROVED' &&
+                                            !m.userSubmission?.marksLocked
+                                        )
+                                    "
+                                    [class.gc-badge-orange]="
+                                        m.userSubmission?.status === 'NEEDS_REVISION'
+                                    ">
+
+                                    <i
+                                        *ngIf="m.isLocked"
+                                        class="fa-solid fa-lock">
+                                    </i>
+
+                                    {{
+                                        (
+                                            m.userSubmission?.status === 'APPROVED' &&
+                                            !m.userSubmission?.marksLocked
+                                        ) ||
+                                        m.userSubmission?.status === 'SUBMITTED'
+                                            ? 'Under Review'
+                                            :
+                                        (
+                                            m.userSubmission?.status === 'NEEDS_REVISION'
+                                                ? 'Needs Revision'
+                                                :
+                                            (
+                                                m.userSubmission?.status ||
+                                                (m.isLocked ? 'Locked' : 'Active')
+                                            )
+                                        )
+                                    }}
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- TITLE -->
+                            <h3 class="milestone-title">
+                                {{m.title}}
+                            </h3>
+
+
+                            <!-- DESCRIPTION -->
+                            <p
+                                class="milestone-description"
+                                [title]="m.description || ''">
+
+                                {{
+                                    m.description && m.description.length > 100
+                                        ? (m.description | slice:0:100) + '...'
+                                        : (m.description || '')
+                                }}
+
+                            </p>
+
+
+                            <!-- ==================================================
+                                 MARKS
+                            ================================================== -->
+
+                            <div class="gc-marks-row">
+
+                                <span class="gc-max-marks">
+                                    Max Marks: {{m.maxMarks || 100}}
+                                </span>
+
+                                <span class="gc-points">
+                                    {{m.basePoints}} pts
+                                </span>
+
+                            </div>
+
+
+                            <!-- ==================================================
+                                 SCORE
+                            ================================================== -->
+
+                            <div
+                                *ngIf="
+                                    m.userSubmission?.status === 'APPROVED' &&
+                                    m.userSubmission?.marksLocked
+                                "
+                                class="gc-score-badge">
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                                <span>
+                                    Score:
+                                    {{
+                                        m.userSubmission?.obtainedMarks != null
+                                            ? m.userSubmission?.obtainedMarks
+                                            : 'N/A'
+                                    }}
+                                    / {{m.maxMarks || 100}}
+                                </span>
+
+                                <span class="earned-points">
+                                    ({{m.userSubmission?.finalPoints}} pts earned)
+                                </span>
+
+                            </div>
+
+
+                            <!-- ==================================================
+                                 TEACHER COMMENT
+                            ================================================== -->
+
+                            <div
+                                *ngIf="
+                                    m.userSubmission?.instructorFeedback &&
+                                    m.userSubmission?.marksLocked
+                                "
+                                class="gc-feedback-badge">
+
+                                <i class="fa-solid fa-comment-dots"></i>
+
+                                <strong>Teacher Comment:</strong>
+
+                                "{{m.userSubmission?.instructorFeedback}}"
+
+                            </div>
+
+
+                            <!-- ==================================================
+                                 UPLOADED DATE
+                            ================================================== -->
+
+                            <div
+                                *ngIf="m.userSubmission?.status === 'SUBMITTED'"
+                                class="submission-date">
+
+                                <i class="fa-regular fa-calendar-check"></i>
+
+                                Uploaded:
+                                {{m.userSubmission?.submittedAt | date:'medium'}}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ==================================================
+                             BOTTOM INFORMATION
+                        ================================================== -->
+
+                        <div class="milestone-bottom-content">
+
+                            <!-- DEADLINE -->
+                            <div class="deadline">
+
+                                <i class="fa-regular fa-clock"></i>
+
+                                {{m.daysRemainingText}}
+
+                            </div>
+
+
+                            <!-- DELIVERABLES -->
+                            <div class="deliverable-list">
+
+                                <span
+                                    *ngFor="
+                                        let del of m.deliverablesList | slice:0:2
+                                    "
+                                    class="gc-badge">
+
+                                    <i class="fa-solid fa-paperclip"></i>
+
+                                    {{del.title}}
+
+                                </span>
+
+                                <span
+                                    *ngIf="
+                                        m.deliverablesList &&
+                                        m.deliverablesList.length > 2
+                                    "
+                                    class="gc-badge gc-badge-info deliverable-more">
+
+                                    +{{m.deliverablesList.length - 2}}
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- TURN IN BUTTON -->
+                            <button
+                                *ngIf="
+                                    !m.isLocked &&
+                                    m.userSubmission?.status !== 'APPROVED'
+                                "
+                                class="gc-btn-turn-in gc-btn-block"
+                                (click)="
+                                    $event.stopPropagation();
+                                    triggerUpload(m)
+                                ">
+
+                                <span>
+                                    {{
+                                        m.userSubmission
+                                            ? 'Resubmit'
+                                            : 'Turn In Work'
+                                    }}
+                                </span>
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </button>
+
+
+                            <!-- LOCKED -->
+                            <span
+                                *ngIf="m.isLocked"
+                                class="locked-text">
+
+                                <i class="fa-solid fa-lock"></i>
+
+                                Complete previous milestone
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PATHWAY ARROW -->
+
+                    <div
+                        *ngIf="!last"
+                        class="netflix-pathway-arrow">
+
+                        <i class="fa-solid fa-arrow-right-long"></i>
+
+                    </div>
+
+                </ng-container>
+
             </div>
 
-
-        </div>
-
-        <div *ngIf="heroMilestone.userSubmission?.instructorFeedback" class="gc-feedback-badge" style="margin-top: 15px; width: 100%;">
-            <i class="fa-solid fa-comment-dots"></i>
-            <strong>Teacher Comment:</strong> "{{ heroMilestone.userSubmission?.instructorFeedback }}"
         </div>
 
     </div>
 
 
-
-
-
-    <!-- SUBJECT ROWS -->
-
+    <!-- ==========================================================
+         INSTRUCTOR VIEW
+    ========================================================== -->
 
     <div
-    *ngFor="let row of studentSubjectRows"
-    class="netflix-row-container">
+        *ngIf="
+            authService.currentUser()?.role === 'INSTRUCTOR' ||
+            authService.currentUser()?.role === 'ADMIN'
+        ">
+
+        <!-- TOOLBAR -->
+
+        <div class="gc-classwork-toolbar">
+
+            <button
+                type="button"
+                class="gc-btn-create-milestone"
+                (click)="triggerCreateMilestone()">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Create Milestone
+
+            </button>
 
 
+            <button
+                type="button"
+                class="gc-btn-outline"
+                (click)="downloadMarksCsv()">
 
-        <div class="netflix-row-header">
+                <i class="fa-solid fa-file-csv"></i>
 
+                Export Marks (CSV)
 
-            <h2 class="netflix-row-title" style="cursor: pointer;" (click)="viewStateService.selectSubject(row.subject)" title="View Class details">
-
-
-                <i class="fa-solid fa-layer-group"></i>
-
-
-                {{row.subject.name}}
-
-
-            </h2>
+            </button>
 
 
-
-            <span class="netflix-row-code">
-
-                {{row.subject.code}}
-
+            <span class="gc-badge">
+                {{teacherMilestones.length}} Milestones
             </span>
-
 
         </div>
 
 
+        <!-- ASSIGNMENTS -->
+
+        <div class="gc-assignments-list">
+
+            <div
+                *ngFor="let m of teacherMilestones"
+                class="gc-card gc-assignment-card">
 
 
-
-        <div class="netflix-cards-scroll-row">
-
-
-            <ng-container
-            *ngFor="let m of row.milestones; let last=last">
-
+                <!-- ASSIGNMENT HEADER -->
 
                 <div
-                class="netflix-milestone-card"
-                [class.locked]="m.isLocked"
-                [class.completed]="m.userSubmission?.status==='APPROVED'"
-                [class.under-review]="m.userSubmission?.status==='SUBMITTED'"
-                [class.needs-revision]="m.userSubmission?.status==='NEEDS_REVISION'"
-                [class.active]="!m.isLocked"
-                (click)="(!m.isLocked && m.userSubmission?.status!=='APPROVED') ? triggerUpload(m):null">
+                    class="gc-assignment-header-row"
+                    (click)="toggleExpand(m.id)">
 
+                    <div class="gc-assignment-left">
 
+                        <div class="gc-assignment-icon-pod">
 
-                    <div>
-
-
-                        <div class="card-top">
-
-
-                            <span
-                            class="gc-badge"
-                            [class.gc-badge-danger]="m.isLocked"
-                            [class.gc-badge-success]="m.userSubmission?.status==='APPROVED' && m.userSubmission?.marksLocked"
-                            [class.gc-badge-warning]="m.userSubmission?.status==='SUBMITTED' || (m.userSubmission?.status==='APPROVED' && !m.userSubmission?.marksLocked)"
-                            [class.gc-badge-orange]="m.userSubmission?.status==='NEEDS_REVISION'">
-
-
-                                <i *ngIf="m.isLocked"
-                                class="fa-solid fa-lock"></i>
-
-
-                                {{
-                                (m.userSubmission?.status === 'APPROVED' && !m.userSubmission?.marksLocked) || m.userSubmission?.status === 'SUBMITTED' ? 'Under Review' :
-                                (m.userSubmission?.status === 'NEEDS_REVISION' ? 'Needs Revision' :
-                                (m.userSubmission?.status || (m.isLocked?'Locked':'Active')))
-                                }}
-
-
-                            </span>
-
-
-
-                            <span class="points" style="display: inline-flex; align-items: center; gap: 8px;">
-                                <span style="background: var(--gc-border); padding: 2px 6px; border-radius: 6px; font-size: 0.72rem; color: var(--gc-text-sub); font-weight: 500;">Max Marks: {{m.maxMarks || 100}}</span>
-                                <span>{{m.basePoints}} pts</span>
-                            </span>
-
+                            <i class="fa-solid fa-file-lines"></i>
 
                         </div>
 
+                        <div>
 
+                            <h3>
+                                {{m.title}}
+                            </h3>
 
-                        <h3>
+                            <small>
+                                Due {{m.deadline | date:'short'}}
+                            </small>
 
-                            {{m.title}}
-
-                        </h3>
-
-
-                        <p [title]="m.description || ''">
-
-                            {{ m.description && m.description.length > 100 ? (m.description | slice:0:100) + '...' : (m.description || '') }}
-
-                        </p>
-
-                        <div *ngIf="m.userSubmission?.status==='SUBMITTED'" class="submission-date" style="font-size: 0.8rem; margin-bottom: 0.75rem; color: #b45309; display: flex; align-items: center; gap: 6px; font-weight: 500;">
-                            <i class="fa-regular fa-calendar-check"></i>
-                            Uploaded: {{ m.userSubmission?.submittedAt | date:'medium' }}
                         </div>
-
-                        <div *ngIf="m.userSubmission?.status==='APPROVED' && m.userSubmission?.marksLocked" style="margin-top: 8px; padding: 6px 12px; background: rgba(16, 185, 129, 0.08); color: var(--gc-success, #10b981); border-radius: 8px; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                            <i class="fa-solid fa-circle-check"></i>
-                            Score: {{ m.userSubmission?.obtainedMarks != null ? m.userSubmission?.obtainedMarks : 'N/A' }} / {{ m.maxMarks || 100 }}
-                            <span style="color: var(--gc-text-sub); font-weight: normal; font-size: 0.78rem; margin-left: 4px;">({{ m.userSubmission?.finalPoints }} pts earned)</span>
-                        </div>
-
-                        <div *ngIf="m.userSubmission?.instructorFeedback && m.userSubmission?.marksLocked" class="gc-feedback-badge">
-                            <i class="fa-solid fa-comment-dots"></i>
-                            <strong>Teacher Comment:</strong> "{{ m.userSubmission?.instructorFeedback }}"
-                        </div>
-
 
                     </div>
 
 
+                    <div class="gc-assignment-right">
 
+                        <div class="gc-point-badge">
 
+                            <span class="gc-teacher-max-marks">
+                                Max Marks: {{m.maxMarks || 100}}
+                            </span>
 
-                    <div>
+                            <span>
+                                <i
+                                    class="fa-solid fa-star"
+                                    style="margin-right: 4px;">
+                                </i>
 
-
-                        <div class="deadline">
-
-                            <i class="fa-regular fa-clock"></i>
-
-                            {{m.daysRemainingText}}
-
-                        </div>
-
-
-
-                        <div class="deliverable-list">
-
-
-                            <span
-                            *ngFor="let del of m.deliverablesList | slice:0:2"
-                            class="gc-badge">
-
-
-                                {{del.title}}
-
+                                {{m.basePoints}} pts
 
                             </span>
 
-                            <span *ngIf="m.deliverablesList && m.deliverablesList.length > 2" class="gc-badge gc-badge-info" style="font-weight: bold;">
-                                +{{m.deliverablesList.length - 2}}
-                            </span>
-
-
                         </div>
-
 
 
                         <button
-                        *ngIf="!m.isLocked &&
-                        m.userSubmission?.status!=='APPROVED'"
-                        class="gc-btn-turn-in gc-btn-block"
-                        (click)="$event.stopPropagation();triggerUpload(m)">
-                            <span>
-                            {{
-                            m.userSubmission
-                            ? 'Resubmit'
-                            :'Turn In Work'
-                            }}
-                            </span>
-                            <i class="fa-solid fa-arrow-right"></i>
+                            type="button"
+                            class="gc-btn-action-edit"
+                            (click)="
+                                $event.stopPropagation();
+                                triggerEditMilestone(m)
+                            ">
+
+                            <i class="fa-solid fa-pen-to-square"></i>
+
+                            Edit
+
                         </button>
 
 
+                        <button
+                            type="button"
+                            class="gc-btn-action-delete"
+                            (click)="
+                                $event.stopPropagation();
+                                deleteMilestone(m)
+                            ">
 
-                        <span
-                        *ngIf="m.isLocked"
-                        class="locked-text">
+                            <i class="fa-solid fa-trash-can"></i>
+
+                            Delete
+
+                        </button>
 
 
-                            <i class="fa-solid fa-lock"></i>
-
-                            Complete previous milestone
-
-
-                        </span>
-
+                        <i
+                            class="fa-solid"
+                            [class.fa-chevron-down]="
+                                expandedMilestoneId !== m.id
+                            "
+                            [class.fa-chevron-up]="
+                                expandedMilestoneId === m.id
+                            ">
+                        </i>
 
                     </div>
-
-
 
                 </div>
 
 
-
-
+                <!-- ASSIGNMENT BODY -->
 
                 <div
-                *ngIf="!last"
-                class="netflix-pathway-arrow">
-
-
-                    <i class="fa-solid fa-arrow-right-long"></i>
-
-
-                </div>
-
-
-
-            </ng-container>
-
-
-
-        </div>
-
-
-
-    </div>
-
-
-
-
-</div>
-
-
-
-
-
-
-<!-- ==========================================================
-     INSTRUCTOR VIEW
-========================================================== -->
-
-
-<div *ngIf="authService.currentUser()?.role==='INSTRUCTOR' || authService.currentUser()?.role==='ADMIN'">
-
-
-    <div class="gc-classwork-toolbar" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-        <button
-        type="button"
-        class="gc-btn-create-milestone"
-        (click)="triggerCreateMilestone()">
-            <i class="fa-solid fa-plus"></i>
-            Create Milestone
-        </button>
-
-        <button
-        type="button"
-        class="gc-btn-outline"
-        (click)="downloadMarksCsv()"
-        style="padding: 10px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; border: 1px solid var(--gc-border); background: var(--gc-card); color: var(--gc-text-main); height: 42px;">
-            <i class="fa-solid fa-file-csv" style="color: #10b981;"></i>
-            Export Marks (CSV)
-        </button>
-
-        <span class="gc-badge">
-            {{teacherMilestones.length}} Milestones
-        </span>
-    </div>
-
-    <div class="gc-assignments-list">
-        <div
-        *ngFor="let m of teacherMilestones"
-        class="gc-card gc-assignment-card">
-
-            <div
-            class="gc-assignment-header-row"
-            (click)="toggleExpand(m.id)">
-
-                <div class="gc-assignment-left">
-                    <div class="gc-assignment-icon-pod">
-                        <i class="fa-solid fa-file-lines"></i>
-                    </div>
+                    class="gc-assignment-body"
+                    *ngIf="expandedMilestoneId === m.id">
 
                     <div>
-                        <h3>{{m.title}}</h3>
-                        <small>Due {{m.deadline | date:'short'}}</small>
+
+                        <p>
+                            {{m.description}}
+                        </p>
+
+                        <h4>
+                            Required Deliverables
+                        </h4>
+
+                        <div class="deliverable-list">
+
+                            <span
+                                *ngFor="let item of m.deliverablesList"
+                                class="gc-badge">
+
+                                {{item.title}}
+
+                            </span>
+
+                        </div>
+
                     </div>
-                </div>
 
-                <div class="gc-assignment-right">
-                    <div class="gc-point-badge" style="display: inline-flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 0.72rem; color: var(--gc-text-sub); border: 1px solid var(--gc-border); padding: 2px 6px; border-radius: 6px;">Max Marks: {{m.maxMarks || 100}}</span>
-                        <span><i class="fa-solid fa-star" style="margin-right: 4px;"></i>{{m.basePoints}} pts</span>
+
+                    <div class="gc-your-work-card">
+
+                        <h4>
+                            Student Submissions
+                        </h4>
+
+                        <button
+                            type="button"
+                            class="gc-btn-view-roster"
+                            (click)="triggerRoster(m)">
+
+                            <i class="fa-solid fa-users-rectangle"></i>
+
+                            View Student Roster & Grade
+
+                        </button>
+
                     </div>
 
-                    <button
-                    type="button"
-                    class="gc-btn-action-edit"
-                    (click)="$event.stopPropagation();triggerEditMilestone(m)">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                        Edit
-                    </button>
-
-                    <button
-                    type="button"
-                    class="gc-btn-action-delete"
-                    (click)="$event.stopPropagation();deleteMilestone(m)">
-                        <i class="fa-solid fa-trash-can"></i>
-                        Delete
-                    </button>
-
-                    <i class="fa-solid"
-                    [class.fa-chevron-down]="expandedMilestoneId!==m.id"
-                    [class.fa-chevron-up]="expandedMilestoneId===m.id">
-                    </i>
-                </div>
-
-            </div>
-
-            <div
-            class="gc-assignment-body"
-            *ngIf="expandedMilestoneId===m.id">
-
-                <div>
-                    <p>{{m.description}}</p>
-                    <h4>Required Deliverables</h4>
-                    <div class="deliverable-list">
-                        <span
-                        *ngFor="let item of m.deliverablesList"
-                        class="gc-badge">
-                            {{item.title}}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="gc-your-work-card">
-                    <h4>Student Submissions</h4>
-                    <button
-                    type="button"
-                    class="gc-btn-view-roster"
-                    (click)="triggerRoster(m)">
-                        <i class="fa-solid fa-users-rectangle"></i>
-                        View Student Roster & Grade
-                    </button>
                 </div>
 
             </div>
 
         </div>
+
     </div>
-</div>
+
 </div>
