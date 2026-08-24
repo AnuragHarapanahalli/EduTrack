@@ -1,727 +1,626 @@
 /* ==========================================================
-   STREAM PROFESSIONAL CLASS THEME
-   (Only Class Detail Stream)
+   STREAM
 ========================================================== */
-
 
 :host {
-
-    display:block;
-
-    background: var(--gc-background, #f8fafc);
-
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--gc-background, #f8fafc);
 }
-
-
 
 .gc-stream-container {
+  width: 100%;
+  max-width: 1200px;
 
-    max-width:1200px;
+  margin: 0 auto;
 
-    margin:0 auto;
+  padding: 2rem;
 
-    padding:2rem;
+  box-sizing: border-box;
 
+  min-width: 0;
 
-    --primary:#6366f1;
-    --primary-dark:#4f46e5;
-
-    --card:#ffffff;
-
-    --background: var(--gc-background, #f8fafc);
-
-    --text:#0f172a;
-
-    --subtext:#64748b;
-
-    --border:#e2e8f0;
-
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --card: #ffffff;
+  --background: var(--gc-background, #f8fafc);
+  --text: #0f172a;
+  --subtext: #64748b;
+  --border: #e2e8f0;
 }
-
-
-
-/* ==========================================================
-   CLASS HEADER BANNER
-========================================================== */
-
-
-.gc-class-banner {
-
-
-    height:240px;
-
-
-    border-radius:30px;
-
-
-    padding:2.5rem;
-
-
-    margin-bottom:2rem;
-
-
-    display:flex;
-
-
-    flex-direction:column;
-
-
-    justify-content:flex-end;
-
-
-
-    background:
-
-    linear-gradient(
-
-        135deg,
-
-        #eef2ff,
-
-        #dbeafe
-
-    );
-
-
-
-    border:1px solid #c7d2fe;
-
-
-    box-shadow:
-
-    0 20px 45px rgba(99,102,241,.15);
-
-
-
-}
-
-
-
-.gc-banner-title {
-
-
-    font-size:2.3rem;
-
-
-    font-weight:800;
-
-
-    color:#0f172a;
-
-
-}
-
-
-
-.gc-banner-code {
-
-
-    margin-top:.5rem;
-
-
-    color:#475569;
-
-
-    font-weight:600;
-
-
-}
-
-
-
-.gc-banner-teacher {
-
-
-    margin-top:.7rem;
-
-
-    color:#475569;
-
-
-}
-
 
 
 /* ==========================================================
    MAIN GRID
 ========================================================== */
 
-
 .gc-stream-grid {
+  width: 100%;
+  min-width: 0;
 
+  display: grid;
 
-    display:grid;
+  grid-template-columns: 300px minmax(0, 1fr);
 
+  gap: 2rem;
 
-    grid-template-columns:300px 1fr;
-
-
-    gap:2rem;
-
-
+  box-sizing: border-box;
 }
 
 
+/* ==========================================================
+   LEFT COLUMN
+========================================================== */
 
-@media(max-width:900px){
-
-
-.gc-stream-grid {
-
-
-    grid-template-columns:1fr;
-
-
+.gc-stream-upcoming-col {
+  min-width: 0;
 }
 
 
+/* ==========================================================
+   RIGHT COLUMN
+========================================================== */
+
+.gc-stream-feed-col {
+  min-width: 0;
 }
-
-
-
 
 
 /* ==========================================================
    UPCOMING CARD
 ========================================================== */
 
-
 .gc-upcoming-card {
+  width: 100%;
+  box-sizing: border-box;
 
+  background: #ffffff;
 
-    background:white;
+  border: 1px solid #e2e8f0;
 
+  border-radius: 24px;
 
-    border:1px solid #e2e8f0;
+  padding: 1.5rem;
 
-
-    border-radius:24px;
-
-
-    padding:1.5rem;
-
-
-    box-shadow:
-
-
-    0 10px 30px rgba(15,23,42,.06);
-
-
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.06);
 }
-
-
 
 .gc-upcoming-card h3 {
+  margin: 0 0 1rem;
 
+  font-size: 1.1rem;
 
-    font-size:1.1rem;
+  font-weight: 800;
 
-
-    font-weight:800;
-
-
-    color:#0f172a;
-
-
-    margin-bottom:1rem;
-
-
+  color: #0f172a;
 }
 
 
+/* ==========================================================
+   UPCOMING LIST
+========================================================== */
 
 .gc-upcoming-list {
+  list-style: none;
 
+  padding: 0;
+  margin: 0;
 
-    list-style:none;
-
-
-    padding:0;
-
-
+  width: 100%;
 }
-
-
 
 .gc-upcoming-list li {
+  padding: 1rem 0;
 
+  border-bottom: 1px solid #e2e8f0;
 
-    padding:1rem 0;
-
-
-    border-bottom:1px solid #e2e8f0;
-
-
+  min-width: 0;
 }
-
-
 
 .gc-upcoming-list li:last-child {
-
-
-    border-bottom:none;
-
-
+  border-bottom: none;
 }
-
-
 
 .gc-upcoming-list strong {
+  display: block;
 
+  color: #0f172a;
 
-    color:#0f172a;
+  font-size: 0.9rem;
 
+  line-height: 1.4;
 
-    font-size:.9rem;
-
-
+  overflow-wrap: anywhere;
 }
-
-
 
 .gc-upcoming-list small {
+  display: block;
 
+  margin-top: 0.4rem;
 
-    display:block;
+  color: #64748b;
 
+  font-size: 0.8rem;
 
-    margin-top:.4rem;
+  line-height: 1.4;
 
-
-    color:#64748b;
-
-
+  overflow-wrap: anywhere;
 }
 
+
+/* ==========================================================
+   NO UPCOMING
+========================================================== */
+
+.gc-no-upcoming {
+  color: #64748b;
+
+  line-height: 1.5;
+}
 
 
 /* ==========================================================
    VIEW ALL BUTTON
 ========================================================== */
 
-
 .gc-view-all-btn {
+  width: 100%;
 
+  margin-top: 1rem;
 
-    width:100%;
+  border-radius: 14px;
 
-
-    margin-top:1rem;
-
-
-    border-radius:14px;
-
-
+  box-sizing: border-box;
 }
 
 
-
-
-
 /* ==========================================================
-   ANNOUNCEMENT BOX
+   ANNOUNCEMENT
 ========================================================== */
-
 
 .gc-announcement-box {
+  width: 100%;
 
+  box-sizing: border-box;
 
-    background:white;
+  background: #ffffff;
 
+  border: 1px solid #e2e8f0;
 
-    border:1px solid #e2e8f0;
+  border-radius: 24px;
 
+  padding: 1.3rem 1.5rem;
 
-    border-radius:24px;
+  display: flex;
 
+  align-items: center;
 
-    padding:1.3rem 1.5rem;
+  gap: 1rem;
 
+  margin-bottom: 1.5rem;
 
-    display:flex;
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.06);
 
+  transition: 0.25s;
 
-    align-items:center;
-
-
-    gap:1rem;
-
-
-    margin-bottom:1.5rem;
-
-
-    box-shadow:
-
-
-    0 10px 30px rgba(15,23,42,.06);
-
-
-    transition:.25s;
-
-
+  min-width: 0;
 }
-
-
 
 .gc-announcement-box:hover {
+  transform: translateY(-3px);
 
-
-    transform:translateY(-3px);
-
-
-    box-shadow:
-
-
-    0 15px 35px rgba(15,23,42,.1);
-
-
+  box-shadow:
+    0 15px 35px rgba(15, 23, 42, 0.1);
 }
-
-
 
 .gc-user-avatar-sm {
+  width: 45px;
+  height: 45px;
 
+  min-width: 45px;
 
-    width:45px;
+  border-radius: 50%;
 
+  background: #6366f1;
 
-    height:45px;
+  color: white;
 
+  display: flex;
 
-    border-radius:50%;
+  align-items: center;
+  justify-content: center;
 
-
-    background:#6366f1;
-
-
-    color:white;
-
-
-    display:flex;
-
-
-    align-items:center;
-
-
-    justify-content:center;
-
-
-    font-weight:800;
-
-
+  font-weight: 800;
 }
-
-
 
 .gc-announcement-placeholder {
+  min-width: 0;
 
+  color: #64748b;
 
-    color:#64748b;
-
-
+  overflow-wrap: anywhere;
 }
-
 
 
 /* ==========================================================
-   FEED CARDS
+   FEED
 ========================================================== */
 
-
 .gc-feed-list {
+  width: 100%;
 
+  display: flex;
 
-    display:flex;
+  flex-direction: column;
 
+  gap: 1.3rem;
 
-    flex-direction:column;
-
-
-    gap:1.3rem;
-
-
+  min-width: 0;
 }
-
-
 
 .gc-feed-item {
+  width: 100%;
 
+  box-sizing: border-box;
 
-    background:white;
+  background: #ffffff;
 
+  border: 1px solid #e2e8f0;
 
-    border:1px solid #e2e8f0;
+  border-radius: 24px;
 
+  padding: 1.5rem;
 
-    border-radius:24px;
+  display: flex;
 
+  gap: 1.2rem;
 
-    padding:1.5rem;
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.06);
 
+  transition: 0.25s;
 
-    display:flex;
+  cursor: pointer;
 
-
-    gap:1.2rem;
-
-
-    box-shadow:
-
-
-    0 10px 30px rgba(15,23,42,.06);
-
-
-    transition:.25s;
-
-
-    cursor:pointer;
-
-
+  min-width: 0;
 }
-
-
 
 .gc-feed-item:hover {
+  transform: translateY(-4px);
 
-
-    transform:translateY(-4px);
-
-
-    box-shadow:
-
-
-    0 20px 40px rgba(15,23,42,.1);
-
-
+  box-shadow:
+    0 20px 40px rgba(15, 23, 42, 0.1);
 }
 
 
-
+/* ==========================================================
+   FEED ICON
+========================================================== */
 
 .gc-feed-icon {
+  width: 48px;
+  height: 48px;
 
+  min-width: 48px;
 
-    width:48px;
+  border-radius: 16px;
 
+  background: #eef2ff;
 
-    height:48px;
+  color: #6366f1;
 
+  display: flex;
 
-    border-radius:16px;
+  align-items: center;
+  justify-content: center;
 
-
-    background:#eef2ff;
-
-
-    color:#6366f1;
-
-
-    display:flex;
-
-
-    align-items:center;
-
-
-    justify-content:center;
-
-
-    flex-shrink:0;
-
-
+  flex-shrink: 0;
 }
 
 
-
+/* ==========================================================
+   FEED CONTENT
+========================================================== */
 
 .gc-feed-content {
+  flex: 1;
 
-
-    flex:1;
-
-
+  min-width: 0;
 }
-
-
 
 .gc-feed-title {
+  color: #334155;
 
+  line-height: 1.6;
 
-    color:#334155;
-
-
-    line-height:1.6;
-
-
+  overflow-wrap: anywhere;
 }
-
-
 
 .gc-feed-title strong {
-
-
-    color:#0f172a;
-
-
+  color: #0f172a;
 }
-
-
 
 .gc-feed-title span {
+  color: #6366f1;
 
+  font-weight: 700;
 
-    color:#6366f1;
-
-
-    font-weight:700;
-
-
+  overflow-wrap: anywhere;
 }
-
-
 
 .gc-feed-date {
+  margin-top: 0.5rem;
 
+  color: #64748b;
 
-    margin-top:.5rem;
-
-
-    color:#64748b;
-
-
-    font-size:.85rem;
-
-
+  font-size: 0.85rem;
 }
-
 
 
 /* ==========================================================
    EMPTY STATE
 ========================================================== */
 
-
 .gc-empty-feed {
+  width: 100%;
 
+  box-sizing: border-box;
 
-    background:white;
+  background: #ffffff;
 
+  border-radius: 24px;
 
-    border-radius:24px;
+  border: 1px solid #e2e8f0;
 
+  padding: 4rem 2rem;
 
-    border:1px solid #e2e8f0;
+  text-align: center;
 
+  color: #64748b;
 
-    padding:4rem 2rem;
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.06);
+}
 
-
-    text-align:center;
-
-
-    color:#64748b;
-
-
-    box-shadow:
-
-
-    0 10px 30px rgba(15,23,42,.06);
-
-
+.gc-empty-feed i {
+  color: #6366f1 !important;
 }
 
 
+/* ==========================================================
+   TABLET
+========================================================== */
 
-.gc-empty-feed i {
+@media (max-width: 900px) {
 
+  .gc-stream-container {
+    padding: 1.5rem;
+  }
 
-    color:#6366f1 !important;
+  .gc-stream-grid {
+    grid-template-columns: 1fr;
 
+    gap: 1.5rem;
+  }
 
 }
 
 
 /* ==========================================================
-   DARK THEME OVERRIDES FOR STREAM
+   MOBILE
+========================================================== */
+
+@media (max-width: 600px) {
+
+  :host {
+    overflow-x: hidden;
+  }
+
+  .gc-stream-container {
+    width: 100%;
+
+    max-width: 100%;
+
+    padding: 1rem;
+
+    margin: 0;
+
+    box-sizing: border-box;
+  }
+
+  .gc-stream-grid {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1rem;
+  }
+
+  .gc-stream-upcoming-col,
+  .gc-stream-feed-col {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+
+  /* Upcoming */
+
+  .gc-upcoming-card {
+    width: 100%;
+
+    padding: 1.25rem;
+
+    border-radius: 20px;
+  }
+
+
+  /* Announcement */
+
+  .gc-announcement-box {
+    padding: 1rem;
+
+    border-radius: 20px;
+
+    margin-bottom: 1rem;
+  }
+
+
+  /* Feed */
+
+  .gc-feed-list {
+    gap: 1rem;
+  }
+
+  .gc-feed-item {
+    padding: 1.1rem;
+
+    border-radius: 20px;
+
+    gap: 0.9rem;
+  }
+
+  .gc-feed-icon {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    border-radius: 13px;
+  }
+
+
+  /* Empty */
+
+  .gc-empty-feed {
+    padding: 3rem 1.25rem;
+
+    border-radius: 20px;
+  }
+
+}
+
+
+/* ==========================================================
+   VERY SMALL PHONES
+========================================================== */
+
+@media (max-width: 430px) {
+
+  .gc-stream-container {
+    padding: 0.75rem;
+  }
+
+  .gc-upcoming-card {
+    padding: 1rem;
+
+    border-radius: 18px;
+  }
+
+  .gc-upcoming-card h3 {
+    font-size: 1.05rem;
+  }
+
+  .gc-feed-item {
+    padding: 1rem;
+
+    border-radius: 18px;
+
+    gap: 0.75rem;
+  }
+
+  .gc-feed-title {
+    font-size: 0.9rem;
+
+    line-height: 1.5;
+  }
+
+  .gc-feed-date {
+    font-size: 0.78rem;
+  }
+
+}
+
+
+/* ==========================================================
+   DARK THEME
 ========================================================== */
 
 :host-context(.dark-theme) {
-    background: #0f172a !important;
+  background: #0f172a !important;
 }
 
 :host-context(.dark-theme) .gc-stream-container {
-    --card: #1e293b;
-    --background: #0f172a;
-    --text: #f8fafc;
-    --subtext: #94a3b8;
-    --border: #334155;
-}
-
-:host-context(.dark-theme) .gc-class-banner {
-    background: linear-gradient(135deg, #1e1b4b, #0f172a);
-    border-color: #3730a3;
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
-}
-
-:host-context(.dark-theme) .gc-banner-title {
-    color: #f8fafc;
-}
-
-:host-context(.dark-theme) .gc-banner-code,
-:host-context(.dark-theme) .gc-banner-teacher {
-    color: #cbd5e1;
+  --card: #1e293b;
+  --background: #0f172a;
+  --text: #f8fafc;
+  --subtext: #94a3b8;
+  --border: #334155;
 }
 
 :host-context(.dark-theme) .gc-upcoming-card {
-    background: #1e293b;
-    border-color: #334155;
+  background: #1e293b;
+
+  border-color: #334155;
 }
 
 :host-context(.dark-theme) .gc-upcoming-card h3,
 :host-context(.dark-theme) .gc-upcoming-list strong {
-    color: #f8fafc;
+  color: #f8fafc;
 }
 
 :host-context(.dark-theme) .gc-upcoming-list li {
-    border-bottom-color: #334155;
+  border-bottom-color: #334155;
 }
 
 :host-context(.dark-theme) .gc-upcoming-list small {
-    color: #94a3b8;
+  color: #94a3b8;
 }
 
 :host-context(.dark-theme) .gc-announcement-box {
-    background: #1e293b;
-    border-color: #334155;
+  background: #1e293b;
+
+  border-color: #334155;
 }
 
 :host-context(.dark-theme) .gc-announcement-placeholder {
-    color: #94a3b8;
+  color: #94a3b8;
 }
 
 :host-context(.dark-theme) .gc-feed-item {
-    background: #1e293b;
-    border-color: #334155;
+  background: #1e293b;
+
+  border-color: #334155;
 }
 
 :host-context(.dark-theme) .gc-feed-icon {
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
+  background: rgba(99, 102, 241, 0.15);
+
+  color: #818cf8;
 }
 
 :host-context(.dark-theme) .gc-feed-title {
-    color: #cbd5e1;
+  color: #cbd5e1;
 }
 
 :host-context(.dark-theme) .gc-feed-title strong {
-    color: #f8fafc;
+  color: #f8fafc;
 }
 
 :host-context(.dark-theme) .gc-feed-date {
-    color: #94a3b8;
+  color: #94a3b8;
 }
 
 :host-context(.dark-theme) .gc-empty-feed {
-    background: #1e293b;
-    border-color: #334155;
-    color: #94a3b8;
-}
+  background: #1e293b;
+
+  border-color: #334155;
+
+  color: #94a3b8;
+}
