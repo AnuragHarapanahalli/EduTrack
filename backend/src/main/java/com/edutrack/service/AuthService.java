@@ -49,7 +49,7 @@ public class AuthService {
 
     public void changePassword(AuthDto.ChangePasswordRequest request) {
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (request.getNewPassword() == null || request.getNewPassword().length() < validationConfig.getUserPasswordMin() || request.getNewPassword().length() > validationConfig.getUserPasswordMax()) {
             throw new IllegalArgumentException("Password must be between " + validationConfig.getUserPasswordMin() + " and " + validationConfig.getUserPasswordMax() + " characters.");

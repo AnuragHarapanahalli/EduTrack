@@ -67,58 +67,190 @@
 
 
 
-    <!-- User -->
+    <!-- User Dropdown -->
+    <div class="gc-user-dropdown-container">
 
-    <div class="gc-user-pod">
+      <button
+        class="gc-user-pod"
+        type="button"
+        (click)="toggleUserMenu($event)"
+        title="Account Options">
 
+        <div class="gc-avatar-circle">
+          {{ initials }}
+        </div>
 
-      <div class="gc-avatar-circle">
+        <div class="gc-user-info">
+          <span class="gc-user-name">
+            {{ user?.fullName }}
+          </span>
+          <span class="gc-user-role">
+            {{ user?.role }}
+          </span>
+        </div>
 
-        {{ initials }}
+        <i class="fa-solid fa-chevron-down gc-user-chevron" [class.rotated]="showUserMenu"></i>
+
+      </button>
+
+      <!-- Dropdown Popup -->
+      <div class="gc-user-menu" *ngIf="showUserMenu" (click)="$event.stopPropagation()">
+
+        <div class="gc-user-menu-header">
+          <div class="gc-menu-avatar">
+            {{ initials }}
+          </div>
+          <div class="gc-menu-user-details">
+            <strong class="gc-menu-name">{{ user?.fullName }}</strong>
+            <span class="gc-menu-email">{{ user?.email }}</span>
+            <span class="gc-menu-role-badge">{{ user?.role }}</span>
+          </div>
+        </div>
+
+        <div class="gc-user-menu-divider"></div>
+
+        <button
+          type="button"
+          class="gc-user-menu-item"
+          (click)="openChangePasswordModal()">
+          <i class="fa-solid fa-key"></i>
+          <span>Change Password</span>
+        </button>
+
+        <button
+          type="button"
+          class="gc-user-menu-item gc-menu-item-danger"
+          (click)="logout()">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Sign Out</span>
+        </button>
 
       </div>
-
-
-      <div class="gc-user-info">
-
-
-        <span class="gc-user-name">
-
-          {{ user?.fullName }}
-
-        </span>
-
-
-        <span class="gc-user-role">
-
-          {{ user?.role }}
-
-        </span>
-
-
-      </div>
-
 
     </div>
 
-
-
     <!-- Logout -->
-
     <button
       class="gc-header-action gc-logout-action"
       title="Logout"
       (click)="logout()">
-
-
       <i class="fa-solid fa-right-from-bracket"></i>
-
-
     </button>
-
-
 
   </div>
 
-
 </header>
+
+<!-- Change Password Modal -->
+<div class="gc-modal-backdrop" *ngIf="showChangePasswordModal" (click)="closeChangePasswordModal()">
+
+  <div class="gc-modern-modal" (click)="$event.stopPropagation()">
+
+    <!-- MODAL HEADER -->
+    <div class="gc-modal-top">
+      <div class="gc-modal-title">
+        <div class="gc-modal-icon">
+          <i class="fa-solid fa-key"></i>
+        </div>
+        <div>
+          <h2>Change Password</h2>
+          <p>Set a new password for your EduTrack account</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="gc-modal-close-btn"
+        (click)="closeChangePasswordModal()"
+        title="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- MODAL FORM -->
+    <form (ngSubmit)="submitChangePassword()">
+
+      <div class="gc-modal-body">
+
+        <div class="gc-alert-success" *ngIf="changePasswordSuccess">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>{{ changePasswordSuccess }}</span>
+        </div>
+
+        <div class="gc-alert-danger" *ngIf="changePasswordError">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>{{ changePasswordError }}</span>
+        </div>
+
+        <div class="gc-modal-field">
+          <label>New Password</label>
+          <div class="gc-input-group">
+            <i class="fa-solid fa-lock gc-field-icon"></i>
+            <input
+              [type]="showNewPassword ? 'text' : 'password'"
+              name="newPassword"
+              [(ngModel)]="newPassword"
+              placeholder="Enter new password (min 6 characters)"
+              required>
+            <button
+              type="button"
+              class="gc-pwd-btn"
+              (click)="toggleNewPasswordVisibility()"
+              title="Toggle visibility">
+              <i class="fa-solid" [ngClass]="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <small class="gc-hint">Must be between 6 and 30 characters.</small>
+        </div>
+
+        <div class="gc-modal-field">
+          <label>Confirm New Password</label>
+          <div class="gc-input-group">
+            <i class="fa-solid fa-shield-halved gc-field-icon"></i>
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              name="confirmPassword"
+              [(ngModel)]="confirmPassword"
+              placeholder="Re-enter your new password"
+              required>
+            <button
+              type="button"
+              class="gc-pwd-btn"
+              (click)="toggleConfirmPasswordVisibility()"
+              title="Toggle visibility">
+              <i class="fa-solid" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MODAL ACTIONS -->
+      <div class="gc-modal-actions">
+        <button
+          type="button"
+          class="gc-btn-cancel"
+          (click)="closeChangePasswordModal()"
+          [disabled]="isSubmittingPassword">
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="gc-btn-submit"
+          [disabled]="isSubmittingPassword || !newPassword || !confirmPassword">
+          <span *ngIf="!isSubmittingPassword">
+            <i class="fa-solid fa-check"></i>
+            Update Password
+          </span>
+          <span *ngIf="isSubmittingPassword">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            Updating...
+          </span>
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
