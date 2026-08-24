@@ -2,7 +2,7 @@
 
     <!-- ==========================================================
          STUDENT VIEW
-    ========================================================== -->
+    =========================================================== -->
 
     <div *ngIf="authService.currentUser()?.role === 'STUDENT'">
 
@@ -13,9 +13,7 @@
             [class.completed]="heroMilestone.userSubmission?.status === 'APPROVED'">
 
             <div class="hero-top">
-
                 <div>
-
                     <div class="netflix-hero-badge">
                         <i class="fa-solid fa-clock"></i>
                         Nearest Upcoming Milestone
@@ -26,14 +24,12 @@
                         •
                         {{heroSubject?.name}}
                     </span>
-
                 </div>
 
                 <div class="netflix-countdown-badge">
                     <i class="fa-solid fa-hourglass-half"></i>
                     {{heroMilestone.daysRemainingText}}
                 </div>
-
             </div>
 
             <h1 class="netflix-hero-title">
@@ -47,7 +43,6 @@
             <div class="hero-bottom">
 
                 <div class="deliverable-list">
-
                     <span
                         *ngFor="let item of heroMilestone.deliverablesList"
                         class="gc-badge"
@@ -58,7 +53,6 @@
                         {{item.title}}
 
                     </span>
-
                 </div>
 
                 <div>
@@ -102,10 +96,8 @@
                         class="submission-status-wrapper">
 
                         <span class="gc-badge gc-badge-warning">
-
                             <i class="fa-solid fa-circle-exclamation"></i>
                             Under Review
-
                         </span>
 
                         <span class="submission-date">
@@ -120,10 +112,8 @@
                         class="submission-status-wrapper">
 
                         <span class="gc-badge gc-badge-orange">
-
                             <i class="fa-solid fa-circle-exclamation"></i>
                             Needs Revision
-
                         </span>
 
                     </div>
@@ -137,9 +127,7 @@
                 class="gc-feedback-badge hero-feedback">
 
                 <i class="fa-solid fa-comment-dots"></i>
-
                 <strong>Teacher Comment:</strong>
-
                 "{{heroMilestone.userSubmission?.instructorFeedback}}"
 
             </div>
@@ -163,7 +151,6 @@
                     title="View Class details">
 
                     <i class="fa-solid fa-layer-group"></i>
-
                     {{row.subject.name}}
 
                 </h2>
@@ -196,13 +183,12 @@
                             : null
                         ">
 
-                        <!-- ==================================================
-                             TOP / MAIN INFORMATION
-                        ================================================== -->
+                        <!-- MAIN INFORMATION -->
 
                         <div class="milestone-main-content">
 
                             <!-- STATUS -->
+
                             <div class="card-top">
 
                                 <span
@@ -253,12 +239,14 @@
 
 
                             <!-- TITLE -->
+
                             <h3 class="milestone-title">
                                 {{m.title}}
                             </h3>
 
 
                             <!-- DESCRIPTION -->
+
                             <p
                                 class="milestone-description"
                                 [title]="m.description || ''">
@@ -272,9 +260,7 @@
                             </p>
 
 
-                            <!-- ==================================================
-                                 MARKS
-                            ================================================== -->
+                            <!-- MARKS -->
 
                             <div class="gc-marks-row">
 
@@ -289,9 +275,7 @@
                             </div>
 
 
-                            <!-- ==================================================
-                                 SCORE
-                            ================================================== -->
+                            <!-- SCORE -->
 
                             <div
                                 *ngIf="
@@ -319,9 +303,7 @@
                             </div>
 
 
-                            <!-- ==================================================
-                                 TEACHER COMMENT
-                            ================================================== -->
+                            <!-- TEACHER COMMENT -->
 
                             <div
                                 *ngIf="
@@ -331,24 +313,19 @@
                                 class="gc-feedback-badge">
 
                                 <i class="fa-solid fa-comment-dots"></i>
-
                                 <strong>Teacher Comment:</strong>
-
                                 "{{m.userSubmission?.instructorFeedback}}"
 
                             </div>
 
 
-                            <!-- ==================================================
-                                 UPLOADED DATE
-                            ================================================== -->
+                            <!-- UPLOADED DATE -->
 
                             <div
                                 *ngIf="m.userSubmission?.status === 'SUBMITTED'"
                                 class="submission-date">
 
                                 <i class="fa-regular fa-calendar-check"></i>
-
                                 Uploaded:
                                 {{m.userSubmission?.submittedAt | date:'medium'}}
 
@@ -357,23 +334,22 @@
                         </div>
 
 
-                        <!-- ==================================================
-                             BOTTOM INFORMATION
-                        ================================================== -->
+                        <!-- BOTTOM INFORMATION -->
 
                         <div class="milestone-bottom-content">
 
                             <!-- DEADLINE -->
+
                             <div class="deadline">
 
                                 <i class="fa-regular fa-clock"></i>
-
                                 {{m.daysRemainingText}}
 
                             </div>
 
 
                             <!-- DELIVERABLES -->
+
                             <div class="deliverable-list">
 
                                 <span
@@ -383,7 +359,6 @@
                                     class="gc-badge">
 
                                     <i class="fa-solid fa-paperclip"></i>
-
                                     {{del.title}}
 
                                 </span>
@@ -403,6 +378,7 @@
 
 
                             <!-- TURN IN BUTTON -->
+
                             <button
                                 *ngIf="
                                     !m.isLocked &&
@@ -428,12 +404,12 @@
 
 
                             <!-- LOCKED -->
+
                             <span
                                 *ngIf="m.isLocked"
                                 class="locked-text">
 
                                 <i class="fa-solid fa-lock"></i>
-
                                 Complete previous milestone
 
                             </span>
@@ -464,7 +440,7 @@
 
     <!-- ==========================================================
          INSTRUCTOR VIEW
-    ========================================================== -->
+    =========================================================== -->
 
     <div
         *ngIf="
@@ -482,7 +458,6 @@
                 (click)="triggerCreateMilestone()">
 
                 <i class="fa-solid fa-plus"></i>
-
                 Create Milestone
 
             </button>
@@ -494,7 +469,6 @@
                 (click)="downloadMarksCsv()">
 
                 <i class="fa-solid fa-file-csv"></i>
-
                 Export Marks (CSV)
 
             </button>
@@ -515,7 +489,6 @@
                 *ngFor="let m of teacherMilestones"
                 class="gc-card gc-assignment-card">
 
-
                 <!-- ASSIGNMENT HEADER -->
 
                 <div
@@ -525,9 +498,7 @@
                     <div class="gc-assignment-left">
 
                         <div class="gc-assignment-icon-pod">
-
                             <i class="fa-solid fa-file-lines"></i>
-
                         </div>
 
                         <div>
@@ -554,6 +525,7 @@
                             </span>
 
                             <span>
+
                                 <i
                                     class="fa-solid fa-star"
                                     style="margin-right: 4px;">
@@ -575,7 +547,6 @@
                             ">
 
                             <i class="fa-solid fa-pen-to-square"></i>
-
                             Edit
 
                         </button>
@@ -590,7 +561,6 @@
                             ">
 
                             <i class="fa-solid fa-trash-can"></i>
-
                             Delete
 
                         </button>
@@ -602,8 +572,7 @@
                                 expandedMilestoneId !== m.id
                             "
                             [class.fa-chevron-up]="
-                                expandedMilestoneId === m.id
-                            ">
+                                expandedMilestoneId === m.id">
                         </i>
 
                     </div>
@@ -611,28 +580,60 @@
                 </div>
 
 
-                <!-- ASSIGNMENT BODY -->
+                <!-- ==================================================
+                     ASSIGNMENT BODY
+                =================================================== -->
 
                 <div
                     class="gc-assignment-body"
                     *ngIf="expandedMilestoneId === m.id">
 
-                    <div>
+                    <!-- DESCRIPTION -->
+
+                    <div class="gc-assignment-description">
+
+                        <h4>
+                            <i class="fa-solid fa-align-left"></i>
+                            About this Milestone
+                        </h4>
 
                         <p>
                             {{m.description}}
                         </p>
 
-                        <h4>
-                            Required Deliverables
-                        </h4>
+                    </div>
+
+
+                    <!-- REQUIRED DELIVERABLES -->
+
+                    <div class="gc-deliverables-section">
+
+                        <div class="gc-section-heading">
+
+                            <h4>
+                                <i class="fa-solid fa-paperclip"></i>
+                                Required Deliverables
+                            </h4>
+
+                            <span class="gc-deliverable-count">
+                                {{m.deliverablesList.length}}
+                                {{
+                                    m.deliverablesList.length === 1
+                                        ? 'Item'
+                                        : 'Items'
+                                }}
+                            </span>
+
+                        </div>
+
 
                         <div class="deliverable-list">
 
                             <span
                                 *ngFor="let item of m.deliverablesList"
-                                class="gc-badge">
+                                class="gc-deliverable-chip">
 
+                                <i class="fa-solid fa-file-lines"></i>
                                 {{item.title}}
 
                             </span>
@@ -642,11 +643,31 @@
                     </div>
 
 
-                    <div class="gc-your-work-card">
+                    <!-- STUDENT SUBMISSIONS -->
 
-                        <h4>
-                            Student Submissions
-                        </h4>
+                    <div class="gc-submissions-section">
+
+                        <div class="gc-submissions-info">
+
+                            <div class="gc-submissions-icon">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+
+                            <div>
+
+                                <h4>
+                                    Student Submissions
+                                </h4>
+
+                                <p>
+                                    View student submissions, review their work,
+                                    and assign grades for this milestone.
+                                </p>
+
+                            </div>
+
+                        </div>
+
 
                         <button
                             type="button"
@@ -656,6 +677,8 @@
                             <i class="fa-solid fa-users-rectangle"></i>
 
                             View Student Roster & Grade
+
+                            <i class="fa-solid fa-arrow-right"></i>
 
                         </button>
 

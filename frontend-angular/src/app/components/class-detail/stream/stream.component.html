@@ -1,39 +1,14 @@
 <div class="gc-stream-container">
 
   <!-- =========================
-       CLASS BANNER
-  ========================== -->
-
-  <div class="gc-class-banner">
-
-    <div class="gc-banner-content">
-
-      <h1 class="gc-banner-title">
-        {{ viewStateService.currentSubject()?.name }}
-      </h1>
-
-      <p class="gc-banner-code">
-        {{ viewStateService.currentSubject()?.code }}
-      </p>
-
-      <p class="gc-banner-teacher">
-        <i class="fa-solid fa-chalkboard-user"></i>
-
-        {{ viewStateService.currentSubject()?.instructorName || 'Faculty' }}
-
-      </p>
-
-    </div>
-
-  </div>
-
-  <!-- =========================
        MAIN GRID
   ========================== -->
 
   <div class="gc-stream-grid">
 
-    <!-- LEFT COLUMN -->
+    <!-- =========================
+         LEFT COLUMN
+    ========================== -->
 
     <aside class="gc-stream-upcoming-col">
 
@@ -50,9 +25,7 @@
           <li *ngFor="let milestone of upcomingMilestones">
 
             <strong>
-
               {{ milestone.title }}
-
             </strong>
 
             <small>
@@ -70,9 +43,9 @@
 
         <p
           class="gc-no-upcoming"
-          *ngIf="!loading && upcomingMilestones.length===0">
+          *ngIf="!loading && upcomingMilestones.length === 0">
 
-           No upcoming assignments.
+          No upcoming assignments.
 
         </p>
 
@@ -88,17 +61,20 @@
 
     </aside>
 
-    <!-- RIGHT COLUMN -->
+
+    <!-- =========================
+         RIGHT COLUMN
+    ========================== -->
 
     <section class="gc-stream-feed-col">
 
-      <!-- Announcement -->
+      <!-- Instructor Announcement -->
 
       <div
-  class="gc-card gc-announcement-box"
-  *ngIf="authService.currentUser()?.role==='INSTRUCTOR'">
+        class="gc-card gc-announcement-box"
+        *ngIf="authService.currentUser()?.role === 'INSTRUCTOR'">
 
-  <div class="gc-user-avatar-sm">
+        <div class="gc-user-avatar-sm">
 
           {{ authService.currentUser()?.fullName?.charAt(0) }}
 
@@ -112,6 +88,7 @@
 
       </div>
 
+
       <!-- Loading -->
 
       <div
@@ -121,12 +98,11 @@
         <i class="fa-solid fa-spinner fa-spin"></i>
 
         <p>
-
           Loading class stream...
-
         </p>
 
       </div>
+
 
       <!-- Feed -->
 
@@ -150,17 +126,13 @@
             <div class="gc-feed-title">
 
               <strong>
-
                 {{ viewStateService.currentSubject()?.instructorName || 'Faculty' }}
-
               </strong>
 
               posted a new assignment
 
               <span>
-
                 {{ milestone.title }}
-
               </span>
 
             </div>
@@ -177,28 +149,24 @@
 
         </div>
 
+
         <!-- Empty -->
 
         <div
           class="gc-card gc-empty-feed"
-          *ngIf="milestones.length===0">
+          *ngIf="milestones.length === 0">
 
           <i
             class="fa-regular fa-comments"
             style="font-size:3rem;margin-bottom:1rem;color:var(--gc-primary);">
-
           </i>
 
           <h3>
-
             Nothing posted yet
-
           </h3>
 
           <p>
-
             Class announcements and assignments will appear here.
-
           </p>
 
         </div>

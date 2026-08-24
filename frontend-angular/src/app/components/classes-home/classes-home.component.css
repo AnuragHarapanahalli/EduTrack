@@ -4,10 +4,10 @@
 
 :host {
   display: block;
-  min-height: calc(100vh - 68px);
+  min-height: 100%;
   background: var(--gc-background, #f8fafc);
-  box-sizing: border-box;
 }
+
 
 /* =====================================================
    DASHBOARD CONTAINER
@@ -17,9 +17,10 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 40px 36px 60px;
+  padding: 34px 36px 50px;
   box-sizing: border-box;
 }
+
 
 /* =====================================================
    WELCOME HEADER
@@ -27,11 +28,11 @@
 
 .gc-dashboard-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 24px;
-  margin-bottom: 36px;
-  flex-wrap: wrap;
+  margin-bottom: 32px;
+  padding: 0;
 }
 
 .gc-dashboard-header > div {
@@ -40,22 +41,23 @@
 
 .gc-dashboard-header h1 {
   margin: 0 0 8px;
-  font-size: 2.25rem;
+  font-size: 2rem;
   line-height: 1.2;
   font-weight: 750;
-  letter-spacing: -0.6px;
+  letter-spacing: -0.5px;
   color: var(--gc-text-main, #0f172a);
 }
 
 .gc-dashboard-header p {
   margin: 0;
   color: var(--gc-text-sub, #64748b);
-  font-size: 0.98rem;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
+
 /* =====================================================
-   PRIMARY BUTTON
+   CREATE CLASS BUTTON
 ===================================================== */
 
 .gc-btn-primary {
@@ -64,10 +66,11 @@
   justify-content: center;
   gap: 9px;
 
-  padding: 12px 20px;
+  min-height: 44px;
+  padding: 11px 18px;
 
   border: none;
-  border-radius: 13px;
+  border-radius: 12px;
 
   background: linear-gradient(
     135deg,
@@ -76,30 +79,31 @@
   );
 
   color: #ffffff;
-
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 650;
 
   white-space: nowrap;
-
   cursor: pointer;
 
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
-    opacity 0.2s ease;
+    background 0.2s ease;
 }
 
 .gc-btn-primary:hover {
   transform: translateY(-2px);
-
-  box-shadow:
-    0 10px 24px rgba(15, 118, 110, 0.22);
+  box-shadow: 0 10px 22px rgba(15, 118, 110, 0.22);
 }
 
 .gc-btn-primary:active {
   transform: translateY(0);
 }
+
+.gc-btn-primary i {
+  font-size: 0.85rem;
+}
+
 
 /* =====================================================
    STATISTICS
@@ -107,13 +111,9 @@
 
 .gc-stats {
   display: grid;
-
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
-
-  gap: 20px;
-
-  margin-bottom: 38px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 34px;
 }
 
 .gc-stat-card {
@@ -121,42 +121,36 @@
 
   display: flex;
   align-items: center;
+  gap: 16px;
 
-  gap: 17px;
-
-  padding: 21px;
+  padding: 20px;
 
   background: var(--gc-card, #ffffff);
-
   border: 1px solid var(--gc-border, #e2e8f0);
-
   border-radius: 18px;
 
   box-sizing: border-box;
 
   transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease;
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .gc-stat-card:hover {
   transform: translateY(-3px);
-
-  box-shadow:
-    0 12px 28px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
 .gc-stat-card > i {
-  width: 52px;
-  height: 52px;
-
-  min-width: 52px;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 15px;
+  border-radius: 14px;
 
   background: linear-gradient(
     135deg,
@@ -165,44 +159,42 @@
   );
 
   color: #ffffff;
-
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .gc-stat-card h3 {
   margin: 0;
 
-  font-size: 1.65rem;
-  line-height: 1;
-
+  font-size: 1.55rem;
+  line-height: 1.1;
   font-weight: 750;
 
   color: var(--gc-text-main, #0f172a);
 }
 
 .gc-stat-card p {
-  margin: 6px 0 0;
+  margin: 5px 0 0;
 
   color: var(--gc-text-sub, #64748b);
-
   font-size: 0.82rem;
-  line-height: 1.3;
 }
 
+
 /* =====================================================
-   CLASS GRID
+   CLASSES SECTION
 ===================================================== */
 
 .gc-classes-grid {
   display: grid;
 
   grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+    repeat(auto-fill, minmax(330px, 1fr));
 
-  gap: 24px;
+  gap: 22px;
 
-  align-items: stretch;
+  width: 100%;
 }
+
 
 /* =====================================================
    CLASS CARD
@@ -211,13 +203,9 @@
 .gc-class-card {
   min-width: 0;
 
-  display: flex;
-  flex-direction: column;
-
   background: var(--gc-card, #ffffff);
 
   border: 1px solid var(--gc-border, #e2e8f0);
-
   border-radius: 20px;
 
   overflow: hidden;
@@ -227,19 +215,20 @@
   box-sizing: border-box;
 
   transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    border-color 0.25s ease;
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
 }
 
 .gc-class-card:hover {
   transform: translateY(-5px);
 
-  border-color: rgba(15, 118, 110, 0.25);
+  border-color: rgba(15, 118, 110, 0.22);
 
   box-shadow:
-    0 18px 40px rgba(15, 23, 42, 0.11);
+    0 16px 36px rgba(15, 23, 42, 0.11);
 }
+
 
 /* =====================================================
    CARD BANNER
@@ -248,59 +237,99 @@
 .gc-card-banner {
   position: relative;
 
-  min-height: 148px;
+  height: 142px;
 
   padding: 22px;
 
   color: #ffffff;
 
   box-sizing: border-box;
+
+  overflow: hidden;
 }
 
+/* subtle decorative circle */
+
+.gc-card-banner::after {
+  content: "";
+
+  position: absolute;
+
+  width: 150px;
+  height: 150px;
+
+  right: -45px;
+  bottom: -75px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.10);
+
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   BANNER CONTENT
+===================================================== */
+
 .gc-banner-overlay {
+  position: relative;
+  z-index: 1;
+
   height: 100%;
 
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
 
-  gap: 15px;
+  gap: 16px;
 }
 
 .gc-banner-overlay > div:first-child {
   min-width: 0;
+  padding-top: 2px;
 }
 
 .gc-banner-overlay h2 {
   margin: 0;
 
-  max-width: 220px;
-
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   line-height: 1.25;
-
   font-weight: 750;
 
-  word-break: break-word;
+  max-width: 210px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .gc-banner-overlay p {
   margin: 7px 0 0;
 
-  font-size: 0.8rem;
-
+  font-size: 0.78rem;
   font-weight: 600;
 
-  opacity: 0.88;
-
   letter-spacing: 0.4px;
+
+  opacity: 0.85;
+
+  text-transform: uppercase;
 }
 
-.gc-avatar {
-  width: 52px;
-  height: 52px;
 
-  min-width: 52px;
+/* =====================================================
+   COURSE AVATAR
+===================================================== */
+
+.gc-avatar {
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
 
   display: flex;
   align-items: center;
@@ -310,41 +339,43 @@
 
   background: rgba(255, 255, 255, 0.18);
 
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.20);
 
   backdrop-filter: blur(8px);
 
-  font-size: 21px;
+  color: #ffffff;
+
+  font-size: 19px;
   font-weight: 750;
 
-  flex-shrink: 0;
+  box-sizing: border-box;
 }
+
 
 /* =====================================================
    CARD BODY
 ===================================================== */
 
 .gc-card-body {
-  flex: 1;
-
-  display: flex;
-  flex-direction: column;
-
-  padding: 21px;
+  padding: 20px;
 
   box-sizing: border-box;
 }
+
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
 
 .gc-description {
   margin: 0;
 
   color: var(--gc-text-sub, #64748b);
 
-  font-size: 0.88rem;
-
+  font-size: 0.86rem;
   line-height: 1.55;
 
-  min-height: 48px;
+  min-height: 40px;
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -353,52 +384,52 @@
   overflow: hidden;
 }
 
+
 /* =====================================================
    OWNER BADGE
 ===================================================== */
 
 .gc-owner-badge {
-  width: fit-content;
-
   display: inline-flex;
   align-items: center;
-
   gap: 7px;
 
-  margin: 13px 0 0;
+  margin-top: 13px;
 
-  padding: 6px 11px;
+  padding: 5px 10px;
 
   border-radius: 999px;
 
-  background: rgba(15, 118, 110, 0.1);
+  background: rgba(15, 118, 110, 0.09);
 
   color: var(--gc-primary, #0f766e);
 
-  font-size: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
 
-  font-weight: 650;
+  white-space: nowrap;
 }
 
 .gc-owner-badge i {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
 }
 
+
 /* =====================================================
-   INFO ROW
+   INSTRUCTOR INFO
 ===================================================== */
 
 .gc-info {
   display: flex;
   align-items: center;
 
-  margin: 17px 0 15px;
+  margin: 16px 0 14px;
+
+  min-width: 0;
 
   color: var(--gc-text-sub, #64748b);
 
   font-size: 0.8rem;
-
-  min-width: 0;
 }
 
 .gc-info span {
@@ -406,35 +437,35 @@
 
   display: flex;
   align-items: center;
-
-  gap: 7px;
+  gap: 8px;
 
   overflow: hidden;
-
-  white-space: nowrap;
-
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.gc-info span i {
+.gc-info i {
   flex-shrink: 0;
 
   color: var(--gc-primary, #0f766e);
+
+  font-size: 0.78rem;
 }
 
+
 /* =====================================================
-   PROGRESS
+   PROGRESS BAR
 ===================================================== */
 
 .gc-progress {
   width: 100%;
-  height: 6px;
+  height: 5px;
 
-  margin-bottom: 18px;
+  margin: 0 0 16px;
 
   background: var(--gc-border, #e2e8f0);
 
-  border-radius: 50px;
+  border-radius: 999px;
 
   overflow: hidden;
 }
@@ -444,7 +475,7 @@
 
   max-width: 100%;
 
-  border-radius: 50px;
+  border-radius: 999px;
 
   background: linear-gradient(
     90deg,
@@ -455,41 +486,41 @@
   transition: width 0.3s ease;
 }
 
+
 /* =====================================================
    CARD FOOTER
 ===================================================== */
 
 .gc-bottom {
   display: flex;
-
   align-items: center;
   justify-content: space-between;
 
   gap: 12px;
 
-  margin-top: auto;
-
   min-width: 0;
 }
 
 .gc-bottom > span {
+  min-width: 0;
+
   display: flex;
   align-items: center;
-
   gap: 7px;
-
-  min-width: 0;
 
   color: var(--gc-text-sub, #64748b);
 
-  font-size: 0.78rem;
+  font-size: 0.76rem;
+  font-weight: 600;
 
   white-space: nowrap;
 }
 
 .gc-bottom > span i {
   color: var(--gc-primary, #0f766e);
+  font-size: 0.76rem;
 }
+
 
 /* =====================================================
    CARD ACTIONS
@@ -506,20 +537,19 @@
 
 .gc-secondary-btn,
 .gc-open-btn {
+  min-height: 34px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   gap: 6px;
 
-  min-height: 36px;
+  padding: 7px 11px;
 
-  padding: 8px 12px;
+  border-radius: 9px;
 
-  border-radius: 10px;
-
-  font-size: 0.75rem;
-
+  font-size: 0.74rem;
   font-weight: 650;
 
   white-space: nowrap;
@@ -529,10 +559,9 @@
   box-sizing: border-box;
 
   transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
 }
 
 .gc-secondary-btn {
@@ -550,7 +579,7 @@
 }
 
 .gc-open-btn {
-  border: none;
+  border: 1px solid transparent;
 
   background: var(--gc-primary, #0f766e);
 
@@ -558,10 +587,15 @@
 }
 
 .gc-open-btn:hover {
-  background: #0d665f;
+  background: #0b625b;
 
   transform: translateY(-1px);
 }
+
+.gc-secondary-btn i {
+  font-size: 0.7rem;
+}
+
 
 /* =====================================================
    EMPTY STATE
@@ -570,7 +604,7 @@
 .gc-empty-card {
   grid-column: 1 / -1;
 
-  padding: 75px 30px;
+  padding: 70px 30px;
 
   text-align: center;
 
@@ -588,7 +622,7 @@
 
   margin-bottom: 18px;
 
-  font-size: 55px;
+  font-size: 52px;
 
   color: var(--gc-primary, #0f766e);
 }
@@ -596,129 +630,115 @@
 .gc-empty-card h2 {
   margin: 0 0 8px;
 
-  color: var(--gc-text-main, #0f172a);
+  font-size: 1.25rem;
 
-  font-size: 1.35rem;
+  color: var(--gc-text-main, #0f172a);
 }
 
 .gc-empty-card p {
-  margin: 0 0 22px;
+  margin: 0 0 20px;
 
   color: var(--gc-text-sub, #64748b);
 
   font-size: 0.9rem;
 }
 
-/* =====================================================
-   LARGE LAPTOP
-===================================================== */
-
-@media (max-width: 1200px) {
-
-  .gc-dashboard {
-    padding: 34px 28px 50px;
-  }
-
-  .gc-classes-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-}
 
 /* =====================================================
    TABLET
 ===================================================== */
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
 
   .gc-dashboard {
-    padding: 28px 22px 45px;
+    padding: 28px 24px 45px;
   }
 
   .gc-stats {
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
-
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
   }
 
   .gc-stat-card {
-    padding: 16px;
-
+    padding: 17px;
     gap: 12px;
   }
 
   .gc-stat-card > i {
-    width: 44px;
-    height: 44px;
-
-    min-width: 44px;
-
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
     font-size: 17px;
-
-    border-radius: 13px;
   }
 
   .gc-stat-card h3 {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
   }
 
   .gc-stat-card p {
     font-size: 0.75rem;
   }
 
+  .gc-classes-grid {
+    grid-template-columns:
+      repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+  }
 }
+
 
 /* =====================================================
    MOBILE
 ===================================================== */
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
 
   .gc-dashboard {
-    padding: 24px 16px 40px;
+    padding: 24px 18px 40px;
   }
 
   .gc-dashboard-header {
     align-items: flex-start;
+    flex-direction: column;
 
-    margin-bottom: 28px;
+    gap: 16px;
+
+    margin-bottom: 26px;
   }
 
   .gc-dashboard-header h1 {
-    font-size: 1.75rem;
+    font-size: 1.7rem;
   }
 
   .gc-dashboard-header p {
     font-size: 0.88rem;
   }
 
-  .gc-dashboard-header .gc-btn-primary {
+  .gc-btn-primary {
     width: 100%;
   }
 
   .gc-stats {
     grid-template-columns: 1fr;
-
-    gap: 12px;
-
-    margin-bottom: 28px;
+    gap: 10px;
+    margin-bottom: 24px;
   }
 
   .gc-stat-card {
-    padding: 16px;
+    padding: 15px 17px;
   }
 
   .gc-classes-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
 
-    gap: 18px;
+  .gc-class-card {
+    border-radius: 18px;
   }
 
   .gc-card-banner {
-    min-height: 135px;
-
+    height: 132px;
     padding: 20px;
   }
 
@@ -728,14 +748,12 @@
 
   .gc-bottom {
     align-items: stretch;
-
     flex-direction: column;
-
     gap: 12px;
   }
 
   .gc-bottom > span {
-    white-space: normal;
+    width: 100%;
   }
 
   .gc-actions {
@@ -745,51 +763,52 @@
   .gc-secondary-btn,
   .gc-open-btn {
     flex: 1;
-
-    min-height: 40px;
   }
-
 }
+
 
 /* =====================================================
    SMALL MOBILE
 ===================================================== */
 
-@media (max-width: 430px) {
+@media (max-width: 480px) {
 
   .gc-dashboard {
     padding: 20px 12px 35px;
   }
 
   .gc-dashboard-header h1 {
-    font-size: 1.55rem;
-  }
-
-  .gc-dashboard-header p {
-    font-size: 0.82rem;
+    font-size: 1.5rem;
   }
 
   .gc-card-banner {
-    min-height: 125px;
-
-    padding: 17px;
+    height: 125px;
+    padding: 18px;
   }
 
   .gc-banner-overlay h2 {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
+    max-width: 175px;
+  }
+
+  .gc-banner-overlay p {
+    font-size: 0.7rem;
   }
 
   .gc-avatar {
-    width: 46px;
-    height: 46px;
-
-    min-width: 46px;
-
-    font-size: 18px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 13px;
+    font-size: 17px;
   }
 
   .gc-card-body {
     padding: 16px;
+  }
+
+  .gc-description {
+    font-size: 0.82rem;
   }
 
   .gc-actions {
@@ -799,17 +818,35 @@
   .gc-secondary-btn,
   .gc-open-btn {
     padding: 8px 9px;
-
-    font-size: 0.72rem;
+    font-size: 0.7rem;
   }
-
 }
 
+
 /* =====================================================
-   VERY SMALL MOBILE
+   VERY SMALL PHONES
 ===================================================== */
 
-@media (max-width: 360px) {
+@media (max-width: 380px) {
+
+  .gc-dashboard {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .gc-banner-overlay {
+    gap: 8px;
+  }
+
+  .gc-banner-overlay h2 {
+    max-width: 150px;
+  }
+
+  .gc-avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
 
   .gc-actions {
     flex-direction: column;
@@ -819,8 +856,8 @@
   .gc-open-btn {
     width: 100%;
   }
-
 }
+
 
 /* =====================================================
    DARK THEME
@@ -838,18 +875,17 @@
   color: #94a3b8 !important;
 }
 
+
+/* Statistics */
+
 :host-context(.dark-theme) .gc-stat-card {
   background: #1e293b !important;
-
   border-color: #334155 !important;
-
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
 :host-context(.dark-theme) .gc-stat-card:hover {
-  box-shadow:
-    0 15px 35px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
 }
 
 :host-context(.dark-theme) .gc-stat-card h3 {
@@ -860,20 +896,18 @@
   color: #94a3b8 !important;
 }
 
+
+/* Class cards */
+
 :host-context(.dark-theme) .gc-class-card {
   background: #1e293b !important;
-
   border-color: #334155 !important;
-
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
 :host-context(.dark-theme) .gc-class-card:hover {
-  border-color: #475569 !important;
-
-  box-shadow:
-    0 20px 45px rgba(0, 0, 0, 0.5);
+  border-color: rgba(45, 212, 191, 0.25);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
 }
 
 :host-context(.dark-theme) .gc-card-body {
@@ -886,7 +920,6 @@
 
 :host-context(.dark-theme) .gc-owner-badge {
   background: rgba(45, 212, 191, 0.12) !important;
-
   color: #5eead4 !important;
 }
 
@@ -898,8 +931,8 @@
   color: #cbd5e1 !important;
 }
 
-:host-context(.dark-theme) .gc-info span i {
-  color: #2dd4bf !important;
+:host-context(.dark-theme) .gc-info i {
+  color: #5eead4 !important;
 }
 
 :host-context(.dark-theme) .gc-progress {
@@ -911,26 +944,22 @@
 }
 
 :host-context(.dark-theme) .gc-bottom > span i {
-  color: #2dd4bf !important;
+  color: #5eead4 !important;
 }
 
 :host-context(.dark-theme) .gc-secondary-btn {
   background: rgba(255, 255, 255, 0.04) !important;
-
   border-color: #334155 !important;
-
   color: #f8fafc !important;
 }
 
 :host-context(.dark-theme) .gc-secondary-btn:hover {
   background: rgba(255, 255, 255, 0.08) !important;
-
   border-color: #475569 !important;
 }
 
 :host-context(.dark-theme) .gc-open-btn {
   background: #0f766e !important;
-
   color: #ffffff !important;
 }
 
@@ -938,9 +967,11 @@
   background: #0d9488 !important;
 }
 
+
+/* Empty state */
+
 :host-context(.dark-theme) .gc-empty-card {
   background: #1e293b !important;
-
   border-color: #334155 !important;
 }
 

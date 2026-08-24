@@ -113,6 +113,7 @@
     gap: 0.5rem;
 
     padding: 0.45rem 1rem;
+
     border-radius: 999px;
 
     background: #ffffff;
@@ -136,8 +137,10 @@
 
 .netflix-hero-title {
     margin: 1.5rem 0 0.8rem;
+
     font-size: 2.3rem;
     font-weight: 800;
+
     color: #0f172a;
 }
 
@@ -151,8 +154,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
 
+    flex-wrap: wrap;
     gap: 1.25rem;
 
     border-top: 1px solid rgba(99, 102, 241, 0.15);
@@ -222,6 +225,7 @@
 .netflix-cards-scroll-row {
     display: flex;
     align-items: stretch;
+
     gap: 1.2rem;
 
     overflow-x: auto;
@@ -246,7 +250,6 @@
 .netflix-milestone-card {
     width: 340px;
     min-width: 340px;
-
     min-height: 390px;
 
     padding: 1.7rem;
@@ -335,7 +338,6 @@
 
 .milestone-description {
     font-size: 0.85rem;
-
     color: var(--class-subtext);
 
     line-height: 1.55;
@@ -351,6 +353,7 @@
 .gc-marks-row {
     display: flex;
     align-items: center;
+
     gap: 10px;
 
     margin: 1rem 0;
@@ -362,17 +365,14 @@
     border-radius: 8px;
 
     background: var(--gc-border, #e2e8f0);
-
     color: var(--gc-text-sub, #64748b);
 
     font-size: 0.75rem;
-
     font-weight: 600;
 }
 
 .gc-points {
     font-size: 0.85rem;
-
     font-weight: 700;
 
     color: var(--class-primary);
@@ -389,17 +389,14 @@
     padding: 8px 12px;
 
     background: rgba(16, 185, 129, 0.08);
-
     color: #059669;
 
     border-radius: 8px;
 
     font-size: 0.82rem;
-
     font-weight: 600;
 
     display: inline-flex;
-
     align-items: center;
 
     gap: 6px;
@@ -409,9 +406,7 @@
 
 .gc-score-badge .earned-points {
     color: var(--gc-text-sub, #64748b);
-
     font-weight: 400;
-
     font-size: 0.78rem;
 }
 
@@ -465,7 +460,6 @@
     color: #b45309;
 
     display: flex;
-
     align-items: center;
 
     gap: 6px;
@@ -482,9 +476,7 @@
     margin-top: 0.75rem;
 
     display: flex;
-
     flex-direction: column;
-
     align-items: flex-end;
 
     gap: 4px;
@@ -510,7 +502,6 @@
 
 .netflix-milestone-card .deliverable-list {
     display: flex;
-
     flex-wrap: wrap;
 
     gap: 0.4rem;
@@ -529,9 +520,7 @@
 
 .gc-btn-turn-in {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 
     gap: 10px;
@@ -551,7 +540,6 @@
     color: #ffffff !important;
 
     font-size: 0.92rem;
-
     font-weight: 650;
 
     letter-spacing: -0.01em;
@@ -592,9 +580,7 @@
 
 .locked-text {
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     gap: 8px;
@@ -602,7 +588,6 @@
     color: #94a3b8;
 
     font-size: 0.8rem;
-
     font-weight: 600;
 
     padding: 10px 0;
@@ -632,7 +617,6 @@
 
 .gc-btn-create-milestone {
     display: inline-flex;
-
     align-items: center;
 
     gap: 10px;
@@ -652,7 +636,6 @@
     color: #ffffff !important;
 
     font-size: 0.92rem;
-
     font-weight: 650;
 
     cursor: pointer;
@@ -697,9 +680,7 @@
 
 .gc-classwork-toolbar {
     display: flex;
-
     justify-content: flex-start;
-
     align-items: center;
 
     gap: 12px;
@@ -719,7 +700,6 @@
     cursor: pointer;
 
     display: inline-flex;
-
     align-items: center;
 
     gap: 8px;
@@ -746,7 +726,6 @@
 
 .gc-assignments-list {
     display: flex;
-
     flex-direction: column;
 
     gap: 1.3rem;
@@ -769,15 +748,12 @@
     padding: 1.6rem 1.8rem;
 
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
 }
 
 .gc-assignment-left {
     display: flex;
-
     align-items: center;
 
     gap: 1.25rem;
@@ -785,7 +761,6 @@
 
 .gc-assignment-right {
     display: flex;
-
     align-items: center;
 
     gap: 1rem;
@@ -793,25 +768,20 @@
 
 .gc-assignment-icon-pod {
     width: 50px;
-
     height: 50px;
 
     border-radius: 16px;
 
     background: #eef2ff;
-
     color: #6366f1;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 }
 
 .gc-assignment-title {
     color: #0f172a;
-
     font-weight: 800;
 }
 
@@ -819,12 +789,16 @@
     color: #64748b;
 }
 
+
+/* ==========================================================
+   ASSIGNMENT BODY
+========================================================== */
+
 .gc-assignment-body {
-    display: grid;
+    display: flex;
+    flex-direction: column;
 
-    grid-template-columns: 1fr 300px;
-
-    gap: 2rem;
+    gap: 1.5rem;
 
     padding: 2rem;
 
@@ -833,9 +807,13 @@
     border-top: 1px solid #e2e8f0;
 }
 
+
+/* ==========================================================
+   POINT BADGE
+========================================================== */
+
 .gc-point-badge {
     display: inline-flex;
-
     align-items: center;
 
     gap: 8px;
@@ -855,12 +833,208 @@
 
 
 /* ==========================================================
+   DESCRIPTION
+========================================================== */
+
+.gc-assignment-description {
+    background: white;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 16px;
+
+    padding: 1.25rem 1.5rem;
+}
+
+.gc-assignment-description h4,
+.gc-deliverables-section h4 {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 0 0 0.75rem;
+
+    color: #0f172a;
+
+    font-size: 0.95rem;
+
+    font-weight: 750;
+}
+
+.gc-assignment-description h4 i {
+    color: #6366f1;
+}
+
+.gc-assignment-description p {
+    margin: 0;
+
+    color: #64748b;
+
+    line-height: 1.65;
+
+    font-size: 0.88rem;
+}
+
+
+/* ==========================================================
+   REQUIRED DELIVERABLES
+========================================================== */
+
+.gc-deliverables-section {
+    background: white;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 16px;
+
+    padding: 1.25rem 1.5rem;
+}
+
+.gc-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    margin-bottom: 1rem;
+}
+
+.gc-section-heading h4 {
+    margin: 0;
+}
+
+.gc-section-heading h4 i {
+    color: #f59e0b;
+}
+
+.gc-deliverable-count {
+    padding: 4px 9px;
+
+    border-radius: 999px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 0.72rem;
+
+    font-weight: 700;
+}
+
+.gc-deliverables-section .deliverable-list {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 0.65rem;
+
+    margin: 0;
+}
+
+.gc-deliverable-chip {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    padding: 0.65rem 0.9rem;
+
+    border-radius: 12px;
+
+    color: #475569;
+
+    font-size: 0.82rem;
+
+    font-weight: 600;
+}
+
+.gc-deliverable-chip i {
+    color: #6366f1;
+}
+
+
+/* ==========================================================
+   STUDENT SUBMISSIONS
+========================================================== */
+
+.gc-submissions-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1.5rem;
+
+    padding: 1.35rem 1.5rem;
+
+    background: linear-gradient(
+        135deg,
+        #eef2ff,
+        #f8fafc
+    );
+
+    border: 1px solid #c7d2fe;
+
+    border-radius: 18px;
+}
+
+.gc-submissions-info {
+    display: flex;
+    align-items: center;
+
+    gap: 1rem;
+}
+
+.gc-submissions-icon {
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    background: #e0e7ff;
+
+    color: #4f46e5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.1rem;
+}
+
+.gc-submissions-info h4 {
+    margin: 0 0 4px;
+
+    color: #0f172a;
+
+    font-size: 0.95rem;
+
+    font-weight: 750;
+}
+
+.gc-submissions-info p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 0.8rem;
+
+    line-height: 1.5;
+}
+
+
+/* ==========================================================
    EDIT BUTTON
 ========================================================== */
 
 .gc-btn-action-edit {
     display: inline-flex;
-
     align-items: center;
 
     gap: 7px;
@@ -904,7 +1078,6 @@
 
 .gc-btn-action-delete {
     display: inline-flex;
-
     align-items: center;
 
     gap: 7px;
@@ -943,7 +1116,7 @@
 
 
 /* ==========================================================
-   DELIVERABLES
+   RIGHT PANEL / OLD CHIP SUPPORT
 ========================================================== */
 
 .gc-deliverable-chip {
@@ -958,25 +1131,9 @@
 
 .gc-deliverables-chips {
     display: flex;
-
     flex-wrap: wrap;
 
     gap: 0.6rem;
-}
-
-
-/* ==========================================================
-   RIGHT PANEL
-========================================================== */
-
-.gc-your-work-card {
-    background: white;
-
-    border-radius: 20px;
-
-    border: 1px solid #e2e8f0;
-
-    padding: 1.5rem;
 }
 
 
@@ -986,14 +1143,15 @@
 
 .gc-btn-view-roster {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 
     gap: 9px;
 
-    width: 100%;
+    width: auto;
+    min-width: 225px;
+
+    flex-shrink: 0;
 
     padding: 13px 20px;
 
@@ -1045,8 +1203,13 @@
         padding: 1rem;
     }
 
-    .gc-assignment-body {
-        grid-template-columns: 1fr;
+    .gc-submissions-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .gc-submissions-section .gc-btn-view-roster {
+        width: 100%;
     }
 
     .netflix-milestone-card {
@@ -1065,7 +1228,6 @@
 
     .netflix-row-header {
         flex-direction: column;
-
         align-items: flex-start;
 
         gap: 0.8rem;
@@ -1073,7 +1235,6 @@
 
     .gc-classwork-toolbar {
         flex-direction: column;
-
         align-items: flex-start;
 
         gap: 1rem;
@@ -1081,7 +1242,6 @@
 
     .gc-assignment-header-row {
         flex-direction: column;
-
         align-items: flex-start;
 
         gap: 1.2rem;
@@ -1095,11 +1255,19 @@
 
     .hero-bottom {
         align-items: flex-start;
-
         flex-direction: column;
     }
 
     .submission-status-wrapper {
+        align-items: flex-start;
+    }
+
+    .gc-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .gc-submissions-info {
         align-items: flex-start;
     }
 }
@@ -1116,15 +1284,10 @@
 :host-context(.dark-theme) .gc-classwork-container {
     --class-primary: #818cf8;
     --class-primary-dark: #6366f1;
-
     --class-bg: #0f172a;
-
     --class-card: #1e293b;
-
     --class-text: #f8fafc;
-
     --class-subtext: #94a3b8;
-
     --class-border: #334155;
 }
 
@@ -1222,21 +1385,17 @@
 
 :host-context(.dark-theme) .netflix-milestone-card.completed {
     border: 2px solid #22c55e !important;
-
     border-color: #22c55e !important;
-
     background: rgba(34, 197, 94, 0.15) !important;
 }
 
 :host-context(.dark-theme) .netflix-milestone-card.under-review {
     border-color: #f59e0b;
-
     background: rgba(245, 158, 11, 0.12);
 }
 
 :host-context(.dark-theme) .netflix-milestone-card.needs-revision {
     border-color: #f97316;
-
     background: rgba(249, 115, 22, 0.12);
 }
 
@@ -1247,7 +1406,6 @@
 
 :host-context(.dark-theme) .gc-max-marks {
     background: #334155;
-
     color: #cbd5e1;
 }
 
@@ -1257,7 +1415,6 @@
 
 :host-context(.dark-theme) .gc-score-badge {
     background: rgba(34, 197, 94, 0.15);
-
     color: #86efac;
 }
 
@@ -1272,9 +1429,7 @@
 
 :host-context(.dark-theme) .gc-feedback-badge {
     background: rgba(99, 102, 241, 0.15);
-
     border-left-color: #818cf8;
-
     color: #e2e8f0;
 }
 
@@ -1282,7 +1437,6 @@
 .netflix-milestone-card.needs-revision
 .gc-feedback-badge {
     background: rgba(249, 115, 22, 0.15);
-
     border-left-color: #fb923c;
 }
 
@@ -1290,7 +1444,6 @@
 .netflix-milestone-card.completed
 .gc-feedback-badge {
     background: rgba(34, 197, 94, 0.15);
-
     border-left-color: #4ade80;
 }
 
@@ -1310,7 +1463,6 @@
 
 :host-context(.dark-theme) .gc-assignment-card {
     background: #1e293b;
-
     border-color: #334155;
 }
 
@@ -1324,30 +1476,71 @@
 
 :host-context(.dark-theme) .gc-assignment-icon-pod {
     background: rgba(99, 102, 241, 0.2);
-
     color: #a5b4fc;
 }
 
 :host-context(.dark-theme) .gc-assignment-body {
     background: #0f172a;
-
     border-top-color: #334155;
 }
 
-:host-context(.dark-theme) .gc-deliverable-chip {
+
+/* ==========================================================
+   DARK DESCRIPTION / DELIVERABLES / SUBMISSIONS
+========================================================== */
+
+:host-context(.dark-theme) .gc-assignment-description,
+:host-context(.dark-theme) .gc-deliverables-section {
     background: #1e293b;
-
     border-color: #334155;
+}
 
+:host-context(.dark-theme) .gc-assignment-description h4,
+:host-context(.dark-theme) .gc-deliverables-section h4,
+:host-context(.dark-theme) .gc-submissions-info h4 {
+    color: #f8fafc;
+}
+
+:host-context(.dark-theme) .gc-assignment-description p,
+:host-context(.dark-theme) .gc-submissions-info p {
+    color: #94a3b8;
+}
+
+:host-context(.dark-theme) .gc-deliverable-chip {
+    background: #0f172a;
+    border-color: #334155;
     color: #cbd5e1;
 }
 
-:host-context(.dark-theme) .gc-your-work-card {
+:host-context(.dark-theme) .gc-deliverable-count {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+:host-context(.dark-theme) .gc-submissions-section {
+    background: linear-gradient(
+        135deg,
+        #1e1b4b,
+        #1e293b
+    );
+
+    border-color: #3730a3;
+}
+
+:host-context(.dark-theme) .gc-submissions-icon {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+}
+
+
+/* ==========================================================
+   DARK OLD DELIVERABLE SUPPORT
+========================================================== */
+
+:host-context(.dark-theme) .gc-deliverable-chip {
     background: #1e293b;
-
     border-color: #334155;
-
-    color: #f8fafc;
+    color: #cbd5e1;
 }
 
 
@@ -1359,7 +1552,6 @@
 .gc-classwork-container
 .gc-badge-info {
     background: rgba(99, 102, 241, 0.2) !important;
-
     color: #a5b4fc !important;
 }
 
@@ -1367,7 +1559,6 @@
 .gc-classwork-container
 .gc-badge-success {
     background: rgba(34, 197, 94, 0.2) !important;
-
     color: #86efac !important;
 }
 
@@ -1375,7 +1566,6 @@
 .gc-classwork-container
 .gc-badge-warning {
     background: rgba(245, 158, 11, 0.2) !important;
-
     color: #fde047 !important;
 }
 
@@ -1383,7 +1573,6 @@
 .gc-classwork-container
 .gc-badge-orange {
     background: rgba(249, 115, 22, 0.2) !important;
-
     color: #fdba74 !important;
 }
 
@@ -1391,7 +1580,6 @@
 .gc-classwork-container
 .gc-badge-danger {
     background: rgba(239, 68, 68, 0.2) !important;
-
     color: #fca5a5 !important;
 }
 
@@ -1402,29 +1590,23 @@
 
 .dark-theme .gc-btn-action-edit {
     background: rgba(96, 165, 250, 0.12);
-
     color: #60a5fa !important;
-
     border-color: rgba(96, 165, 250, 0.3);
 }
 
 .dark-theme .gc-btn-action-edit:hover {
     background: #3b82f6;
-
     color: #ffffff !important;
 }
 
 .dark-theme .gc-btn-action-delete {
     background: rgba(248, 113, 113, 0.12);
-
     color: #f87171 !important;
-
     border-color: rgba(248, 113, 113, 0.3);
 }
 
 .dark-theme .gc-btn-action-delete:hover {
     background: #ef4444;
-
     color: #ffffff !important;
 }
 
