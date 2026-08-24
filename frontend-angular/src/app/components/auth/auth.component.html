@@ -66,67 +66,180 @@
 
     <div class="gc-auth-card">
 
-      <div class="gc-auth-header">
-        <h2>Welcome Back</h2>
-        <p>Sign in to access your EduTrack dashboard</p>
-      </div>
+      <!-- LOGIN VIEW -->
+      <ng-container *ngIf="mode === 'login'">
 
-      <div class="gc-auth-error" *ngIf="errorMessage">
-        <i class="fa-solid fa-circle-exclamation"></i>
-        {{ errorMessage }}
-      </div>
-
-      <!-- Sign In Form -->
-      <form (ngSubmit)="onLogin()">
-
-        <div class="gc-form-field">
-          <label>Email Address</label>
-          <div class="gc-input-icon-group">
-            <i class="fa-solid fa-envelope gc-input-icon"></i>
-            <input
-              type="email"
-              name="loginEmail"
-              [(ngModel)]="loginEmail"
-              placeholder="Enter your email"
-              required>
-          </div>
+        <div class="gc-auth-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to access your EduTrack dashboard</p>
         </div>
 
-        <div class="gc-form-field">
-          <label>Password</label>
-          <div class="gc-input-icon-group">
-            <i class="fa-solid fa-lock gc-input-icon"></i>
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              name="loginPassword"
-              [(ngModel)]="loginPassword"
-              placeholder="Enter your password"
-              required>
-            <button
-              type="button"
-              class="gc-pwd-toggle-btn"
-              (click)="togglePasswordVisibility()"
-              title="Toggle password visibility">
-              <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-            </button>
-          </div>
+        <div class="gc-auth-error" *ngIf="errorMessage">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          {{ errorMessage }}
         </div>
 
-        <button class="gc-btn-primary" type="submit" [disabled]="isSubmitting">
-          <span *ngIf="!isSubmitting">
-            Sign In
-            <i class="fa-solid fa-arrow-right"></i>
-          </span>
-          <span *ngIf="isSubmitting">
-            <i class="fa-solid fa-circle-notch fa-spin"></i>
-            Signing In...
-          </span>
-        </button>
+        <!-- Sign In Form -->
+        <form (ngSubmit)="onLogin()">
 
-      </form>
+          <div class="gc-form-field">
+            <label>Email Address</label>
+            <div class="gc-input-icon-group">
+              <i class="fa-solid fa-envelope gc-input-icon"></i>
+              <input
+                type="email"
+                name="loginEmail"
+                [(ngModel)]="loginEmail"
+                placeholder="Enter your email"
+                required>
+            </div>
+          </div>
+
+          <div class="gc-form-field">
+            <div class="gc-label-row">
+              <label>Password</label>
+              <button
+                type="button"
+                class="gc-forgot-btn"
+                (click)="switchToForgotPassword()"
+                title="Forgot Password?">
+                <i class="fa-solid fa-key"></i>
+                Forgot Password?
+              </button>
+            </div>
+            <div class="gc-input-icon-group">
+              <i class="fa-solid fa-lock gc-input-icon"></i>
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                name="loginPassword"
+                [(ngModel)]="loginPassword"
+                placeholder="Enter your password"
+                required>
+              <button
+                type="button"
+                class="gc-pwd-toggle-btn"
+                (click)="togglePasswordVisibility()"
+                title="Toggle password visibility">
+                <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </button>
+            </div>
+          </div>
+
+          <button class="gc-btn-primary" type="submit" [disabled]="isSubmitting">
+            <span *ngIf="!isSubmitting">
+              Sign In
+              <i class="fa-solid fa-arrow-right"></i>
+            </span>
+            <span *ngIf="isSubmitting">
+              <i class="fa-solid fa-circle-notch fa-spin"></i>
+              Signing In...
+            </span>
+          </button>
+
+        </form>
+
+      </ng-container>
+
+      <!-- FORGOT PASSWORD VIEW -->
+      <ng-container *ngIf="mode === 'forgot-password'">
+
+        <div class="gc-auth-header">
+          <h2>Reset Password</h2>
+          <p>Enter your email and choose a new password</p>
+        </div>
+
+        <div class="gc-auth-success" *ngIf="forgotSuccessMessage">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>{{ forgotSuccessMessage }}</span>
+        </div>
+
+        <div class="gc-auth-error" *ngIf="forgotErrorMessage">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>{{ forgotErrorMessage }}</span>
+        </div>
+
+        <!-- Reset Password Form -->
+        <form (ngSubmit)="onResetPassword()">
+
+          <div class="gc-form-field">
+            <label>Registered Email Address</label>
+            <div class="gc-input-icon-group">
+              <i class="fa-solid fa-envelope gc-input-icon"></i>
+              <input
+                type="email"
+                name="forgotEmail"
+                [(ngModel)]="forgotEmail"
+                placeholder="Enter your registered email"
+                required>
+            </div>
+          </div>
+
+          <div class="gc-form-field">
+            <label>New Password</label>
+            <div class="gc-input-icon-group">
+              <i class="fa-solid fa-lock gc-input-icon"></i>
+              <input
+                [type]="showForgotNewPassword ? 'text' : 'password'"
+                name="forgotNewPassword"
+                [(ngModel)]="forgotNewPassword"
+                placeholder="Enter new password (min 6 characters)"
+                required>
+              <button
+                type="button"
+                class="gc-pwd-toggle-btn"
+                (click)="toggleForgotNewPasswordVisibility()"
+                title="Toggle password visibility">
+                <i class="fa-solid" [ngClass]="showForgotNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="gc-form-field">
+            <label>Confirm New Password</label>
+            <div class="gc-input-icon-group">
+              <i class="fa-solid fa-shield-halved gc-input-icon"></i>
+              <input
+                [type]="showForgotConfirmPassword ? 'text' : 'password'"
+                name="forgotConfirmPassword"
+                [(ngModel)]="forgotConfirmPassword"
+                placeholder="Confirm your new password"
+                required>
+              <button
+                type="button"
+                class="gc-pwd-toggle-btn"
+                (click)="toggleForgotConfirmPasswordVisibility()"
+                title="Toggle password visibility">
+                <i class="fa-solid" [ngClass]="showForgotConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </button>
+            </div>
+          </div>
+
+          <button class="gc-btn-primary" type="submit" [disabled]="isForgotSubmitting">
+            <span *ngIf="!isForgotSubmitting">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              Reset Password
+            </span>
+            <span *ngIf="isForgotSubmitting">
+              <i class="fa-solid fa-circle-notch fa-spin"></i>
+              Updating Password...
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="gc-btn-secondary"
+            (click)="switchToLogin()"
+            [disabled]="isForgotSubmitting">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Sign In
+          </button>
+
+        </form>
+
+      </ng-container>
 
       <div class="gc-divider">
-        <span>Quick Demo Login</span>
+        <span>{{ mode === 'login' ? 'Quick Demo Login' : 'Fill Demo Account Email' }}</span>
       </div>
 
       <div class="gc-demo-grid">
