@@ -32,6 +32,17 @@ public class User {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(name = "student_panel")
+    private String panel;
+
+    @Column(name = "student_batch")
+    private String batch;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "instructor_assigned_batches", joinColumns = @JoinColumn(name = "instructor_id"))
+    @Column(name = "batch")
+    private java.util.Set<String> assignedBatches = new java.util.HashSet<>();
+
     public User() {
         this.createdAt = LocalDateTime.now();
         this.active = true;
@@ -81,4 +92,13 @@ public class User {
     public int hashCode() {
         return id != null ? id.hashCode() : getClass().hashCode();
     }
+
+    public String getPanel() { return panel; }
+    public void setPanel(String panel) { this.panel = panel; }
+
+    public String getBatch() { return batch; }
+    public void setBatch(String batch) { this.batch = batch; }
+
+    public java.util.Set<String> getAssignedBatches() { return assignedBatches; }
+    public void setAssignedBatches(java.util.Set<String> assignedBatches) { this.assignedBatches = assignedBatches; }
 }

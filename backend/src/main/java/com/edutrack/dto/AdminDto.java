@@ -15,6 +15,9 @@ public class AdminDto {
         private boolean needsPasswordReset;
         private LocalDateTime createdAt;
         private int associatedSubjectsCount;
+        private String panel;
+        private String batch;
+        private java.util.Set<String> assignedBatches;
 
         public AdminUserResponse() {}
 
@@ -52,6 +55,15 @@ public class AdminDto {
 
         public int getAssociatedSubjectsCount() { return associatedSubjectsCount; }
         public void setAssociatedSubjectsCount(int associatedSubjectsCount) { this.associatedSubjectsCount = associatedSubjectsCount; }
+
+        public String getPanel() { return panel; }
+        public void setPanel(String panel) { this.panel = panel; }
+
+        public String getBatch() { return batch; }
+        public void setBatch(String batch) { this.batch = batch; }
+
+        public java.util.Set<String> getAssignedBatches() { return assignedBatches; }
+        public void setAssignedBatches(java.util.Set<String> assignedBatches) { this.assignedBatches = assignedBatches; }
     }
 
     public static class CreateUserRequest {
@@ -59,6 +71,9 @@ public class AdminDto {
         private String email;
         private String password;
         private Role role;
+        private String panel;
+        private String batch;
+        private java.util.Set<String> assignedBatches;
 
         public CreateUserRequest() {}
 
@@ -73,6 +88,15 @@ public class AdminDto {
 
         public Role getRole() { return role; }
         public void setRole(Role role) { this.role = role; }
+
+        public String getPanel() { return panel; }
+        public void setPanel(String panel) { this.panel = panel; }
+
+        public String getBatch() { return batch; }
+        public void setBatch(String batch) { this.batch = batch; }
+
+        public java.util.Set<String> getAssignedBatches() { return assignedBatches; }
+        public void setAssignedBatches(java.util.Set<String> assignedBatches) { this.assignedBatches = assignedBatches; }
     }
 
     public static class UpdateUserRequest {
@@ -81,6 +105,9 @@ public class AdminDto {
         private String password;
         private Role role;
         private Boolean active;
+        private String panel;
+        private String batch;
+        private java.util.Set<String> assignedBatches;
 
         public UpdateUserRequest() {}
 
@@ -98,6 +125,15 @@ public class AdminDto {
 
         public Boolean getActive() { return active; }
         public void setActive(Boolean active) { this.active = active; }
+
+        public String getPanel() { return panel; }
+        public void setPanel(String panel) { this.panel = panel; }
+
+        public String getBatch() { return batch; }
+        public void setBatch(String batch) { this.batch = batch; }
+
+        public java.util.Set<String> getAssignedBatches() { return assignedBatches; }
+        public void setAssignedBatches(java.util.Set<String> assignedBatches) { this.assignedBatches = assignedBatches; }
     }
 
     public static class ToggleStatusRequest {

@@ -6,6 +6,7 @@ public class SubjectDto {
         private String name;
         private String code;
         private String description;
+        private String batch;
 
         public CreateSubjectRequest() {}
 
@@ -17,6 +18,9 @@ public class SubjectDto {
 
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
+        
+        public String getBatch() { return batch; }
+        public void setBatch(String batch) { this.batch = batch; }
     }
 
     public static class SubjectResponse {
@@ -26,6 +30,7 @@ public class SubjectDto {
         private String instructorName;
         private Long instructorId;
         private String description;
+        private String batch;
         private int totalMilestones;
         private int enrolledStudentsCount;
 
@@ -48,6 +53,9 @@ public class SubjectDto {
 
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
+
+        public String getBatch() { return batch; }
+        public void setBatch(String batch) { this.batch = batch; }
 
         public int getTotalMilestones() { return totalMilestones; }
         public void setTotalMilestones(int totalMilestones) { this.totalMilestones = totalMilestones; }

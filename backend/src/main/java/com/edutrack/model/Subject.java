@@ -24,6 +24,9 @@ public class Subject {
 
     private String description;
 
+    @Column(name = "batch")
+    private String batch;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "subject_enrolled_students",
@@ -58,4 +61,7 @@ public class Subject {
 
     public Set<User> getEnrolledStudents() { return enrolledStudents; }
     public void setEnrolledStudents(Set<User> enrolledStudents) { this.enrolledStudents = enrolledStudents; }
+
+    public String getBatch() { return batch; }
+    public void setBatch(String batch) { this.batch = batch; }
 }

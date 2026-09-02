@@ -1812,16 +1812,24 @@ export class AddStudentsModalComponent {
 
       Promise
         .allSettled(promises)
-        .then(() => {
+        .then((results) => {
+
+          const failed = results.filter(r => r.status === 'rejected');
+          const succeeded = results.filter(r => r.status === 'fulfilled');
 
           let msg =
-            `Successfully processed CSV. Added ${enrolledCount} student(s).`;
+            `Successfully processed CSV. Added ${succeeded.length} student(s).`;
 
           if (skippedCount > 0) {
 
             msg +=
               ` Skipped ${skippedCount} invalid row(s) (invalid name or email format).`;
 
+          }
+          
+          if (failed.length > 0) {
+            const firstError = (failed[0] as PromiseRejectedResult).reason?.error?.message || 'Some students could not be added.';
+            msg += ` Failed to add ${failed.length} student(s): ${firstError}`;
           }
 
           alert(msg);
