@@ -35,3 +35,4 @@ uploads/*
 **/tmp/
 **/out-tsc/
 **/coverage/
+**/node/

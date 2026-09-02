@@ -96,7 +96,7 @@
 				<version>1.15.0</version>
 				<configuration>
 					<workingDirectory>../frontend-angular</workingDirectory>
-					<nodeVersion>v20.9.0</nodeVersion>
+					<nodeVersion>v22.22.3</nodeVersion>
 				</configuration>
 				<executions>
 					<execution>
