@@ -95,7 +95,7 @@
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>1.15.0</version>
 				<configuration>
-					<workingDirectory>../frontend-angular</workingDirectory>
+					<workingDirectory>${project.basedir}/../frontend-angular</workingDirectory>
 					<nodeVersion>v22.22.3</nodeVersion>
 				</configuration>
 				<executions>
@@ -139,7 +139,7 @@
 							<outputDirectory>${project.build.directory}/classes/static</outputDirectory>
 							<resources>
 								<resource>
-									<directory>../frontend-angular/dist/frontend-angular/browser</directory>
+									<directory>${project.basedir}/../frontend-angular/dist/frontend-angular/browser</directory>
 								</resource>
 							</resources>
 						</configuration>
