@@ -67,6 +67,12 @@ public class SubjectService {
                 instructor,
                 request.getDescription()
         );
+        subject.setBatch(request.getBatch());
+
+        if (request.getBatch() != null && !request.getBatch().trim().isEmpty()) {
+            List<User> batchStudents = userRepository.findByBatch(request.getBatch().trim());
+            subject.getEnrolledStudents().addAll(batchStudents);
+        }
 
         Subject saved = subjectRepository.save(subject);
         return toSubjectResponse(saved);
@@ -116,14 +122,7 @@ public class SubjectService {
 
         User student = userRepository.findByEmail(email.trim()).orElse(null);
         if (student == null) {
-            // Register new student account automatically
-            student = new User(
-                    email.trim(),
-                    passwordEncoder.encode("student123"),
-                    trimmedName,
-                    Role.STUDENT
-            );
-            student.setNeedsPasswordReset(true);
+            throw new IllegalArgumentException("Student with email " + email.trim() + " does not exist. Only Admins can create new student profiles.");
         }
 
         User savedStudent = userRepository.save(student);
@@ -134,7 +133,7 @@ public class SubjectService {
             subjectRepository.save(subject);
         }
 
-        return new AuthDto.UserDto(savedStudent.getId(), savedStudent.getEmail(), savedStudent.getFullName(), savedStudent.getRole(), savedStudent.isNeedsPasswordReset(), savedStudent.isActive());
+        return AuthDto.UserDto.fromUser(savedStudent);
     }
 
     public List<AuthDto.UserDto> getStudentsBySubject(Long subjectId) {
@@ -142,7 +141,7 @@ public class SubjectService {
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
         return subject.getEnrolledStudents().stream()
-                .map(u -> new AuthDto.UserDto(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), u.isNeedsPasswordReset(), u.isActive()))
+                .map(AuthDto.UserDto::fromUser)
                 .collect(Collectors.toList());
     }
 
@@ -154,6 +153,7 @@ public class SubjectService {
         response.setInstructorName(subject.getInstructor() != null ? subject.getInstructor().getFullName() : "N/A");
         response.setInstructorId(subject.getInstructor() != null ? subject.getInstructor().getId() : null);
         response.setDescription(subject.getDescription());
+        response.setBatch(subject.getBatch());
         
         Long count = milestoneRepository.countBySubject(subject);
         response.setTotalMilestones(count != null ? count.intValue() : 0);

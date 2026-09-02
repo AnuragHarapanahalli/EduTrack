@@ -82,13 +82,6 @@ public class AuthService {
     }
 
     public AuthDto.UserDto toUserDto(User user) {
-        return new AuthDto.UserDto(
-                user.getId(),
-                user.getEmail(),
-                user.getFullName(),
-                user.getRole(),
-                user.isNeedsPasswordReset(),
-                user.isActive()
-        );
+        return AuthDto.UserDto.fromUser(user);
     }
 }

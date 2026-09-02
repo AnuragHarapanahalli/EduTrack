@@ -145,6 +145,18 @@ import { CreateSubjectRequest } from '../../models/subject.model';
 
         </textarea>
 
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;" *ngIf="assignedBatches.length > 0">
+          <label style="margin: 0;">Assigned Batch (Optional)</label>
+        </div>
+
+        <div class="gc-input-box" *ngIf="assignedBatches.length > 0" style="margin-top: 8px;">
+          <i class="fa-solid fa-users-rectangle"></i>
+          <select name="batch" [(ngModel)]="batch" style="width: 100%; background: transparent; border: none; padding: 14px; outline: none; color: var(--gc-text-main); font-size: .95rem; cursor: pointer;">
+            <option value="" disabled selected>Select a Batch</option>
+            <option *ngFor="let b of assignedBatches" [value]="b">{{ b }}</option>
+          </select>
+        </div>
+
 
 
 
@@ -338,6 +350,11 @@ textarea::placeholder{
 color:var(--gc-text-light);
 }
 
+select option {
+background: var(--gc-card);
+color: var(--gc-text-main);
+}
+
 textarea{
 border:1px solid var(--gc-input-border, var(--gc-border));
 border-radius:14px;
@@ -423,7 +440,11 @@ subjectCreated=new EventEmitter<void>();
 name='';
 code='';
 description='';
+batch='';
 
+get assignedBatches(): string[] {
+  return this.authService.currentUser()?.assignedBatches || [];
+}
 
 isSaving=false;
 
@@ -494,7 +515,9 @@ name:this.name.trim(),
 
 code:this.code.trim().toUpperCase(),
 
-description:this.description.trim()
+description:this.description.trim(),
+
+batch: this.batch
 
 };
 

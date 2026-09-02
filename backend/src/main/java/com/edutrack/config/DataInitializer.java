@@ -40,15 +40,44 @@ public class DataInitializer implements CommandLineRunner {
 
         // 1. Create Users (Admin, Instructors, Students)
         User admin = userRepository.save(new User("admin@edutrack.edu", passwordEncoder.encode("admin123"), "System Administrator", Role.ADMIN));
-        User profSharma = userRepository.save(new User("sharma@edutrack.edu", passwordEncoder.encode("prof123"), "Prof. Rajesh Sharma", Role.INSTRUCTOR));
-        User profVerma = userRepository.save(new User("prof.verma@edutrack.edu", passwordEncoder.encode("prof123"), "Dr. Vikram Verma", Role.INSTRUCTOR));
+        
+        User profSharma = new User("sharma@edutrack.edu", passwordEncoder.encode("prof123"), "Prof. Rajesh Sharma", Role.INSTRUCTOR);
+        profSharma.setAssignedBatches(Set.of("A1", "B1"));
+        profSharma = userRepository.save(profSharma);
 
-        User studentAnurag = userRepository.save(new User("anurag@edutrack.edu", passwordEncoder.encode("student123"), "Anurag Harapanahalli", Role.STUDENT));
-        User studentPriya = userRepository.save(new User("priya@edutrack.edu", passwordEncoder.encode("student123"), "Priya Patel", Role.STUDENT));
-        User studentRahul = userRepository.save(new User("rahul@edutrack.edu", passwordEncoder.encode("student123"), "Rahul Sharma", Role.STUDENT));
-        User studentSneha = userRepository.save(new User("sneha@edutrack.edu", passwordEncoder.encode("student123"), "Sneha Reddy", Role.STUDENT));
-        User studentAmit = userRepository.save(new User("amit@edutrack.edu", passwordEncoder.encode("student123"), "Amit Patel", Role.STUDENT));
-        User studentAditi = userRepository.save(new User("aditi@edutrack.edu", passwordEncoder.encode("student123"), "Aditi Sharma", Role.STUDENT));
+        User profVerma = new User("prof.verma@edutrack.edu", passwordEncoder.encode("prof123"), "Dr. Vikram Verma", Role.INSTRUCTOR);
+        profVerma.setAssignedBatches(Set.of("A2", "B2"));
+        profVerma = userRepository.save(profVerma);
+
+        User studentAnurag = new User("anurag@edutrack.edu", passwordEncoder.encode("student123"), "Anurag Harapanahalli", Role.STUDENT);
+        studentAnurag.setPanel("A");
+        studentAnurag.setBatch("A1");
+        studentAnurag = userRepository.save(studentAnurag);
+
+        User studentPriya = new User("priya@edutrack.edu", passwordEncoder.encode("student123"), "Priya Patel", Role.STUDENT);
+        studentPriya.setPanel("A");
+        studentPriya.setBatch("A1");
+        studentPriya = userRepository.save(studentPriya);
+
+        User studentRahul = new User("rahul@edutrack.edu", passwordEncoder.encode("student123"), "Rahul Sharma", Role.STUDENT);
+        studentRahul.setPanel("A");
+        studentRahul.setBatch("A2");
+        studentRahul = userRepository.save(studentRahul);
+
+        User studentSneha = new User("sneha@edutrack.edu", passwordEncoder.encode("student123"), "Sneha Reddy", Role.STUDENT);
+        studentSneha.setPanel("B");
+        studentSneha.setBatch("B1");
+        studentSneha = userRepository.save(studentSneha);
+
+        User studentAmit = new User("amit@edutrack.edu", passwordEncoder.encode("student123"), "Amit Patel", Role.STUDENT);
+        studentAmit.setPanel("B");
+        studentAmit.setBatch("B1");
+        studentAmit = userRepository.save(studentAmit);
+
+        User studentAditi = new User("aditi@edutrack.edu", passwordEncoder.encode("student123"), "Aditi Sharma", Role.STUDENT);
+        studentAditi.setPanel("B");
+        studentAditi.setBatch("B2");
+        studentAditi = userRepository.save(studentAditi);
 
         // 2. Create Subjects for Prof. Sharma
         // Subject 1: PBL3
@@ -58,6 +87,7 @@ public class DataInitializer implements CommandLineRunner {
                 profSharma,
                 "Hands-on fullstack application development lab focusing on software architecture, design patterns, and deployment."
         );
+        pblSubject.setBatch("A1");
         pblSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentPriya, studentSneha, studentAmit, studentAditi));
         pblSubject = subjectRepository.save(pblSubject);
 
@@ -68,6 +98,7 @@ public class DataInitializer implements CommandLineRunner {
                 profSharma,
                 "Fundamentals of relational databases, SQL programming, normalization, transaction management, and indexing techniques."
         );
+        dbmsSubject.setBatch("A1");
         dbmsSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentPriya, studentSneha, studentAmit, studentAditi));
         dbmsSubject = subjectRepository.save(dbmsSubject);
 
@@ -80,6 +111,7 @@ public class DataInitializer implements CommandLineRunner {
                 profVerma,
                 "Advanced web engineering covering RESTful services, frontend frameworks, and cloud deployment."
         );
+        webDevSubject.setBatch("A2");
         webDevSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentRahul));
         webDevSubject = subjectRepository.save(webDevSubject);
 
@@ -90,6 +122,7 @@ public class DataInitializer implements CommandLineRunner {
                 profVerma,
                 "Architecting cloud-native applications, containerization using Docker, orchestration via Kubernetes, and serverless compute paradigms."
         );
+        cloudSubject.setBatch("A2");
         cloudSubject.getEnrolledStudents().addAll(Set.of(studentAnurag, studentRahul));
         cloudSubject = subjectRepository.save(cloudSubject);
 

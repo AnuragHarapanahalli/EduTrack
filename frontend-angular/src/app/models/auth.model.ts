@@ -7,6 +7,9 @@ export interface User {
   role: Role;
   needsPasswordReset?: boolean;
   active?: boolean;
+  panel?: string;
+  batch?: string;
+  assignedBatches?: string[];
 }
 
 export interface LoginRequest {

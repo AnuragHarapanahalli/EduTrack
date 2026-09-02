@@ -9,6 +9,9 @@ export interface AdminUser {
   needsPasswordReset: boolean;
   createdAt: string;
   associatedSubjectsCount: number;
+  panel?: string;
+  batch?: string;
+  assignedBatches?: string[];
 }
 
 export interface CreateAdminUserRequest {
@@ -16,6 +19,9 @@ export interface CreateAdminUserRequest {
   email: string;
   password?: string;
   role: Role;
+  panel?: string;
+  batch?: string;
+  assignedBatches?: string[];
 }
 
 export interface UpdateAdminUserRequest {
@@ -24,6 +30,9 @@ export interface UpdateAdminUserRequest {
   password?: string;
   role?: Role;
   active?: boolean;
+  panel?: string;
+  batch?: string;
+  assignedBatches?: string[];
 }
 
 export interface SystemStats {

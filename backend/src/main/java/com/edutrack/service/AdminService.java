@@ -112,6 +112,11 @@ public class AdminService {
         User user = new User(email, passwordEncoder.encode(rawPassword), trimmedName, role);
         user.setNeedsPasswordReset(defaultPassUsed);
         user.setActive(true);
+        user.setPanel(request.getPanel());
+        user.setBatch(request.getBatch());
+        if (request.getAssignedBatches() != null) {
+            user.setAssignedBatches(request.getAssignedBatches());
+        }
 
         User saved = userRepository.save(user);
         writeAuditLog("USER_CREATE", "Created user account: " + saved.getFullName() + " (" + saved.getEmail() + ") with role: " + saved.getRole());
@@ -155,6 +160,18 @@ public class AdminService {
 
         if (request.getActive() != null) {
             user.setActive(request.getActive());
+        }
+
+        if (request.getPanel() != null) {
+            user.setPanel(request.getPanel());
+        }
+
+        if (request.getBatch() != null) {
+            user.setBatch(request.getBatch());
+        }
+
+        if (request.getAssignedBatches() != null) {
+            user.setAssignedBatches(request.getAssignedBatches());
         }
 
         User updated = userRepository.save(user);
@@ -204,6 +221,17 @@ public class AdminService {
                 request.setFullName(fullName);
                 request.setEmail(email);
                 request.setRole(role);
+
+                if (parts.length >= 4) {
+                    request.setPanel(parts[3].replaceAll("^\"|\"$", "").trim());
+                }
+                if (parts.length >= 5) {
+                    request.setBatch(parts[4].replaceAll("^\"|\"$", "").trim());
+                }
+                if (parts.length >= 6 && role == Role.INSTRUCTOR) {
+                    String[] batches = parts[5].replaceAll("^\"|\"$", "").trim().split(";");
+                    request.setAssignedBatches(Arrays.stream(batches).map(String::trim).collect(Collectors.toSet()));
+                }
                 
                 try {
                     responses.add(createUser(request));
@@ -385,7 +413,7 @@ public class AdminService {
             associatedCount = subjectRepository.findByInstructor(user).size();
         }
 
-        return new AdminDto.AdminUserResponse(
+        AdminDto.AdminUserResponse response = new AdminDto.AdminUserResponse(
                 user.getId(),
                 user.getEmail(),
                 user.getFullName(),
@@ -395,5 +423,9 @@ public class AdminService {
                 user.getCreatedAt(),
                 associatedCount
         );
+        response.setPanel(user.getPanel());
+        response.setBatch(user.getBatch());
+        response.setAssignedBatches(user.getAssignedBatches());
+        return response;
     }
 }

@@ -61,6 +61,9 @@ public class AuthDto {
         private Role role;
         private boolean needsPasswordReset;
         private boolean active = true;
+        private String panel;
+        private String batch;
+        private java.util.Set<String> assignedBatches;
 
         public UserDto() {}
 
@@ -99,6 +102,23 @@ public class AuthDto {
 
         public boolean isActive() { return active; }
         public void setActive(boolean active) { this.active = active; }
+
+        public String getPanel() { return panel; }
+        public void setPanel(String panel) { this.panel = panel; }
+
+        public String getBatch() { return batch; }
+        public void setBatch(String batch) { this.batch = batch; }
+
+        public java.util.Set<String> getAssignedBatches() { return assignedBatches; }
+        public void setAssignedBatches(java.util.Set<String> assignedBatches) { this.assignedBatches = assignedBatches; }
+
+        public static UserDto fromUser(com.edutrack.model.User user) {
+            UserDto dto = new UserDto(user.getId(), user.getEmail(), user.getFullName(), user.getRole(), user.isNeedsPasswordReset(), user.isActive());
+            dto.setPanel(user.getPanel());
+            dto.setBatch(user.getBatch());
+            dto.setAssignedBatches(user.getAssignedBatches());
+            return dto;
+        }
     }
 
     public static class ChangePasswordRequest {

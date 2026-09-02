@@ -353,10 +353,10 @@ export class AdminPanelComponent implements OnInit {
   }
 
   downloadTemplate(): void {
-    const headers = 'fullName,email\n';
+    const headers = 'fullName,email,role,panel,batch,assignedBatches\n';
     const row = this.csvUploadRole === 'STUDENT' 
-      ? '"Rahul Sharma","rahul@edutrack.edu"\n"Priya Patel","priya@edutrack.edu"\n'
-      : '"Prof. Rajesh Sharma","sharma@edutrack.edu"\n"Dr. Amit Verma","verma@edutrack.edu"\n';
+      ? '"Rahul Sharma","rahul@edutrack.edu","STUDENT","A","A2",""\n"Priya Patel","priya@edutrack.edu","STUDENT","A","A1",""\n'
+      : '"Prof. Rajesh Sharma","sharma@edutrack.edu","INSTRUCTOR","","","A1;B1"\n"Dr. Amit Verma","verma@edutrack.edu","INSTRUCTOR","","","A2;B2"\n';
     
     const blob = new Blob([headers + row], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
