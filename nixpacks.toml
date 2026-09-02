@@ -1,0 +1,15 @@
+[providers]
+  # Explicitly tell Nixpacks to use the Java environment
+  java = {}
+
+[phases.setup]
+  # Ensure Maven is installed in the container
+  nixPkgs = ["jdk17", "maven"]
+
+[phases.build]
+  # Build the project using the backend's POM file
+  cmds = ["mvn -f backend/pom.xml -B clean install"]
+
+[start]
+  # Start the generated Spring Boot application
+  cmd = "java -jar backend/target/edutrack-backend-1.0.0.jar"
