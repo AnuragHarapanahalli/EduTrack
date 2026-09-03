@@ -1,0 +1,34 @@
+# Docker ignore — speeds up builds by excluding files Docker doesn't need
+
+# Git history
+.git
+.gitignore
+
+# IDE & OS junk
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Maven build output (gets rebuilt inside Docker)
+backend/target/
+
+# Angular build output (gets rebuilt inside Docker)
+frontend-angular/dist/
+frontend-angular/.angular/
+frontend-angular/node_modules/
+frontend-angular/node/
+
+# Logs & uploads
+*.log
+uploads/*
+!uploads/.gitkeep
+
+# Docs & misc
+*.md
+*.docx
+*.har
+*.zip
+load-test.js
+test_batch_upload.csv
