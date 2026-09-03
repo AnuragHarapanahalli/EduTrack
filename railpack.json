@@ -1,5 +1,0 @@
-{
-  "deploy": {
-    "startCommand": "java -jar backend/target/edutrack-backend-1.0.0.jar"
-  }
-}

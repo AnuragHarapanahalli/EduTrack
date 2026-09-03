@@ -1,0 +1,8 @@
+fullName,email,role,panel,batch,assignedBatches
+"Alice Johnson","alice.j@edutrack.edu","STUDENT","A","A1",""
+"Bob Smith","bob.s@edutrack.edu","STUDENT","A","A2",""
+"Charlie Brown","charlie.b@edutrack.edu","STUDENT","B","B1",""
+"Diana Prince","diana.p@edutrack.edu","STUDENT","B","B2",""
+"Evan Wright","evan.w@edutrack.edu","STUDENT","C","C1",""
+"Prof. John Doe","johndoe@edutrack.edu","INSTRUCTOR","","","A1;A2"
+"Dr. Sarah Lee","sarahlee@edutrack.edu","INSTRUCTOR","","","B1;C1;C2"

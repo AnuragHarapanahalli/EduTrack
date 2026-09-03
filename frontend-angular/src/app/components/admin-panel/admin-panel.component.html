@@ -174,6 +174,7 @@
             <th>User</th>
             <th>Role</th>
             <th>Status</th>
+            <th>Batch Info</th>
             <th>Associated Courses</th>
             <th>Registered</th>
             <th class="text-right">Actions</th>
@@ -204,6 +205,21 @@
               <span class="gc-status-pill" [class.active]="user.active" [class.inactive]="!user.active">
                 <span class="status-dot"></span>
                 {{ user.active ? 'Active' : 'Deactivated' }}
+              </span>
+            </td>
+
+            <td>
+              <span *ngIf="user.role === 'STUDENT'" class="gc-role-pill badge-role-student" style="font-size: 0.7rem; background: transparent; border: 1px solid var(--gc-border); color: var(--gc-text-main);">
+                {{ user.panel || '-' }} / {{ user.batch || '-' }}
+              </span>
+              <span *ngIf="user.role === 'INSTRUCTOR' && user.assignedBatches?.length" style="font-size: 0.75rem; color: var(--gc-text-sub);">
+                {{ user.assignedBatches!.join(', ') }}
+              </span>
+              <span *ngIf="user.role === 'INSTRUCTOR' && !user.assignedBatches?.length" style="font-size: 0.75rem; color: var(--gc-text-sub);">
+                -
+              </span>
+              <span *ngIf="user.role === 'ADMIN'" style="font-size: 0.75rem; color: var(--gc-text-sub);">
+                N/A
               </span>
             </td>
 
@@ -637,6 +653,45 @@
               <option value="INSTRUCTOR">Instructor / Faculty</option>
               <option value="ADMIN">Administrator</option>
             </select>
+          </div>
+        </div>
+
+        <div class="gc-form-field" *ngIf="userForm.role === 'STUDENT'">
+          <label>Panel / Division</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-layer-group gc-input-icon"></i>
+            <input
+              type="text"
+              [(ngModel)]="userForm.panel"
+              name="panel"
+              placeholder="e.g. A, B, C">
+          </div>
+        </div>
+
+        <div class="gc-form-field" *ngIf="userForm.role === 'STUDENT'">
+          <label>Batch</label>
+          <div class="gc-input-icon-group">
+            <i class="fa-solid fa-users-viewfinder gc-input-icon"></i>
+            <input
+              type="text"
+              [(ngModel)]="userForm.batch"
+              name="batch"
+              placeholder="e.g. A1, A2, B1">
+          </div>
+        </div>
+
+        <div class="gc-form-field" *ngIf="userForm.role === 'INSTRUCTOR'">
+          <label>Assigned Batches (Select Multiple)</label>
+          <div class="gc-input-icon-group" style="height: auto;">
+            <select multiple [(ngModel)]="userForm.assignedBatches" name="assignedBatches" class="gc-multi-select" style="min-height: 80px;">
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
+            </select>
+            <small style="display: block; margin-top: 4px; color: var(--gc-text-sub);">Hold Ctrl (Windows) or Command (Mac) to select multiple batches.</small>
           </div>
         </div>
 

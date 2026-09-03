@@ -52,12 +52,18 @@ export class AdminPanelComponent implements OnInit {
     role: Role;
     password?: string;
     active?: boolean;
+    panel?: string;
+    batch?: string;
+    assignedBatches?: string[];
   } = {
     fullName: '',
     email: '',
     role: 'STUDENT',
     password: '',
-    active: true
+    active: true,
+    panel: '',
+    batch: '',
+    assignedBatches: []
   };
 
   userFormError = '';
@@ -188,7 +194,10 @@ export class AdminPanelComponent implements OnInit {
       email: '',
       role: 'STUDENT',
       password: '',
-      active: true
+      active: true,
+      panel: '',
+      batch: '',
+      assignedBatches: []
     };
     this.userFormError = '';
     this.showUserModal = true;
@@ -203,7 +212,10 @@ export class AdminPanelComponent implements OnInit {
       email: user.email,
       role: user.role,
       password: '',
-      active: user.active
+      active: user.active,
+      panel: user.panel || '',
+      batch: user.batch || '',
+      assignedBatches: user.assignedBatches ? [...user.assignedBatches] : []
     };
     this.userFormError = '';
     this.showUserModal = true;
@@ -260,7 +272,10 @@ export class AdminPanelComponent implements OnInit {
         fullName: this.userForm.fullName.trim(),
         email: this.userForm.email.trim(),
         role: this.userForm.role,
-        active: this.userForm.active
+        active: this.userForm.active,
+        panel: this.userForm.role === 'STUDENT' ? (this.userForm.panel?.trim() || undefined) : undefined,
+        batch: this.userForm.role === 'STUDENT' ? (this.userForm.batch?.trim() || undefined) : undefined,
+        assignedBatches: this.userForm.role === 'INSTRUCTOR' ? this.userForm.assignedBatches : undefined
       };
       if (this.userForm.password && this.userForm.password.trim()) {
         payload.password = this.userForm.password.trim();
@@ -285,7 +300,10 @@ export class AdminPanelComponent implements OnInit {
       const payload: CreateAdminUserRequest = {
         fullName: this.userForm.fullName.trim(),
         email: this.userForm.email.trim(),
-        role: this.userForm.role
+        role: this.userForm.role,
+        panel: this.userForm.role === 'STUDENT' ? (this.userForm.panel?.trim() || undefined) : undefined,
+        batch: this.userForm.role === 'STUDENT' ? (this.userForm.batch?.trim() || undefined) : undefined,
+        assignedBatches: this.userForm.role === 'INSTRUCTOR' ? this.userForm.assignedBatches : undefined
       };
       if (this.userForm.password && this.userForm.password.trim()) {
         payload.password = this.userForm.password.trim();
