@@ -25,9 +25,14 @@ import {
 })
 export class ApiService {
 
-  private readonly baseUrl = window.location.port === '4200'
-    ? 'http://localhost:8080/api'
-    : '/api';
+  // In production (Render static site), window.__API_URL__ is injected via env.js
+  // In local dev (ng serve on port 4200), falls back to localhost:8080
+  private readonly baseUrl: string = (() => {
+    const w = window as any;
+    if (w.__API_URL__) return w.__API_URL__;
+    if (window.location.port === '4200') return 'http://localhost:8080/api';
+    return '/api';
+  })();
 
 
   constructor(private http: HttpClient) {}
