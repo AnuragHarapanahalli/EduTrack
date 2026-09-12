@@ -17,7 +17,8 @@ import {
   UpdateAdminUserRequest,
   CreateSubjectAdminRequest,
   SystemStats,
-  AuditLog
+  AuditLog,
+  BulkUploadValidationResponse
 } from '../models/admin.model';
 
 @Injectable({
@@ -394,6 +395,28 @@ export class ApiService {
         ...this.options,
         params
       }
+    );
+  }
+
+  validateUsersCsv(file: File, role: string): Observable<BulkUploadValidationResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const params = new HttpParams().set('role', role);
+    return this.http.post<BulkUploadValidationResponse>(
+      `${this.baseUrl}/admin/users/bulk/validate`,
+      formData,
+      {
+        ...this.options,
+        params
+      }
+    );
+  }
+
+  importProcessedUsers(users: CreateAdminUserRequest[]): Observable<AdminUser[]> {
+    return this.http.post<AdminUser[]>(
+      `${this.baseUrl}/admin/users/bulk/import-processed`,
+      { users },
+      this.options
     );
   }
 

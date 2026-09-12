@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
+import { DocumentPreviewService } from '../../services/document-preview.service';
 import { Milestone } from '../../models/milestone.model';
 import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.model';
 
@@ -81,6 +82,24 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                 "
               >
 
+                <button
+                  type="button"
+                  *ngIf="activeGradingEntry.fileUrl"
+                  (click)="previewFile(activeGradingEntry.fileUrl, activeGradingEntry.studentName)"
+                  class="gc-btn gc-btn-outline"
+                  style="
+                    padding: 0.2rem 0.6rem;
+                    font-size: 0.75rem;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 5px;
+                  "
+                  title="Preview Document"
+                >
+                  <i class="fa-solid fa-eye"></i>
+                  Preview
+                </button>
+
                 <a
                   *ngIf="activeGradingEntry.fileUrl"
                   [href]="serverHost + activeGradingEntry.fileUrl"
@@ -90,6 +109,7 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                     padding: 0.2rem 0.5rem;
                     font-size: 0.75rem;
                   "
+                  title="Download File"
                 >
                   <i class="fa-solid fa-download"></i>
                   File
@@ -712,6 +732,26 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                       "
                     >
 
+                      <button
+                        type="button"
+                        *ngIf="item.fileUrl"
+                        (click)="previewFile(item.fileUrl, item.studentName)"
+                        class="gc-btn gc-btn-outline"
+                        style="
+                          padding: 0.2rem 0.5rem;
+                          font-size: 0.75rem;
+                          text-align: center;
+                          display: inline-flex;
+                          align-items: center;
+                          justify-content: center;
+                          gap: 4px;
+                        "
+                        title="Preview Document"
+                      >
+                        <i class="fa-solid fa-eye"></i>
+                        Preview
+                      </button>
+
                       <a
                         *ngIf="item.fileUrl"
                         [href]="serverHost + item.fileUrl"
@@ -722,6 +762,7 @@ import { MilestoneRosterEntry, SubmissionStatus } from '../../models/submission.
                           font-size: 0.75rem;
                           text-align: center;
                         "
+                        title="Download File"
                       >
                         <i class="fa-solid fa-download"></i>
                         File
@@ -854,8 +895,14 @@ export class ReviewRosterModalComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public previewService: DocumentPreviewService
   ) {}
+
+  previewFile(fileUrl: string, studentName?: string): void {
+    const fileName = fileUrl.split('/').pop() || `${studentName || 'Student'} Submission`;
+    this.previewService.openPreview(fileUrl, fileName);
+  }
 
   ngOnInit() {
     this.loadRoster();

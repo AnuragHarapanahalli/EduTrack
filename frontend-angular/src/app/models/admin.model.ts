@@ -67,3 +67,29 @@ export interface AuditLog {
   performedByEmail: string;
   timestamp: string;
 }
+
+export interface BulkRowIssue {
+  rowNumber: number;
+  column: string;
+  originalValue: string;
+  currentValue: string;
+  errorMessage: string;
+  allowedFormat: string;
+  fixed: boolean;
+  ignored: boolean;
+
+  fullName?: string;
+  email?: string;
+  role?: string;
+  panel?: string;
+  batch?: string;
+  assignedBatches?: string;
+}
+
+export interface BulkUploadValidationResponse {
+  totalRows: number;
+  validCount: number;
+  issueCount: number;
+  validRows: CreateAdminUserRequest[];
+  issues: BulkRowIssue[];
+}

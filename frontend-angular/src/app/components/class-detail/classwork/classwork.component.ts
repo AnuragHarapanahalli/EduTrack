@@ -16,6 +16,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ApiService } from '../../../services/api.service';
 import { AuthService } from '../../../services/auth.service';
 import { ViewStateService } from '../../../services/view-state.service';
+import { DocumentPreviewService } from '../../../services/document-preview.service';
 
 import {
   Milestone,
@@ -67,6 +68,7 @@ export class ClassworkComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     public authService: AuthService,
     public viewStateService: ViewStateService,
+    public previewService: DocumentPreviewService,
     private cdr: ChangeDetectorRef
   ) {
     effect(() => {
@@ -81,6 +83,12 @@ export class ClassworkComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  previewSubmission(fileUrl?: string, title?: string): void {
+    if (!fileUrl) return;
+    const fileName = fileUrl.split('/').pop() || `${title || 'Milestone'} Deliverable`;
+    this.previewService.openPreview(fileUrl, fileName);
   }
 
 

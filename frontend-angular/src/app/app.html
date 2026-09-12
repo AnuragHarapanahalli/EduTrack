@@ -90,6 +90,9 @@
     (gradeReturned)="refreshCurrentSubjectState()">
   </app-review-roster-modal>
 
+  <!-- Global Document Preview Modal (PDF, Word, Images, etc.) -->
+  <app-document-preview-modal></app-document-preview-modal>
+
   <!-- Force Password Reset Modal -->
   <div class="gc-modal-backdrop" *ngIf="authService.currentUser()?.needsPasswordReset">
     <div class="gc-modal-card" style="max-width: 480px; padding: 2.5rem; text-align: center;" (click)="$event.stopPropagation()">

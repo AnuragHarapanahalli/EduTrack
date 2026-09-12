@@ -1,0 +1,138 @@
+-- ==============================================================================
+-- User Table
+-- ==============================================================================
+CREATE TABLE UserEntity (
+    id INTEGER PRIMARY KEY NOT NULL,
+    email TEXT NOT NULL,
+    fullName TEXT NOT NULL,
+    role TEXT NOT NULL,
+    panel TEXT,
+    batch TEXT,
+    jwtToken TEXT
+);
+
+getCurrentUser:
+SELECT * FROM UserEntity LIMIT 1;
+
+insertOrUpdateUser:
+INSERT OR REPLACE INTO UserEntity (id, email, fullName, role, panel, batch, jwtToken)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+clearUser:
+DELETE FROM UserEntity;
+
+-- ==============================================================================
+-- Subject Table
+-- ==============================================================================
+CREATE TABLE SubjectEntity (
+    id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    code TEXT NOT NULL,
+    instructorName TEXT,
+    instructorId INTEGER,
+    batch TEXT,
+    description TEXT,
+    totalMilestones INTEGER NOT NULL DEFAULT 0,
+    enrolledStudentsCount INTEGER NOT NULL DEFAULT 0
+);
+
+selectAllSubjects:
+SELECT * FROM SubjectEntity;
+
+selectSubjectById:
+SELECT * FROM SubjectEntity WHERE id = :id;
+
+insertOrUpdateSubject:
+INSERT OR REPLACE INTO SubjectEntity (id, name, code, instructorName, instructorId, batch, description, totalMilestones, enrolledStudentsCount)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+clearSubjects:
+DELETE FROM SubjectEntity;
+
+-- ==============================================================================
+-- Milestone Table
+-- ==============================================================================
+CREATE TABLE MilestoneEntity (
+    id INTEGER PRIMARY KEY NOT NULL,
+    subjectId INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    deadline TEXT NOT NULL,
+    basePoints REAL NOT NULL,
+    maxMarks REAL NOT NULL,
+    requiredDeliverables TEXT,
+    isMandatory INTEGER NOT NULL DEFAULT 1
+);
+
+selectMilestonesForSubject:
+SELECT * FROM MilestoneEntity WHERE subjectId = :subjectId ORDER BY deadline ASC;
+
+selectMilestoneById:
+SELECT * FROM MilestoneEntity WHERE id = :id;
+
+insertOrUpdateMilestone:
+INSERT OR REPLACE INTO MilestoneEntity (id, subjectId, title, description, deadline, basePoints, maxMarks, requiredDeliverables, isMandatory)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+clearMilestonesForSubject:
+DELETE FROM MilestoneEntity WHERE subjectId = :subjectId;
+
+-- ==============================================================================
+-- Submission Table
+-- ==============================================================================
+CREATE TABLE SubmissionEntity (
+    id INTEGER PRIMARY KEY NOT NULL,
+    milestoneId INTEGER NOT NULL,
+    studentId INTEGER NOT NULL,
+    studentName TEXT,
+    fileUrl TEXT,
+    submissionLink TEXT,
+    comments TEXT,
+    submittedAt TEXT NOT NULL,
+    status TEXT NOT NULL,
+    qualityRating INTEGER,
+    timelinessMultiplier REAL,
+    finalPoints REAL,
+    obtainedMarks REAL,
+    marksLocked INTEGER NOT NULL DEFAULT 0,
+    instructorFeedback TEXT
+);
+
+selectSubmissionsForStudent:
+SELECT * FROM SubmissionEntity WHERE studentId = :studentId;
+
+selectSubmissionForMilestone:
+SELECT * FROM SubmissionEntity WHERE milestoneId = :milestoneId AND studentId = :studentId LIMIT 1;
+
+selectSubmissionsForMilestoneAll:
+SELECT * FROM SubmissionEntity WHERE milestoneId = :milestoneId;
+
+insertOrUpdateSubmission:
+INSERT OR REPLACE INTO SubmissionEntity (id, milestoneId, studentId, studentName, fileUrl, submissionLink, comments, submittedAt, status, qualityRating, timelinessMultiplier, finalPoints, obtainedMarks, marksLocked, instructorFeedback)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+-- ==============================================================================
+-- Leaderboard Table
+-- ==============================================================================
+CREATE TABLE LeaderboardEntity (
+    subjectId INTEGER NOT NULL,
+    rank INTEGER NOT NULL,
+    studentId INTEGER NOT NULL,
+    studentName TEXT NOT NULL,
+    studentEmail TEXT NOT NULL,
+    totalPoints REAL NOT NULL,
+    approvedMilestones INTEGER NOT NULL,
+    totalMilestones INTEGER NOT NULL,
+    completionPercentage REAL NOT NULL,
+    PRIMARY KEY (subjectId, studentId)
+);
+
+selectLeaderboardForSubject:
+SELECT * FROM LeaderboardEntity WHERE subjectId = :subjectId ORDER BY rank ASC;
+
+insertOrUpdateLeaderboardEntry:
+INSERT OR REPLACE INTO LeaderboardEntity (subjectId, rank, studentId, studentName, studentEmail, totalPoints, approvedMilestones, totalMilestones, completionPercentage)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+clearLeaderboardForSubject:
+DELETE FROM LeaderboardEntity WHERE subjectId = :subjectId;

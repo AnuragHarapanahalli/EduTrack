@@ -234,4 +234,100 @@ public class AdminDto {
         public long getSubmissionsOverdue() { return submissionsOverdue; }
         public void setSubmissionsOverdue(long submissionsOverdue) { this.submissionsOverdue = submissionsOverdue; }
     }
+
+    public static class BulkRowIssue {
+        private int rowNumber;
+        private String column;
+        private String originalValue;
+        private String currentValue;
+        private String errorMessage;
+        private String allowedFormat;
+        private boolean fixed;
+        private boolean ignored;
+
+        private String fullName;
+        private String email;
+        private String role;
+        private String panel;
+        private String batch;
+        private String assignedBatches;
+
+        public BulkRowIssue() {}
+
+        public int getRowNumber() { return rowNumber; }
+        public void setRowNumber(int rowNumber) { this.rowNumber = rowNumber; }
+
+        public String getColumn() { return column; }
+        public void setColumn(String column) { this.column = column; }
+
+        public String getOriginalValue() { return originalValue; }
+        public void setOriginalValue(String originalValue) { this.originalValue = originalValue; }
+
+        public String getCurrentValue() { return currentValue; }
+        public void setCurrentValue(String currentValue) { this.currentValue = currentValue; }
+
+        public String getErrorMessage() { return errorMessage; }
+        public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+
+        public String getAllowedFormat() { return allowedFormat; }
+        public void setAllowedFormat(String allowedFormat) { this.allowedFormat = allowedFormat; }
+
+        public boolean isFixed() { return fixed; }
+        public void setFixed(boolean fixed) { this.fixed = fixed; }
+
+        public boolean isIgnored() { return ignored; }
+        public void setIgnored(boolean ignored) { this.ignored = ignored; }
+
+        public String getFullName() { return fullName; }
+        public void setFullName(String fullName) { this.fullName = fullName; }
+
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+
+        public String getRole() { return role; }
+        public void setRole(String role) { this.role = role; }
+
+        public String getPanel() { return panel; }
+        public void setPanel(String panel) { this.panel = panel; }
+
+        public String getBatch() { return batch; }
+        public void setBatch(String batch) { this.batch = batch; }
+
+        public String getAssignedBatches() { return assignedBatches; }
+        public void setAssignedBatches(String assignedBatches) { this.assignedBatches = assignedBatches; }
+    }
+
+    public static class BulkUploadValidationResponse {
+        private int totalRows;
+        private int validCount;
+        private int issueCount;
+        private List<CreateUserRequest> validRows;
+        private List<BulkRowIssue> issues;
+
+        public BulkUploadValidationResponse() {}
+
+        public int getTotalRows() { return totalRows; }
+        public void setTotalRows(int totalRows) { this.totalRows = totalRows; }
+
+        public int getValidCount() { return validCount; }
+        public void setValidCount(int validCount) { this.validCount = validCount; }
+
+        public int getIssueCount() { return issueCount; }
+        public void setIssueCount(int issueCount) { this.issueCount = issueCount; }
+
+        public List<CreateUserRequest> getValidRows() { return validRows; }
+        public void setValidRows(List<CreateUserRequest> validRows) { this.validRows = validRows; }
+
+        public List<BulkRowIssue> getIssues() { return issues; }
+        public void setIssues(List<BulkRowIssue> issues) { this.issues = issues; }
+    }
+
+    public static class BulkImportProcessedRequest {
+        private List<CreateUserRequest> users;
+
+        public BulkImportProcessedRequest() {}
+
+        public List<CreateUserRequest> getUsers() { return users; }
+        public void setUsers(List<CreateUserRequest> users) { this.users = users; }
+    }
 }

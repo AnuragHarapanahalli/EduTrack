@@ -38,6 +38,9 @@ from './components/modals/upload-modal.component';
 import { ReviewRosterModalComponent }
 from './components/modals/review-roster-modal.component';
 
+import { DocumentPreviewModalComponent }
+from './components/modals/document-preview-modal.component';
+
 
 import { AuthService } from './services/auth.service';
 import { ViewStateService } from './services/view-state.service';
@@ -80,8 +83,8 @@ import { AdminPanelComponent } from './components/admin-panel/admin-panel.compon
     AddStudentsModalComponent,
     CreateMilestoneModalComponent,
     UploadModalComponent,
-    ReviewRosterModalComponent
-
+    ReviewRosterModalComponent,
+    DocumentPreviewModalComponent
   ],
 
   templateUrl: './app.html',

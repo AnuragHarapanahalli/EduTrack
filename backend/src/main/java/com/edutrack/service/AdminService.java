@@ -189,8 +189,34 @@ public class AdminService {
         return toAdminUserResponse(updated);
     }
 
-    public List<AdminDto.AdminUserResponse> bulkUploadUsers(MultipartFile file, Role defaultRole) {
-        List<AdminDto.AdminUserResponse> responses = new ArrayList<>();
+    public List<String> parseCsvLine(String line) {
+        List<String> values = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean inQuotes = false;
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '\"') {
+                inQuotes = !inQuotes;
+            } else if (c == ',' && !inQuotes) {
+                values.add(sb.toString().trim().replaceAll("^\"|\"$", ""));
+                sb.setLength(0);
+            } else {
+                sb.append(c);
+            }
+        }
+        values.add(sb.toString().trim().replaceAll("^\"|\"$", ""));
+        return values;
+    }
+
+    public AdminDto.BulkUploadValidationResponse validateBulkUpload(MultipartFile file, Role defaultRole) {
+        AdminDto.BulkUploadValidationResponse response = new AdminDto.BulkUploadValidationResponse();
+        List<AdminDto.CreateUserRequest> validRows = new ArrayList<>();
+        List<AdminDto.BulkRowIssue> issues = new ArrayList<>();
+        Set<String> seenEmailsInCsv = new HashSet<>();
+
+        int totalRows = 0;
+        int rowNumber = 1;
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
             boolean isHeader = true;
@@ -198,53 +224,168 @@ public class AdminService {
                 if (line.trim().isEmpty()) continue;
                 if (isHeader) {
                     isHeader = false;
-                    continue; // Skip header line
+                    rowNumber++;
+                    continue;
                 }
-                
-                String[] parts = line.split(",");
-                if (parts.length < 2) continue;
-                
-                String fullName = parts[0].replaceAll("^\"|\"$", "").trim();
-                String email = parts[1].replaceAll("^\"|\"$", "").trim();
-                
-                Role role = defaultRole;
-                if (parts.length >= 3) {
-                    String roleStr = parts[2].replaceAll("^\"|\"$", "").trim().toUpperCase();
+
+                totalRows++;
+                List<String> tokens = parseCsvLine(line);
+                String fullName = tokens.size() > 0 ? tokens.get(0) : "";
+                String email = tokens.size() > 1 ? tokens.get(1) : "";
+                String roleStr = tokens.size() > 2 ? tokens.get(2) : "";
+                String panel = tokens.size() > 3 ? tokens.get(3) : "";
+                String batch = tokens.size() > 4 ? tokens.get(4) : "";
+                String assignedBatches = tokens.size() > 5 ? tokens.get(5) : "";
+
+                Role resolvedRole = defaultRole;
+                boolean hasRowIssue = false;
+
+                // Check fullName
+                if (fullName.isEmpty()) {
+                    AdminDto.BulkRowIssue issue = new AdminDto.BulkRowIssue();
+                    issue.setRowNumber(rowNumber);
+                    issue.setColumn("fullName");
+                    issue.setOriginalValue(fullName);
+                    issue.setCurrentValue(fullName);
+                    issue.setErrorMessage("Full name is required.");
+                    issue.setAllowedFormat("2-100 characters");
+                    populateRowData(issue, fullName, email, roleStr, panel, batch, assignedBatches);
+                    issues.add(issue);
+                    hasRowIssue = true;
+                } else if (fullName.length() < validationConfig.getUserFullnameMin() || fullName.length() > validationConfig.getUserFullnameMax()) {
+                    AdminDto.BulkRowIssue issue = new AdminDto.BulkRowIssue();
+                    issue.setRowNumber(rowNumber);
+                    issue.setColumn("fullName");
+                    issue.setOriginalValue(fullName);
+                    issue.setCurrentValue(fullName);
+                    issue.setErrorMessage("Full name must be between " + validationConfig.getUserFullnameMin() + " and " + validationConfig.getUserFullnameMax() + " chars.");
+                    issue.setAllowedFormat("2-100 characters");
+                    populateRowData(issue, fullName, email, roleStr, panel, batch, assignedBatches);
+                    issues.add(issue);
+                    hasRowIssue = true;
+                }
+
+                // Check email
+                String cleanEmail = email.toLowerCase().trim();
+                if (cleanEmail.isEmpty()) {
+                    AdminDto.BulkRowIssue issue = new AdminDto.BulkRowIssue();
+                    issue.setRowNumber(rowNumber);
+                    issue.setColumn("email");
+                    issue.setOriginalValue(email);
+                    issue.setCurrentValue(email);
+                    issue.setErrorMessage("Email address is required.");
+                    issue.setAllowedFormat("Valid email (e.g. user@domain.edu)");
+                    populateRowData(issue, fullName, email, roleStr, panel, batch, assignedBatches);
+                    issues.add(issue);
+                    hasRowIssue = true;
+                } else if (!cleanEmail.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                    AdminDto.BulkRowIssue issue = new AdminDto.BulkRowIssue();
+                    issue.setRowNumber(rowNumber);
+                    issue.setColumn("email");
+                    issue.setOriginalValue(email);
+                    issue.setCurrentValue(email);
+                    issue.setErrorMessage("Invalid email format.");
+                    issue.setAllowedFormat("Valid email (e.g. user@domain.edu)");
+                    populateRowData(issue, fullName, email, roleStr, panel, batch, assignedBatches);
+                    issues.add(issue);
+                    hasRowIssue = true;
+                } else if (userRepository.existsByEmail(cleanEmail)) {
+                    AdminDto.BulkRowIssue issue = new AdminDto.BulkRowIssue();
+                    issue.setRowNumber(rowNumber);
+                    issue.setColumn("email");
+                    issue.setOriginalValue(email);
+                    issue.setCurrentValue(email);
+                    issue.setErrorMessage("Email '" + cleanEmail + "' is already registered in system.");
+                    issue.setAllowedFormat("Unique email address");
+                    populateRowData(issue, fullName, email, roleStr, panel, batch, assignedBatches);
+                    issues.add(issue);
+                    hasRowIssue = true;
+                } else if (seenEmailsInCsv.contains(cleanEmail)) {
+                    AdminDto.BulkRowIssue issue = new AdminDto.BulkRowIssue();
+                    issue.setRowNumber(rowNumber);
+                    issue.setColumn("email");
+                    issue.setOriginalValue(email);
+                    issue.setCurrentValue(email);
+                    issue.setErrorMessage("Duplicate email in uploaded file: " + cleanEmail);
+                    issue.setAllowedFormat("Unique email per row");
+                    populateRowData(issue, fullName, email, roleStr, panel, batch, assignedBatches);
+                    issues.add(issue);
+                    hasRowIssue = true;
+                } else {
+                    seenEmailsInCsv.add(cleanEmail);
+                }
+
+                // Check role
+                if (!roleStr.isEmpty()) {
                     try {
-                        role = Role.valueOf(roleStr);
+                        resolvedRole = Role.valueOf(roleStr.toUpperCase().trim());
                     } catch (IllegalArgumentException e) {
-                        // Keep defaultRole
+                        AdminDto.BulkRowIssue issue = new AdminDto.BulkRowIssue();
+                        issue.setRowNumber(rowNumber);
+                        issue.setColumn("role");
+                        issue.setOriginalValue(roleStr);
+                        issue.setCurrentValue(roleStr);
+                        issue.setErrorMessage("Invalid role '" + roleStr + "'. Must be STUDENT or INSTRUCTOR.");
+                        issue.setAllowedFormat("STUDENT or INSTRUCTOR");
+                        populateRowData(issue, fullName, email, roleStr, panel, batch, assignedBatches);
+                        issues.add(issue);
+                        hasRowIssue = true;
                     }
                 }
-                
-                AdminDto.CreateUserRequest request = new AdminDto.CreateUserRequest();
-                request.setFullName(fullName);
-                request.setEmail(email);
-                request.setRole(role);
 
-                if (parts.length >= 4) {
-                    request.setPanel(parts[3].replaceAll("^\"|\"$", "").trim());
+                if (!hasRowIssue) {
+                    AdminDto.CreateUserRequest request = new AdminDto.CreateUserRequest();
+                    request.setFullName(fullName);
+                    request.setEmail(cleanEmail);
+                    request.setRole(resolvedRole);
+                    request.setPanel(panel);
+                    request.setBatch(batch);
+                    if (!assignedBatches.isEmpty() && resolvedRole == Role.INSTRUCTOR) {
+                        String[] batches = assignedBatches.split(";");
+                        request.setAssignedBatches(Arrays.stream(batches).map(String::trim).collect(Collectors.toSet()));
+                    }
+                    validRows.add(request);
                 }
-                if (parts.length >= 5) {
-                    request.setBatch(parts[4].replaceAll("^\"|\"$", "").trim());
-                }
-                if (parts.length >= 6 && role == Role.INSTRUCTOR) {
-                    String[] batches = parts[5].replaceAll("^\"|\"$", "").trim().split(";");
-                    request.setAssignedBatches(Arrays.stream(batches).map(String::trim).collect(Collectors.toSet()));
-                }
-                
-                try {
-                    responses.add(createUser(request));
-                } catch (Exception e) {
-                    System.err.println("Failed to import user " + email + ": " + e.getMessage());
-                }
+
+                rowNumber++;
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to read CSV file: " + e.getMessage());
         }
-        
-        writeAuditLog("USER_BULK_UPLOAD", "Uploaded batch file containing " + responses.size() + " accounts under role: " + defaultRole);
-        return responses;
+
+        response.setTotalRows(totalRows);
+        response.setValidCount(validRows.size());
+        response.setIssueCount(issues.size());
+        response.setValidRows(validRows);
+        response.setIssues(issues);
+        return response;
+    }
+
+    private void populateRowData(AdminDto.BulkRowIssue issue, String fullName, String email, String role, String panel, String batch, String assignedBatches) {
+        issue.setFullName(fullName);
+        issue.setEmail(email);
+        issue.setRole(role);
+        issue.setPanel(panel);
+        issue.setBatch(batch);
+        issue.setAssignedBatches(assignedBatches);
+    }
+
+    public List<AdminDto.AdminUserResponse> importProcessedUsers(List<AdminDto.CreateUserRequest> users) {
+        List<AdminDto.AdminUserResponse> results = new ArrayList<>();
+        for (AdminDto.CreateUserRequest req : users) {
+            try {
+                results.add(createUser(req));
+            } catch (Exception e) {
+                System.err.println("Failed to import user " + req.getEmail() + ": " + e.getMessage());
+            }
+        }
+        writeAuditLog("USER_BULK_UPLOAD", "Bulk imported " + results.size() + " accounts via CSV workflow.");
+        return results;
+    }
+
+    public List<AdminDto.AdminUserResponse> bulkUploadUsers(MultipartFile file, Role defaultRole) {
+        AdminDto.BulkUploadValidationResponse validation = validateBulkUpload(file, defaultRole);
+        return importProcessedUsers(validation.getValidRows());
     }
 
     // ==========================================

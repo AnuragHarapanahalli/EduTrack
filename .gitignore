@@ -36,3 +36,15 @@ uploads/*
 **/out-tsc/
 **/coverage/
 **/node/
+
+# Mobile / Gradle / Android / KMP / iOS Build Outputs
+.gradle/
+**/.gradle/
+**/build/
+**/.kotlin/
+**/local.properties
+**/DerivedData/
+**/*.xcworkspace/xcuserdata/
+**/*.xcodeproj/xcuserdata/
+**/*.xcodeproj/project.xcworkspace/xcuserdata/
+

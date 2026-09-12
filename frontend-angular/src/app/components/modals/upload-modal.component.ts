@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { ViewStateService } from '../../services/view-state.service';
+import { DocumentPreviewService } from '../../services/document-preview.service';
 import { Milestone, DeliverableItem } from '../../models/milestone.model';
 
 @Component({
@@ -37,12 +38,24 @@ import { Milestone, DeliverableItem } from '../../models/milestone.model';
               <!-- FILE UPLOAD FIELD -->
               <div class="gc-form-field" *ngIf="item.acceptsFile !== false">
                 <label>Upload File</label>
-                <div class="gc-file-upload-wrapper">
-                  <input type="file" id="fileInput_{{i}}" class="gc-file-input-hidden" (change)="onFileSelected($event, i)">
-                  <label for="fileInput_{{i}}" class="gc-file-upload-trigger" [class.has-file]="filesMap[i] || existingFilesMap[i]">
-                    <i class="fa-solid" [class.fa-cloud-arrow-up]="!filesMap[i] && !existingFilesMap[i]" [class.fa-circle-check]="filesMap[i] || existingFilesMap[i]"></i>
-                    <span>{{ filesMap[i] ? filesMap[i].name : (existingFilesMap[i] ? 'Uploaded: ' + existingFilesMap[i] : 'Choose file or drag here') }}</span>
-                  </label>
+                <div class="gc-file-upload-wrapper" style="display: flex; gap: 8px; align-items: stretch;">
+                  <div style="flex: 1;">
+                    <input type="file" id="fileInput_{{i}}" class="gc-file-input-hidden" (change)="onFileSelected($event, i)">
+                    <label for="fileInput_{{i}}" class="gc-file-upload-trigger" [class.has-file]="filesMap[i] || existingFilesMap[i]">
+                      <i class="fa-solid" [class.fa-cloud-arrow-up]="!filesMap[i] && !existingFilesMap[i]" [class.fa-circle-check]="filesMap[i] || existingFilesMap[i]"></i>
+                      <span>{{ filesMap[i] ? filesMap[i].name : (existingFilesMap[i] ? 'Uploaded: ' + existingFilesMap[i] : 'Choose file or drag here') }}</span>
+                    </label>
+                  </div>
+                  <button
+                    type="button"
+                    *ngIf="filesMap[i] || existingFilesMap[i]"
+                    (click)="previewDeliverable(i)"
+                    class="gc-btn gc-btn-outline"
+                    style="padding: 0 14px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; border-radius: 8px; white-space: nowrap;"
+                    title="Preview Document"
+                  >
+                    <i class="fa-solid fa-eye"></i> Preview
+                  </button>
                 </div>
                 <small style="display:block; margin-top:6px; color: var(--gc-text-sub);">
                   Max size: {{ formatBytes(viewStateService.validationLimits().submissionFileMaxBytes) }}
@@ -202,6 +215,7 @@ export class UploadModalComponent implements OnInit {
   deliverablesList: DeliverableItem[] = [];
   filesMap: { [index: number]: File } = {};
   existingFilesMap: { [index: number]: string } = {};
+  existingFileUrlsMap: { [index: number]: string } = {};
   linksMap: { [index: number]: string } = {};
   linkErrorsMap: { [index: number]: string } = {};
   comments = '';
@@ -210,6 +224,7 @@ export class UploadModalComponent implements OnInit {
     private apiService: ApiService,
     private authService: AuthService,
     public viewStateService: ViewStateService,
+    public previewService: DocumentPreviewService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -217,6 +232,14 @@ export class UploadModalComponent implements OnInit {
     if (!url) return '';
     const parts = url.split('/');
     return parts[parts.length - 1];
+  }
+
+  previewDeliverable(index: number): void {
+    if (this.filesMap[index]) {
+      this.previewService.openPreview('', this.filesMap[index].name, this.filesMap[index]);
+    } else if (this.existingFileUrlsMap[index]) {
+      this.previewService.openPreview(this.existingFileUrlsMap[index], this.existingFilesMap[index]);
+    }
   }
 
   ngOnInit() {
@@ -245,6 +268,7 @@ export class UploadModalComponent implements OnInit {
         let fileIndex = this.deliverablesList.findIndex(d => d.acceptsFile !== false && (this.allowedFileFormatsFor(d) || !this.allowedLinkFormatsFor(d)));
         if (fileIndex === -1) fileIndex = 0;
         this.existingFilesMap[fileIndex] = this.getFileNameFromUrl(sub.fileUrl);
+        this.existingFileUrlsMap[fileIndex] = sub.fileUrl;
       }
     }
   }

@@ -1011,4 +1011,236 @@
     </div>
   </div>
 
+  <!-- ================================================================= -->
+  <!-- MODAL: BULK IMPORT ISSUES RESOLUTION (LARGE POPUP WINDOW) -->
+  <!-- ================================================================= -->
+  <div class="gc-modal-backdrop" *ngIf="showIssueModal" (click)="closeIssueModal()">
+    <div class="gc-modal-card gc-modal-xl" (click)="$event.stopPropagation()">
+      
+      <!-- Modal Header -->
+      <div class="gc-modal-header">
+        <div class="modal-title-pod">
+          <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b; font-size: 1.3rem;"></i>
+          <div>
+            <h3 style="margin: 0; font-size: 1.25rem;">
+              Bulk Import Issues - {{ csvUploadRole === 'STUDENT' ? 'Student' : 'Teacher' }} CSV
+            </h3>
+            <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: var(--gc-text-sub);">
+              Resolve row issues directly below, ignore rows to skip, or download the issue CSV to correct offline.
+            </p>
+          </div>
+        </div>
+        <button class="gc-modal-close" (click)="closeIssueModal()" title="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="gc-modal-body gc-issue-modal-body">
+        
+        <!-- Summary Stats Banner -->
+        <div class="gc-issue-stats-bar">
+          <div class="issue-stat-pill">
+            <span class="stat-num">{{ bulkValidationResult?.totalRows || 0 }}</span>
+            <span class="stat-lbl">Total Rows</span>
+          </div>
+          <div class="issue-stat-pill text-emerald">
+            <span class="stat-num">{{ bulkValidRows.length }}</span>
+            <span class="stat-lbl">Clean Rows</span>
+          </div>
+          <div class="issue-stat-pill text-amber">
+            <span class="stat-num">{{ getUnresolvedIssuesCount() }}</span>
+            <span class="stat-lbl">Needs Attention</span>
+          </div>
+          <div class="issue-stat-pill text-blue">
+            <span class="stat-num">{{ getFixedIssuesCount() }}</span>
+            <span class="stat-lbl">Fixed Inline</span>
+          </div>
+          <div class="issue-stat-pill text-slate">
+            <span class="stat-num">{{ getIgnoredIssuesCount() }}</span>
+            <span class="stat-lbl">Ignored / Skip</span>
+          </div>
+        </div>
+
+        <!-- Action Toolbar -->
+        <div class="gc-issue-toolbar">
+          <div class="gc-issue-filter-tabs">
+            <button 
+              type="button" 
+              class="gc-tab-chip" 
+              [class.active]="issueFilter === 'ALL'" 
+              (click)="issueFilter = 'ALL'">
+              All Issues ({{ bulkIssues.length }})
+            </button>
+            <button 
+              type="button" 
+              class="gc-tab-chip" 
+              [class.active]="issueFilter === 'UNRESOLVED'" 
+              (click)="issueFilter = 'UNRESOLVED'">
+              <i class="fa-solid fa-xmark text-danger"></i> Unresolved ({{ getUnresolvedIssuesCount() }})
+            </button>
+            <button 
+              type="button" 
+              class="gc-tab-chip" 
+              [class.active]="issueFilter === 'FIXED'" 
+              (click)="issueFilter = 'FIXED'">
+              <i class="fa-solid fa-check text-success"></i> Fixed ({{ getFixedIssuesCount() }})
+            </button>
+            <button 
+              type="button" 
+              class="gc-tab-chip" 
+              [class.active]="issueFilter === 'IGNORED'" 
+              (click)="issueFilter = 'IGNORED'">
+              <i class="fa-solid fa-ban text-muted"></i> Ignored ({{ getIgnoredIssuesCount() }})
+            </button>
+          </div>
+
+          <div class="gc-issue-actions">
+            <!-- Download Issue File -->
+            <button 
+              type="button" 
+              class="gc-btn-secondary gc-btn-sm" 
+              (click)="downloadIssuesCsv()"
+              title="Download CSV containing only the entries with issues">
+              <i class="fa-solid fa-file-arrow-down"></i> Download Issues CSV
+            </button>
+
+            <!-- Re-upload Corrected File -->
+            <label 
+              class="gc-btn-secondary gc-btn-sm gc-btn-file-trigger"
+              title="Upload a corrected CSV to re-validate">
+              <i class="fa-solid fa-file-circle-check"></i> Upload Corrected CSV
+              <input 
+                type="file" 
+                accept=".csv" 
+                (change)="onCorrectedCsvSelected($event)" 
+                style="display: none;">
+            </label>
+          </div>
+        </div>
+
+        <!-- Issue Table -->
+        <div class="gc-issue-table-wrap">
+          <table class="gc-issue-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">Row</th>
+                <th style="width: 140px;">Column</th>
+                <th>Issue / Editable Value</th>
+                <th>Allowed Format</th>
+                <th style="width: 130px; text-align: center;">Status</th>
+                <th style="width: 110px; text-align: center;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let issue of getFilteredIssues()" [class.row-ignored]="issue.ignored" [class.row-fixed]="issue.fixed && !issue.ignored">
+                
+                <!-- Row Number -->
+                <td class="cell-row-num">
+                  <span class="row-num-badge">#{{ issue.rowNumber }}</span>
+                </td>
+
+                <!-- Specific Column -->
+                <td class="cell-column">
+                  <span class="col-pill">{{ issue.column }}</span>
+                  <div class="row-name-hint" *ngIf="issue.fullName && issue.column !== 'fullName'">
+                    {{ issue.fullName }}
+                  </div>
+                </td>
+
+                <!-- Editable Value (Text box) & Error Detail -->
+                <td class="cell-value-edit">
+                  <div class="input-with-validation">
+                    <input 
+                      type="text" 
+                      class="gc-issue-input" 
+                      [class.invalid-field]="!issue.fixed && !issue.ignored"
+                      [class.valid-field]="issue.fixed && !issue.ignored"
+                      [disabled]="issue.ignored"
+                      [(ngModel)]="issue.currentValue"
+                      (input)="onIssueValueChange(issue)"
+                      [placeholder]="'Enter ' + issue.column" />
+                  </div>
+                  <div class="issue-error-hint" *ngIf="!issue.fixed && !issue.ignored">
+                    <i class="fa-solid fa-circle-exclamation"></i> {{ issue.errorMessage }}
+                  </div>
+                  <div class="issue-success-hint" *ngIf="issue.fixed && !issue.ignored">
+                    <i class="fa-solid fa-circle-check"></i> Format verified
+                  </div>
+                </td>
+
+                <!-- Allowed Format Description (Short) -->
+                <td class="cell-allowed-format">
+                  <div class="allowed-box">
+                    {{ issue.allowedFormat }}
+                  </div>
+                </td>
+
+                <!-- Tick / Cross Status -->
+                <td class="cell-status" style="text-align: center;">
+                  <span class="status-indicator ignored" *ngIf="issue.ignored">
+                    <i class="fa-solid fa-ban"></i> Ignored
+                  </span>
+                  <span class="status-indicator fixed" *ngIf="issue.fixed && !issue.ignored">
+                    <i class="fa-solid fa-check"></i> Fixed
+                  </span>
+                  <span class="status-indicator cross" *ngIf="!issue.fixed && !issue.ignored">
+                    <i class="fa-solid fa-xmark"></i> Issue
+                  </span>
+                </td>
+
+                <!-- Action Button (Ignore / Restore) -->
+                <td class="cell-action" style="text-align: center;">
+                  <button 
+                    type="button" 
+                    class="btn-ignore-toggle" 
+                    [class.is-ignored]="issue.ignored"
+                    (click)="toggleIgnoreIssue(issue)">
+                    <i class="fa-solid" [ngClass]="issue.ignored ? 'fa-rotate-left' : 'fa-eye-slash'"></i>
+                    {{ issue.ignored ? 'Restore' : 'Ignore' }}
+                  </button>
+                </td>
+
+              </tr>
+
+              <tr *ngIf="getFilteredIssues().length === 0">
+                <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--gc-text-sub);">
+                  <i class="fa-solid fa-check-double" style="font-size: 2rem; color: #10b981; margin-bottom: 8px; display: block;"></i>
+                  No issues in this filter view.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="gc-modal-footer gc-issue-modal-footer">
+        <div class="footer-hint">
+          <span>Ready to import: <strong>{{ getReadyToImportCount() }}</strong> accounts</span>
+          <span *ngIf="getUnresolvedIssuesCount() > 0" class="text-amber">
+            ({{ getUnresolvedIssuesCount() }} unresolved rows will be skipped)
+          </span>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="gc-btn-secondary" (click)="closeIssueModal()">
+            Cancel
+          </button>
+          
+          <button 
+            type="button" 
+            class="gc-btn-primary" 
+            [disabled]="isImportingProcessed || getReadyToImportCount() === 0"
+            (click)="applyFixesAndImport()">
+            <i class="fa-solid" [ngClass]="isImportingProcessed ? 'fa-circle-notch fa-spin' : 'fa-cloud-arrow-up'"></i>
+            Apply Fixes & Import ({{ getReadyToImportCount() }})
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>

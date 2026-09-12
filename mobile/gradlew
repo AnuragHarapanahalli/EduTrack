@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# Setup Java and Gradle Wrapper
+set -e
+
+# Resolve APP_HOME
+APP_HOME="$(cd "$(dirname "$0")" && pwd -P)"
+
+# Auto-detect Java on macOS if not in PATH or JAVA_HOME
+if [ -z "$JAVA_HOME" ]; then
+    if [ -x "/opt/homebrew/opt/openjdk@21/bin/java" ]; then
+        export JAVA_HOME="/opt/homebrew/opt/openjdk@21"
+    elif [ -x "/opt/homebrew/bin/java" ]; then
+        export JAVA_HOME="/opt/homebrew"
+    elif [ -x "/usr/libexec/java_home" ]; then
+        export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null || true)
+    fi
+fi
+export PATH="/opt/homebrew/bin:/opt/homebrew/opt/openjdk@21/bin:$PATH"
+
+if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/java" ]; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD="java"
+fi
+
+WRAPPER_JAR="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+
+# Download gradle-wrapper.jar if not present
+if [ ! -f "$WRAPPER_JAR" ]; then
+    echo "Downloading gradle-wrapper.jar..."
+    mkdir -p "$APP_HOME/gradle/wrapper"
+    curl -sS -L -o "$WRAPPER_JAR" "https://raw.githubusercontent.com/gradle/gradle/master/gradle/wrapper/gradle-wrapper.jar" || true
+fi
+
+if [ -f "$WRAPPER_JAR" ]; then
+    exec "$JAVACMD" -jar "$WRAPPER_JAR" "$@"
+else
+    echo "gradle-wrapper.jar could not be located. Please run with an installed gradle binary or verify internet access." >&2
+    exit 1
+fi

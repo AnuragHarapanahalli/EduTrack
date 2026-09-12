@@ -10,7 +10,9 @@ import {
   CreateAdminUserRequest,
   UpdateAdminUserRequest,
   SystemStats,
-  AuditLog
+  AuditLog,
+  BulkRowIssue,
+  BulkUploadValidationResponse
 } from '../../models/admin.model';
 import { Subject } from '../../models/subject.model';
 import { Role } from '../../models/auth.model';
@@ -98,6 +100,14 @@ export class AdminPanelComponent implements OnInit {
   isUploadingCsv = false;
   csvFormError = '';
   csvUploadRole: 'STUDENT' | 'INSTRUCTOR' = 'STUDENT';
+
+  // Issue Resolution Modal State (Large Popup Window)
+  showIssueModal = false;
+  bulkValidationResult: BulkUploadValidationResponse | null = null;
+  bulkIssues: BulkRowIssue[] = [];
+  bulkValidRows: CreateAdminUserRequest[] = [];
+  isImportingProcessed = false;
+  issueFilter: 'ALL' | 'UNRESOLVED' | 'FIXED' | 'IGNORED' = 'ALL';
 
   // Audit Logs Pagination State
   logPage = 0;
@@ -397,7 +407,43 @@ export class AdminPanelComponent implements OnInit {
     this.csvFormError = '';
     this.cdr.detectChanges();
 
-    this.apiService.uploadUsersCsv(this.selectedCsvFile, this.csvUploadRole).subscribe({
+    this.apiService.validateUsersCsv(this.selectedCsvFile, this.csvUploadRole).subscribe({
+      next: (result) => {
+        this.isUploadingCsv = false;
+        if (!result.issues || result.issues.length === 0) {
+          this.importValidAccounts(result.validRows);
+        } else {
+          this.closeCsvModal();
+          this.bulkValidationResult = result;
+          this.bulkValidRows = [...result.validRows];
+          this.bulkIssues = result.issues.map(iss => ({
+            ...iss,
+            fixed: false,
+            ignored: false
+          }));
+          this.showIssueModal = true;
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => {
+        this.isUploadingCsv = false;
+        this.csvFormError = err.error?.message || 'Failed to parse or validate CSV file.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  importValidAccounts(validRows: CreateAdminUserRequest[]): void {
+    if (!validRows || validRows.length === 0) {
+      this.csvFormError = 'No valid rows found in the CSV file.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.isUploadingCsv = true;
+    this.cdr.detectChanges();
+
+    this.apiService.importProcessedUsers(validRows).subscribe({
       next: (imported) => {
         this.isUploadingCsv = false;
         this.closeCsvModal();
@@ -410,7 +456,244 @@ export class AdminPanelComponent implements OnInit {
       },
       error: (err) => {
         this.isUploadingCsv = false;
-        this.csvFormError = err.error?.message || 'Failed to parse or upload CSV file.';
+        this.csvFormError = err.error?.message || 'Failed to import accounts.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  closeIssueModal(): void {
+    this.showIssueModal = false;
+    this.bulkValidationResult = null;
+    this.bulkIssues = [];
+    this.bulkValidRows = [];
+    this.isImportingProcessed = false;
+    this.cdr.detectChanges();
+  }
+
+  downloadIssuesCsv(): void {
+    if (!this.bulkIssues || this.bulkIssues.length === 0) return;
+
+    const rowMap = new Map<number, { row: BulkRowIssue; reasons: string[] }>();
+    for (const issue of this.bulkIssues) {
+      if (!rowMap.has(issue.rowNumber)) {
+        rowMap.set(issue.rowNumber, { row: issue, reasons: [issue.errorMessage] });
+      } else {
+        rowMap.get(issue.rowNumber)!.reasons.push(issue.errorMessage);
+      }
+    }
+
+    const headers = 'fullName,email,role,panel,batch,assignedBatches,issue_notes\n';
+    let csvContent = headers;
+
+    rowMap.forEach(({ row, reasons }) => {
+      const escape = (str?: string) => `"${(str || '').replace(/"/g, '""')}"`;
+      const line = [
+        escape(row.fullName),
+        escape(row.email),
+        escape(row.role || this.csvUploadRole),
+        escape(row.panel),
+        escape(row.batch),
+        escape(row.assignedBatches),
+        escape(reasons.join('; '))
+      ].join(',');
+      csvContent += line + '\n';
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${this.csvUploadRole.toLowerCase()}_import_issues.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  onCorrectedCsvSelected(event: any): void {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.isUploadingCsv = true;
+    this.cdr.detectChanges();
+
+    this.apiService.validateUsersCsv(file, this.csvUploadRole).subscribe({
+      next: (result) => {
+        this.isUploadingCsv = false;
+        if (!result.issues || result.issues.length === 0) {
+          this.showToast('Corrected CSV has no issues! Importing now...');
+          this.importValidAccounts(result.validRows);
+          this.closeIssueModal();
+        } else {
+          this.bulkValidationResult = result;
+          this.bulkValidRows = [...result.validRows];
+          this.bulkIssues = result.issues.map(iss => ({ ...iss, fixed: false, ignored: false }));
+          this.showToast(`Analyzed corrected file: ${result.validCount} valid, ${result.issueCount} remaining issues.`);
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => {
+        this.isUploadingCsv = false;
+        this.showToast(err.error?.message || 'Failed to validate corrected CSV file.', 'error');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onIssueValueChange(issue: BulkRowIssue): void {
+    const val = (issue.currentValue || '').trim();
+
+    if (issue.column === 'email') {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (val.length > 0 && val.length <= 100 && emailRegex.test(val)) {
+        issue.fixed = true;
+        issue.email = val.toLowerCase();
+        this.bulkIssues
+          .filter(i => i.rowNumber === issue.rowNumber)
+          .forEach(i => i.email = val.toLowerCase());
+      } else {
+        issue.fixed = false;
+      }
+    } else if (issue.column === 'fullName') {
+      if (val.length >= 2 && val.length <= 100) {
+        issue.fixed = true;
+        issue.fullName = val;
+        this.bulkIssues
+          .filter(i => i.rowNumber === issue.rowNumber)
+          .forEach(i => i.fullName = val);
+      } else {
+        issue.fixed = false;
+      }
+    } else if (issue.column === 'role') {
+      const upper = val.toUpperCase();
+      if (upper === 'STUDENT' || upper === 'INSTRUCTOR' || upper === 'ADMIN') {
+        issue.fixed = true;
+        issue.role = upper;
+        this.bulkIssues
+          .filter(i => i.rowNumber === issue.rowNumber)
+          .forEach(i => i.role = upper);
+      } else {
+        issue.fixed = false;
+      }
+    } else {
+      if (val.length > 0) {
+        issue.fixed = true;
+        if (issue.column === 'batch') {
+          issue.batch = val;
+          this.bulkIssues.filter(i => i.rowNumber === issue.rowNumber).forEach(i => i.batch = val);
+        } else if (issue.column === 'assignedBatches') {
+          issue.assignedBatches = val;
+          this.bulkIssues.filter(i => i.rowNumber === issue.rowNumber).forEach(i => i.assignedBatches = val);
+        }
+      } else {
+        issue.fixed = false;
+      }
+    }
+  }
+
+  toggleIgnoreIssue(issue: BulkRowIssue): void {
+    issue.ignored = !issue.ignored;
+  }
+
+  getFilteredIssues(): BulkRowIssue[] {
+    if (this.issueFilter === 'UNRESOLVED') {
+      return this.bulkIssues.filter(i => !i.fixed && !i.ignored);
+    }
+    if (this.issueFilter === 'FIXED') {
+      return this.bulkIssues.filter(i => i.fixed && !i.ignored);
+    }
+    if (this.issueFilter === 'IGNORED') {
+      return this.bulkIssues.filter(i => i.ignored);
+    }
+    return this.bulkIssues;
+  }
+
+  getUnresolvedIssuesCount(): number {
+    return this.bulkIssues.filter(i => !i.fixed && !i.ignored).length;
+  }
+
+  getFixedIssuesCount(): number {
+    return this.bulkIssues.filter(i => i.fixed && !i.ignored).length;
+  }
+
+  getIgnoredIssuesCount(): number {
+    return this.bulkIssues.filter(i => i.ignored).length;
+  }
+
+  getReadyToImportCount(): number {
+    let count = this.bulkValidRows.length;
+    const rowMap = new Map<number, BulkRowIssue[]>();
+    for (const iss of this.bulkIssues) {
+      if (!rowMap.has(iss.rowNumber)) rowMap.set(iss.rowNumber, []);
+      rowMap.get(iss.rowNumber)!.push(iss);
+    }
+    rowMap.forEach(issues => {
+      if (!issues.some(i => i.ignored) && issues.every(i => i.fixed)) {
+        count++;
+      }
+    });
+    return count;
+  }
+
+  applyFixesAndImport(): void {
+    const toImport: CreateAdminUserRequest[] = [...this.bulkValidRows];
+
+    const rowMap = new Map<number, BulkRowIssue[]>();
+    for (const iss of this.bulkIssues) {
+      if (!rowMap.has(iss.rowNumber)) {
+        rowMap.set(iss.rowNumber, []);
+      }
+      rowMap.get(iss.rowNumber)!.push(iss);
+    }
+
+    let fixedCount = 0;
+    let ignoredCount = 0;
+
+    rowMap.forEach((issues) => {
+      if (issues.some(i => i.ignored)) {
+        ignoredCount++;
+        return;
+      }
+
+      const allFixed = issues.every(i => i.fixed);
+      if (allFixed) {
+        fixedCount++;
+        const sample = issues[0];
+        const req: CreateAdminUserRequest = {
+          fullName: sample.fullName || sample.currentValue,
+          email: (sample.email || sample.currentValue).toLowerCase().trim(),
+          role: (sample.role?.toUpperCase() as any) || (this.csvUploadRole as any),
+          panel: sample.panel,
+          batch: sample.batch,
+          assignedBatches: sample.assignedBatches ? sample.assignedBatches.split(';').map(s => s.trim()) : undefined
+        };
+        toImport.push(req);
+      }
+    });
+
+    if (toImport.length === 0) {
+      this.showToast('No valid accounts to import. Please fix or restore issues.', 'error');
+      return;
+    }
+
+    this.isImportingProcessed = true;
+    this.cdr.detectChanges();
+
+    this.apiService.importProcessedUsers(toImport).subscribe({
+      next: (imported) => {
+        this.isImportingProcessed = false;
+        this.closeIssueModal();
+        const roleLabel = this.csvUploadRole === 'STUDENT' ? 'Students' : 'Teachers';
+        this.showToast(`Imported ${imported.length} ${roleLabel} accounts successfully (${fixedCount} fixed, ${ignoredCount} skipped)!`);
+        this.loadUsers();
+        this.loadStats();
+        this.loadLogs();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isImportingProcessed = false;
+        this.showToast(err.error?.message || 'Failed to import accounts.', 'error');
         this.cdr.detectChanges();
       }
     });

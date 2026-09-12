@@ -44,12 +44,27 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createUser(request));
     }
 
-    @PostMapping("/users/bulk")
+    @PostMapping(value = "/users/bulk", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<AdminDto.AdminUserResponse>> bulkUploadUsers(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "role", defaultValue = "STUDENT") Role role
     ) {
         return ResponseEntity.ok(adminService.bulkUploadUsers(file, role));
+    }
+
+    @PostMapping(value = "/users/bulk/validate", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AdminDto.BulkUploadValidationResponse> validateBulkUpload(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "role", defaultValue = "STUDENT") Role role
+    ) {
+        return ResponseEntity.ok(adminService.validateBulkUpload(file, role));
+    }
+
+    @PostMapping("/users/bulk/import-processed")
+    public ResponseEntity<List<AdminDto.AdminUserResponse>> importProcessedUsers(
+            @RequestBody AdminDto.BulkImportProcessedRequest request
+    ) {
+        return ResponseEntity.ok(adminService.importProcessedUsers(request.getUsers()));
     }
 
     @PutMapping("/users/{id}")
