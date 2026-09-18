@@ -2,6 +2,7 @@
 backend/target/
 *.class
 *.jar
+!**/gradle/wrapper/*.jar
 *.war
 
 # IDE files
