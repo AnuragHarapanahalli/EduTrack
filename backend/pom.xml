@@ -82,6 +82,14 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Selenium WebDriver for End-to-End Automated Testing -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.26.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
