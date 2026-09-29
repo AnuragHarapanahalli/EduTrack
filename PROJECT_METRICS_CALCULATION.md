@@ -229,17 +229,19 @@ $$TDEV = C \times (PM)^F$$
 
 $$\text{Average Staffing} = \frac{PM}{TDEV} = \frac{23.01 \text{ Person-Months}}{9.73 \text{ Months}} \approx \mathbf{2.36 \text{ Full-Time Engineers}}$$
 
-### Academic Project Compression (4-Month Semester Timeline):
-If scheduled across a standard university semester of **4 calendar months**:
-$$\text{Required Team Size} = \frac{23.01 \text{ Person-Months}}{4 \text{ Months}} \approx \mathbf{5.75 \approx 5 \text{ to } 6 \text{ Team Members}}$$
+### Academic Project Delivery (4-Month Semester Timeline):
+If scheduled across an intensive university semester of **4 calendar months**:
+$$\text{Required Effort Rate} = \frac{23.01 \text{ Person-Months}}{4 \text{ Months}} \approx \mathbf{5.75 \text{ Effort Equivalent}}$$
 
-| Role | Headcount | Key Responsibilities |
-|---|:---:|---|
-| **Backend & Database Engineer** | 2 | Spring Boot REST APIs, JPA entities, JWT authentication, H2/MySQL schema |
-| **Frontend UI/UX Engineer** | 2 | Angular components, styling, client state management, document preview |
-| **QA & Automation Engineer** | 1 | Selenium 4 POM harness, E2E test suites, test reporting |
-| **Project Manager / DevOps** | 1 | Architecture governance, Docker containerization, milestone tracking |
-| **Total Team** | **6** | Full project lifecycle coverage |
+The project was engineered and executed by a core cross-functional team of **4 engineers**:
+
+| Team Member | Engineering Role | Key Responsibilities |
+|---|---|---|
+| **Anurag Harapanahalli** | Fullstack Lead & System Architect | Spring Boot core architecture, Security/JWT, Angular shell, Selenium POM test harness |
+| **Aaryan Kumbhare** | Backend & Database Systems Engineer | Relational JPA schema, REST endpoints, Timeliness algorithm & Leaderboard service |
+| **Harshad Pardhi** | Frontend UI/UX Engineer | Angular standalone components, Netflix-style roadmap carousel, In-browser document preview |
+| **Nayna Sharma** | QA & Systems Governance Engineer | End-to-end test scenarios, Admin governance module, CSV parser validation, Documentation |
+
 
 ---
 
