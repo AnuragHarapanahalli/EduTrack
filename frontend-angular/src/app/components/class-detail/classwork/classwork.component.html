@@ -55,7 +55,18 @@
                     </span>
                 </div>
 
-                <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+
+                    <!-- PREVIEW SUBMITTED FILE BUTTON (HERO) -->
+                    <button
+                        *ngIf="heroMilestone.userSubmission?.fileUrl"
+                        type="button"
+                        class="gc-btn-turn-in"
+                        style="background: var(--gc-surface); color: var(--gc-text-main); border: 1px solid var(--gc-border); display: inline-flex; align-items: center; gap: 6px;"
+                        (click)="previewSubmission(heroMilestone.userSubmission?.fileUrl, heroMilestone.title)">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>Preview Submission</span>
+                    </button>
 
                     <button
                         *ngIf="

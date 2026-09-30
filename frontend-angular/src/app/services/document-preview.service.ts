@@ -40,10 +40,10 @@ export class DocumentPreviewService {
     return clean.split('.').pop()?.toLowerCase() || '';
   }
 
-  openPreview(fileUrl: string, fileName?: string, fileBlob?: Blob): void {
-    const derivedName = fileName || fileUrl.split('/').pop() || 'Document';
+  openPreview(fileUrl?: string, fileName?: string, fileBlob?: Blob): void {
+    const derivedName = fileName || (fileUrl ? fileUrl.split('/').pop() : '') || 'Document';
     this.currentDocument.set({
-      fileUrl,
+      fileUrl: fileUrl || '',
       fileName: derivedName,
       fileBlob
     });

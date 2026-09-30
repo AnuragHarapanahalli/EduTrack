@@ -335,10 +335,11 @@
                   </div>
                   <select 
                     *ngIf="updatingInstructorSubjectId !== s.id"
-                    [value]="s.instructorId || ''"
-                    (change)="changeInstructor(s, $event)"
+                    [ngModel]="s.instructorId"
+                    (ngModelChange)="changeInstructor(s, $event)"
                     class="gc-table-select">
-                    <option *ngFor="let prof of instructorUsers" [value]="prof.id">
+                    <option value="" disabled [selected]="!s.instructorId">Select Faculty</option>
+                    <option *ngFor="let prof of instructorUsers" [ngValue]="prof.id">
                       {{ prof.fullName }} ({{ prof.email }})
                     </option>
                   </select>

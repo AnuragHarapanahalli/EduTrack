@@ -146,14 +146,7 @@ import {
 
           <!-- VIEWER: PDF -->
           <div class="gc-pdf-viewer" *ngIf="!isLoading && isSupported && fileType === 'pdf' && safePdfUrl">
-            <object [data]="safePdfUrl" type="application/pdf" class="pdf-frame">
-              <iframe [src]="safePdfUrl" class="pdf-frame">
-                <p>
-                  Your browser does not support inline PDF viewing.
-                  <a [href]="downloadUrl" target="_blank">Download PDF</a>
-                </p>
-              </iframe>
-            </object>
+            <iframe [src]="safePdfUrl" class="pdf-frame" title="PDF Document Viewer"></iframe>
           </div>
 
           <!-- VIEWER: WORD (.DOCX) via Mammoth -->
@@ -562,6 +555,7 @@ export class DocumentPreviewModalComponent implements OnInit, OnDestroy {
   textContent: string | null = null;
   zoom = 100;
   isFullscreen = false;
+  private createdBlobUrl: string | null = null;
 
   get fileTypeBadgeClass(): string {
     return this.fileType;
@@ -593,7 +587,9 @@ export class DocumentPreviewModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {}
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.resetState();
+  }
 
   loadDocument(fileUrl?: string, fileName?: string, fileBlob?: Blob): void {
     this.resetState();
@@ -622,6 +618,7 @@ export class DocumentPreviewModalComponent implements OnInit, OnDestroy {
     let targetUrl = '';
     if (fileBlob) {
       targetUrl = URL.createObjectURL(fileBlob);
+      this.createdBlobUrl = targetUrl;
       this.downloadUrl = targetUrl;
     } else if (fileUrl) {
       targetUrl = this.resolveFullUrl(fileUrl);
@@ -631,9 +628,32 @@ export class DocumentPreviewModalComponent implements OnInit, OnDestroy {
     // Determine type
     if (this.fileExtension === 'pdf') {
       this.fileType = 'pdf';
-      this.safePdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(targetUrl);
-      this.isLoading = false;
-      this.cdr.detectChanges();
+      if (fileBlob) {
+        this.safePdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(targetUrl);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      } else {
+        // Fetch as blob to guarantee same-origin Blob URL, resolving all iframe refusal and mime-type issues
+        fetch(targetUrl)
+          .then(res => {
+            if (!res.ok) throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
+            return res.blob();
+          })
+          .then(blob => {
+            const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+            const blobUrl = URL.createObjectURL(pdfBlob);
+            this.createdBlobUrl = blobUrl;
+            this.safePdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          })
+          .catch(err => {
+            console.warn('PDF blob fetch failed, falling back to direct URL:', err);
+            this.safePdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(targetUrl);
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          });
+      }
     } else if (this.fileExtension === 'docx') {
       this.fileType = 'docx';
       this.loadDocx(targetUrl, fileBlob);
@@ -719,6 +739,12 @@ export class DocumentPreviewModalComponent implements OnInit, OnDestroy {
   }
 
   private resetState(): void {
+    if (this.createdBlobUrl) {
+      try {
+        URL.revokeObjectURL(this.createdBlobUrl);
+      } catch (e) {}
+      this.createdBlobUrl = null;
+    }
     this.fileName = '';
     this.fileExtension = '';
     this.fileType = 'unsupported';

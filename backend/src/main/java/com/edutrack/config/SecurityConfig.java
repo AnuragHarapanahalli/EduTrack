@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())) // For H2 Console
+            .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Allow iframe preview from frontend origin
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/h2-console/**", "/uploads/**", "/", "/index.html", "/static/**", "/**").permitAll()

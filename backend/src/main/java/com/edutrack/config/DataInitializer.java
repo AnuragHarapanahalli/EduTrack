@@ -2,6 +2,7 @@ package com.edutrack.config;
 
 import com.edutrack.model.*;
 import com.edutrack.repository.*;
+import com.edutrack.service.FileStorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -17,23 +18,27 @@ public class DataInitializer implements CommandLineRunner {
     private final MilestoneRepository milestoneRepository;
     private final SubmissionRepository submissionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileStorageService fileStorageService;
 
     public DataInitializer(
             UserRepository userRepository,
             SubjectRepository subjectRepository,
             MilestoneRepository milestoneRepository,
             SubmissionRepository submissionRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            FileStorageService fileStorageService
     ) {
         this.userRepository = userRepository;
         this.subjectRepository = subjectRepository;
         this.milestoneRepository = milestoneRepository;
         this.submissionRepository = submissionRepository;
         this.passwordEncoder = passwordEncoder;
+        this.fileStorageService = fileStorageService;
     }
 
     @Override
     public void run(String... args) throws Exception {
+        ensureSampleFilesExist();
         if (userRepository.count() > 0) return;
 
         System.out.println("🌱 Initializing EduTrack Demo Seed Data...");
@@ -451,5 +456,70 @@ public class DataInitializer implements CommandLineRunner {
         submissionRepository.save(subDbmsAmitM1);
 
         System.out.println("✅ EduTrack Demo Seed Data Initialized Successfully!");
+    }
+
+    private void ensureSampleFilesExist() {
+        try {
+            String[] pdfFiles = {
+                "anurag-proposal.pdf", "priya-proposal.pdf", "anurag-srs.pdf",
+                "sneha-proposal.pdf", "sneha-srs.pdf", "amit-proposal.pdf",
+                "aditi-proposal.pdf", "anurag-db-er.pdf", "sneha-db-er.pdf",
+                "priya-db-er.pdf", "amit-db-er.pdf"
+            };
+
+            for (String fileName : pdfFiles) {
+                java.nio.file.Path target = fileStorageService.getFilePath(fileName);
+                if (!java.nio.file.Files.exists(target)) {
+                    byte[] samplePdf = createMinimalPdf(fileName);
+                    java.nio.file.Files.write(target, samplePdf);
+                }
+            }
+
+            java.nio.file.Path pngTarget = fileStorageService.getFilePath("anurag-schema.png");
+            if (!java.nio.file.Files.exists(pngTarget)) {
+                byte[] samplePng = new byte[] {
+                    (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D,
+                    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+                    0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, (byte) 0xC4, (byte) 0x89, 0x00, 0x00,
+                    0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, (byte) 0x9C, 0x63, 0x60, 0x60,
+                    0x60, 0x00, 0x00, 0x00, 0x04, 0x00, 0x01, 0x05, (byte) 0xFE, 0x02, 0x7B,
+                    0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, (byte) 0xAE, 0x42, 0x60, (byte) 0x82
+                };
+                java.nio.file.Files.write(pngTarget, samplePng);
+            }
+        } catch (Exception ex) {
+            System.err.println("Could not ensure demo sample files: " + ex.getMessage());
+        }
+    }
+
+    private byte[] createMinimalPdf(String title) {
+        String cleanTitle = title.replace(".pdf", "").replace("-", " ").toUpperCase();
+        String content = "BT /F1 20 Tf 50 720 Td (EduTrack Project Deliverable) Tj ET " +
+                         "BT /F1 14 Tf 50 680 Td (Document: " + cleanTitle + ") Tj ET " +
+                         "BT /F1 11 Tf 50 640 Td (Submitted for academic evaluation via EduTrack Platform.) Tj ET " +
+                         "BT /F1 11 Tf 50 610 Td (Status: Verified and Stored) Tj ET";
+        int streamLength = content.length();
+        String pdf = "%PDF-1.4\n" +
+                "1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n" +
+                "2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n" +
+                "3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj\n" +
+                "4 0 obj << /Length " + streamLength + " >> stream\n" +
+                content + "\n" +
+                "endstream\n" +
+                "endobj\n" +
+                "5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n" +
+                "xref\n" +
+                "0 6\n" +
+                "0000000000 65535 f \n" +
+                "0000000009 00000 n \n" +
+                "0000000058 00000 n \n" +
+                "0000000115 00000 n \n" +
+                "0000000244 00000 n \n" +
+                "0000000350 00000 n \n" +
+                "trailer << /Size 6 /Root 1 0 R >>\n" +
+                "startxref\n" +
+                "420\n" +
+                "%%EOF\n";
+        return pdf.getBytes(java.nio.charset.StandardCharsets.UTF_8);
     }
 }

@@ -34,6 +34,7 @@ export class AdminPanelComponent implements OnInit {
 
   // Data
   users: AdminUser[] = [];
+  allInstructors: AdminUser[] = [];
   subjects: Subject[] = [];
   auditLogs: AuditLog[] = [];
   stats: SystemStats | null = null;
@@ -132,9 +133,22 @@ export class AdminPanelComponent implements OnInit {
 
   loadAllData(): void {
     this.loadUsers();
+    this.loadInstructors();
     this.loadStats();
     this.loadSubjects();
     this.loadLogs();
+  }
+
+  loadInstructors(): void {
+    this.apiService.getAdminUsers(undefined, 'INSTRUCTOR', true).subscribe({
+      next: (data) => {
+        this.allInstructors = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to load instructors', err);
+      }
+    });
   }
 
   setTab(tab: AdminTab): void {
@@ -145,6 +159,7 @@ export class AdminPanelComponent implements OnInit {
       this.loadLogs();
     } else if (tab === 'CLASSES') {
       this.loadSubjects();
+      this.loadInstructors();
     }
   }
 
@@ -719,9 +734,10 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
-  changeInstructor(subject: Subject, event: any): void {
-    const instructorId = +event.target.value;
-    if (!instructorId) return;
+  changeInstructor(subject: Subject, eventOrId: any): void {
+    const rawVal = (eventOrId && eventOrId.target) ? eventOrId.target.value : eventOrId;
+    const instructorId = Number(rawVal);
+    if (!instructorId || instructorId === subject.instructorId) return;
 
     this.updatingInstructorSubjectId = subject.id;
     this.apiService.changeSubjectInstructor(subject.id, instructorId).subscribe({
@@ -976,6 +992,9 @@ export class AdminPanelComponent implements OnInit {
   // ==========================================
 
   get instructorUsers(): AdminUser[] {
+    if (this.allInstructors && this.allInstructors.length > 0) {
+      return this.allInstructors;
+    }
     return this.users.filter(u => u.role === 'INSTRUCTOR');
   }
 
